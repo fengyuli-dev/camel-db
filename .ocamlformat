@@ -1,0 +1,8 @@
+profile = conventional
+break-cases = toplevel
+break-fun-decl = fit-or-vertical
+exp-grouping = preserve
+margin = 72
+parse-docstrings = true
+type-decl=sparse
+wrap-comments = true

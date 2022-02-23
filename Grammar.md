@@ -1,7 +1,5 @@
 Note that curly braces are not part of the grammar. Colons are for type annotations. *Italics* are types.
 
-command —> query {; query}* ;;
-
 query —> create | select | drop | insert | delete | update
 
 type —> DATABASE | TABLE
