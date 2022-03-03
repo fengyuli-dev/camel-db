@@ -32,6 +32,8 @@ type terminal =
   | Float of float
   | String of string
 
+type end_of_query = EOQ
+
 type token =
   | Command of command_type
   | Target of target_type
@@ -39,5 +41,6 @@ type token =
   | LogicOp of logic_op
   | Datatype of datatype
   | Terminal of terminal
+  | EndOfQuery of end_of_query
 
 val tokenize : string -> token list

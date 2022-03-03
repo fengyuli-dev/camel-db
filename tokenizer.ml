@@ -32,6 +32,8 @@ type terminal =
   | Float of float
   | String of string
 
+type end_of_query = EOQ
+
 type token =
   | Command of command_type
   | Target of target_type
@@ -39,6 +41,7 @@ type token =
   | LogicOp of logic_op
   | Datatype of datatype
   | Terminal of terminal
+  | EndOfQuery of end_of_query
 
 let to_string_list input =
   input |> String.trim
@@ -78,6 +81,7 @@ let match_token = function
   | "CHAR" -> Datatype String
   | "TEXT" -> Datatype String
   | "VARCHAR" -> Datatype String
+  | ";" -> EndOfQuery EOQ
   | s -> match_terminal s
 
 let tokenize s = List.map (fun e -> match_token e) (to_string_list s)
