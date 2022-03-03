@@ -25,13 +25,11 @@ type logic_op =
 type datatype =
   | Int
   | Float
-  | Char
   | String
 
 type terminal =
   | Int of int
   | Float of float
-  | Char of char
   | String of string
 
 type token =
@@ -42,16 +40,19 @@ type token =
   | Datatype of datatype
   | Terminal of terminal
 
-type tokens = token list
-
 let to_string_list input =
   input |> String.trim
   |> String.split_on_char ' '
   |> List.map String.trim
   |> List.filter (fun e -> e <> "")
 
-(* TODO: Implement this *)
-let match_terminal s = Terminal (Int 1)
+(* TODO: Tokenizer does not support string with spaces. It also does not
+   support spaces around binary operators. *)
+let match_terminal s =
+  try Terminal (Int (int_of_string s))
+  with _ -> (
+    try Terminal (Float (float_of_string s))
+    with _ -> Terminal (String s))
 
 let match_token = function
   | "CREATE" -> Command Create
@@ -74,7 +75,9 @@ let match_token = function
   | "INT" -> Datatype Int
   | "FLOAT" -> Datatype Float
   | "DOUBLE" -> Datatype Float
-  | "CHAR" -> Datatype Char
+  | "CHAR" -> Datatype String
   | "TEXT" -> Datatype String
   | "VARCHAR" -> Datatype String
   | s -> match_terminal s
+
+let tokenize s = List.map (fun e -> match_token e) (to_string_list s)

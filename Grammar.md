@@ -10,7 +10,7 @@ create —> CREATE type {db/table_name : *string*} (schema)
 
 ​	field_definition —> {field_name : *string*} datatype | {field_name : *string*} datatype {default : *datatype*}
 
-​	datatype —> *int* | *float* | *char*| *string*
+​	datatype —> *int* | *float* | *string*
 
 drop —> DROP type {db/table_name : *string*}
 
