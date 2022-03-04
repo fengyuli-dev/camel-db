@@ -1,0 +1,3 @@
+(test
+ (name main)
+ (libraries Camel_db ounit2))
