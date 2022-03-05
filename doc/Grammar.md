@@ -20,13 +20,13 @@ select —> SELECT columns FROM {table_name : *string*}
 
 delete —> DELETE FROM {table_name : *string*} WHERE condition {logic_op condition}*
 
-condition —> {field_name : *string*} binary_op {terminal : *datatype*}	
+condition —> {field_name : *string*} binary_op {terminal : *datatype*}
 
-binary_op —> = | > | < | >= | <= | != 
+binary_op —> = | > | < | >= | <= | !=
 
 logic_op —> AND | OR
 
-columns —> * | {field_name : *string*} {, field_name : *string*}* 
+columns —> * | {field_name : *string*} {, field_name : *string*}*
 
 insert —> INSERT INTO {table_name : *string*} (columns) VALUES (values)
 

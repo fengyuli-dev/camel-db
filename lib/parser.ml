@@ -12,8 +12,8 @@ let parse tokens =
 
 
 
-let parse_query token = 
-  match token with
+let parse_query tokens = 
+  match tokens with
   | Command Create -> parse_create 
   | Command Select ->
   | Command Drop ->
@@ -21,3 +21,10 @@ let parse_query token =
   | Command Delete ->
   | Command Update ->
   | _ -> raise Malformed
+
+
+(** *)
+val parse_where : token list -> fun
+
+(** *)
+val parse_expression : token list -> fun

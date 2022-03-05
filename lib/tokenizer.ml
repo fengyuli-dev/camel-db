@@ -70,6 +70,8 @@ let match_token = function
   | "UPDATE" -> Command Update
   | "DATABASE" -> Target Database
   | "TABLE" -> Target Table
+  | "SET" -> 
+  | "VALUES" -> 
   | "=" -> BinaryOp EQ
   | ">" -> BinaryOp GT
   | ">=" -> BinaryOp GE
