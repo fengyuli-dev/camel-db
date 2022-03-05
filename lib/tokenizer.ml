@@ -5,6 +5,7 @@ type command_type =
   | Insert
   | Delete
   | Update
+  | From
 
 type target_type =
   | Database
@@ -60,6 +61,7 @@ let match_terminal s =
 let match_token = function
   | "CREATE" -> Command Create
   | "SELECT" -> Command Select
+  | "FROM" -> Command From
   | "DROP" -> Command Drop
   | "INSERT" -> Command Insert
   | "DELETE" -> Command Delete
