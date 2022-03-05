@@ -6,6 +6,7 @@ type command_type =
   | Delete
   | Update
   | From
+  | Where
 
 type target_type =
   | Database
@@ -62,12 +63,15 @@ let match_token = function
   | "CREATE" -> Command Create
   | "SELECT" -> Command Select
   | "FROM" -> Command From
+  | "WHERE" -> Command Where
   | "DROP" -> Command Drop
   | "INSERT" -> Command Insert
   | "DELETE" -> Command Delete
   | "UPDATE" -> Command Update
   | "DATABASE" -> Target Database
   | "TABLE" -> Target Table
+  | "SET" -> 
+  | "VALUES" -> 
   | "=" -> BinaryOp EQ
   | ">" -> BinaryOp GT
   | ">=" -> BinaryOp GE
