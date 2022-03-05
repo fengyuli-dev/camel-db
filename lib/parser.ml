@@ -10,5 +10,14 @@ let parse tokens =
   | [] -> whatever
   | h :: t -> parse_token h
 
-  
 
+
+let parse_query token = 
+  match token with
+  | Command Create -> parse_create 
+  | Command Select ->
+  | Command Drop ->
+  | Command Insert ->
+  | Command Delete ->
+  | Command Update ->
+  | _ -> raise Malformed
