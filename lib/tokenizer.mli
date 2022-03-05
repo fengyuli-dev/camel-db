@@ -5,6 +5,7 @@ type command_type =
   | Insert
   | Delete
   | Update
+  | From
 
 type target_type =
   | Database
