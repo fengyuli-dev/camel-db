@@ -52,4 +52,9 @@ let rec delete key = function
       else if k < key then Node (k, v, l, delete key r)
       else Node (k, v, delete key l, r)
 
+let rec inorder = function
+  | EmptyLeaf -> []
+  | Leaf (k, v) -> [ (k, v) ]
+  | Node (k, v, l, r) -> inorder l @ [ (k, v) ] @ inorder r
+    
 let empty () = EmptyLeaf
