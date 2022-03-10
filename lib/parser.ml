@@ -3,14 +3,20 @@ open Tokenizer
 exception Malformed
 exception Empty
 
-let parse (input : string) = 
-  let tokens = tokenize input in 
-  if List.length tokens = 0 then raise Empty
-  else if List.hd (List.rev tokens) <> (EndOfQuery EOQ) then raise Malformed
-  else parse_query tokens
+let parse_create tokens = 
+  failwith "Unimplemented"
+let parse_select tokens = 
+  failwith "Unimplemented"
+let parse_drop tokens = 
+  failwith "Unimplemented"  
 
-
-
+let parse_insert tokens = 
+  failwith "Unimplemented"
+let parse_delete tokens = 
+  failwith "Unimplemented"  
+let parse_update tokens = 
+  failwith "Unimplemented"  
+  
 let parse_query tokens = 
   match tokens with
   | Command Create :: t -> parse_create t
@@ -20,3 +26,11 @@ let parse_query tokens =
   | Command Delete :: t -> parse_delete t
   | Command Update :: t -> parse_update t
   | _ -> raise Malformed
+
+
+let parse (input : string) = 
+  let tokens = tokenize input in 
+  if List.length tokens = 0 then raise Empty
+  else if List.hd (List.rev tokens) <> (EndOfQuery EOQ) then raise Malformed
+  else parse_query tokens
+  
