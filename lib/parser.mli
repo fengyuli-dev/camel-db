@@ -2,6 +2,13 @@ open Tokenizer
 
 (** Representation of dynamic adventure state. *)
 
+type record 
+(** A dummy type representing a row in a table in the database. *)
+
+type table
+(** THe abstract type representing a table. *)
+type data_base
+(** The abstract type representing a database. *)
 
 (** Partition the line into commands and get rid of ";" *)
 val parse : token list -> unit
@@ -15,8 +22,7 @@ val parse_query : token list -> unit
 
 
 (** [parse_create input] parse a create data base command to send 
-to controller_create to create a table. Create table with input in syntax 
-"CREATE TABLE table_name (data_catagory data_type *)". *)
+to controller_create to create a table. *)
 val parse_create : token list -> unit
 
 
@@ -54,11 +60,6 @@ val parse_from : token list -> data_base
 (** [parse_where input] parse the where clause and return the function that 
 takes a row in the table repersented by record and returns a boolean. True
 if the row match and False if the row does not *)
-val parse_where : token list -> fun
+val parse_where : token list -> (record -> bool)
 
-
-(** [parse_expression input] parse input which is expression such as 
-"Country = USA" or "AGE > 18" and return a boolean value, used in WHERE *)
-val parse_expression : token list -> fun
-
-(** We might need a syntax tree for the expressions. *)
+(** We might need a syntax tree for the expressions, it will be represented by helper functions within parse_where. *)

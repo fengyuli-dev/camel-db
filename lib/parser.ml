@@ -3,28 +3,20 @@ open Tokenizer
 exception Malformed
 exception Empty
 
-let parse tokens = 
+let parse (input : string) = 
+  let tokens = tokenize input in 
   if List.length tokens = 0 then raise Empty
   else if List.hd (List.rev tokens) <> (EndOfQuery EOQ) then raise Malformed
-  else match tokens with
-  | [] -> whatever
-  | h :: t -> parse_token h
+  else parse_query tokens
 
 
 
 let parse_query tokens = 
   match tokens with
-  | Command Create -> parse_create 
-  | Command Select ->
-  | Command Drop ->
-  | Command Insert ->
-  | Command Delete ->
-  | Command Update ->
+  | Command Create :: t -> parse_create t
+  | Command Select :: t -> parse_select t
+  | Command Drop :: t -> parse_drop t
+  | Command Insert :: t -> parse_insert t
+  | Command Delete :: t -> parse_delete t
+  | Command Update :: t -> parse_update t
   | _ -> raise Malformed
-
-
-(** *)
-val parse_where : token list -> fun
-
-(** *)
-val parse_expression : token list -> fun
