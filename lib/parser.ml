@@ -14,6 +14,7 @@ let parse_delete tokens = failwith "Unimplemented"
 let parse_update tokens = failwith "Unimplemented"
 
 let parse_query tokens =
+  
   match tokens with
   | Command Create :: t -> parse_create t
   | Command Select :: t -> parse_select t
