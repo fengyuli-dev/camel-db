@@ -7,7 +7,7 @@ type command_type =
   | Delete
   | Update
 
-type sub_command_type = 
+type sub_command_type =
   | From
   | Where
   | Set
@@ -29,6 +29,7 @@ type binary_op =
 type logic_op =
   | AND
   | OR
+  | NOT
 
 type datatype =
   | Int
