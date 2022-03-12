@@ -15,12 +15,20 @@ let parse_create tokens = failwith "Unimplemented"
 let parse_select tokens = failwith "Unimplemented"
 let parse_drop tokens = failwith "Unimplemented"
 
-(** goal: parse the table, cols - lst -, values - lst- to feed into controller*)
-(** sql syntax: insert into table_name values (value1, value2, value3)*)
+(** goal: parse the TABLE, COLS - lst -, VALUES - lst- to feed into controller*)
+(** [Command Insert; SubCommand Into; Terminal (String "Customers");
+ Terminal (String "(CustomerName,"); Terminal (String "ContactName,");
+ Terminal (String "Address,"); Terminal (String "City,");
+ Terminal (String "PostalCode,"); Terminal (String "Country)\nVALUES");
+ Terminal (String "('Cardinal',"); Terminal (String "'Tom");
+ Terminal (String "B."); Terminal (String "Erichsen',");
+ Terminal (String "'Skagen"); Terminal (String "21',");
+ Terminal (String "'Stavanger',"); Terminal (String "'4006',");
+ Terminal (String "'Norway')")] *)
+
 let parse_insert (tokens: token list) = match tokens with
 | [] -> raise Empty
-| a :: b 
-| _ -> raise Malformed
+| insert::into
 
 let parse_delete tokens = failwith "Unimplemented"
 

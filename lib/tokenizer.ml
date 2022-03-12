@@ -13,11 +13,6 @@ type sub_command_type =
   | Values
   | Into
 
-type ketword = 
-  | Into
-  | Values
-  | Set
-
 type target_type =
   | Database
   | Table
