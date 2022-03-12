@@ -15,6 +15,9 @@ type 'a tree =
 (** Returns the value associated with the given key. *)
 val get : int -> 'a tree -> 'a
 
+(** Returns the number of nonempty nodes in this tree. *)
+val size : 'a tree -> int
+
 (** Inserts the given key-value pair into the tree. *)
 val insert : int -> 'a -> 'a tree -> 'a tree
 

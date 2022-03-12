@@ -27,9 +27,10 @@ let parse_drop tokens = failwith "Unimplemented"
  Terminal (String "B."); Terminal (String "Erichsen','Skagen");
  Terminal (String "21','Stavanger','4006','Norway';")] *)
 
-let parse_insert (tokens: token list) = match tokens with
+let parse_insert (tokens: token list) = failwith "Unimplemented"
+  (* match tokens with
 | [] -> raise Empty
-| insert::into
+| insert::into *)
 
 let parse_delete tokens = failwith "Unimplemented"
 

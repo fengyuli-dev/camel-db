@@ -10,6 +10,11 @@ let is_empty = function
   | EmptyLeaf -> true
   | _ -> false
 
+let rec size = function
+  | EmptyLeaf -> 0
+  | Leaf _ -> 1
+  | Node (_, _, l, r) -> 1 + size l + size r
+
 let rec get key = function
   | EmptyLeaf -> raise NotFound
   | Leaf (k, v) -> if k = key then v else raise NotFound
@@ -17,7 +22,7 @@ let rec get key = function
       if k = key then v else if k < key then get key r else get key l
 
 let rec insert key value = function
-  | EmptyLeaf -> raise NotFound
+  | EmptyLeaf -> Node (key, value, EmptyLeaf, EmptyLeaf)
   | Leaf (k, v) ->
       if k = key then raise Duplicate
       else
