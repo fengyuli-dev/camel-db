@@ -56,5 +56,13 @@ let rec inorder = function
   | EmptyLeaf -> []
   | Leaf (k, v) -> [ (k, v) ]
   | Node (k, v, l, r) -> inorder l @ [ (k, v) ] @ inorder r
-    
+
+let rec fold f init = function
+  | EmptyLeaf -> init
+  | Leaf (k, v) -> init
+  | Node (k, v, l, r) ->
+      let l' = fold f init l in
+      let r' = fold f init r in
+      f l' v r'
+
 let empty () = EmptyLeaf
