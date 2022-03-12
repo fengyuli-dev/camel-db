@@ -26,9 +26,9 @@ type binary_op =
   | NE
 
 type logic_op =
-  | NOT
   | AND
   | OR
+  | NOT
 
 type datatype =
   | Int

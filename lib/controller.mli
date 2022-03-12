@@ -12,8 +12,8 @@ val select : string -> string list -> (record -> bool) -> unit
 val insert : string -> string list -> 'a list -> unit
 (** [delete table_name filtering_function] *)
 val delete : string -> (record -> bool) -> unit
-(** [update cols values filtering_function] *)
-val update : string list -> 'a list -> (record -> bool) -> unit
+(** [update table_name cols values filtering_function] *)
+val update : string -> string list -> 'a list -> (record -> bool) -> unit
 (** [drop table_name] *)
 val drop : string -> unit
 

@@ -4,6 +4,7 @@ open Controller
 exception Malformed
 exception Empty
 
+(** General Helpers within Parser*)
 let rec terminal_to_string tokens =
   match tokens with
   | [] -> ""
@@ -12,12 +13,44 @@ let rec terminal_to_string tokens =
   | Tokenizer.Float f :: t ->
       string_of_float f ^ " " ^ terminal_to_string t
 
+let explode (s: string): char list = List.init (String.length s) (String.get s)      
+
+(* let remove_parenthesis t = match t with
+|Terminal (data) -> match data with
+    |Int i -> i
+    |Float f -> f
+    |String s -> f *)
+
+(** turns a string into a list of characters*)
+
+
+(** remove any instances of the character in a string *)
+let remove_char (c: char)(s: string): string = let char_list = explode s in 
+    let filtered_list = List.filter(fun letter -> letter <> c)(char_list) 
+  in List.fold_left (fun acc h -> acc ^ (String.make 1 h)) ("") (filtered_list)
+
+(** remove all the () and , in a string *)
+let trim_string (s: string) = s |> remove_char '(' |> remove_char ')' |> 
+remove_char ','
+
+(** input: whole tokenized list, return the table name*)
+
+(* let parse_table (tokens: token list): string = 
+  match tokens with
+  | [] -> raise Empty
+  | h :: t -> if (h = SubCommand Into) then remove_parenthesis (List.nth t 0) *)
+
+(** input: the tokenized list after the table, return a list of columns*)
+let parse_cols (tokens: token list): string list = failwith "Unimplemented"
+
+let parse_vals (tokens: token list): string list = failwith "Unimplemented"
+
 let parse_from tokens = failwith "Unimplemented"
 let parse_where tokens = failwith "Unimplemented"
 
 let rec parse_create tokens = (failwith "TODO!")
 
-(** Parse Select Functions: *)
+(* Parse Select Functions: *)
 and parse_columns tokens = ["dadada "; "hahaha "]
 (** acc is accumulator, cols is token list of columns, from_lst is token
     list for parse_from, lst is the list containing parse_where and so
@@ -26,7 +59,7 @@ and get_where acc cols from_lst lst =
   match lst with
   | [] -> raise Malformed
   | EndOfQuery EOQ :: t ->
-      select (parse_columns cols) (parse_from from_lst)
+      select (parse_from from_lst) (parse_columns cols) 
         (parse_where acc);
       parse_query t
   | h :: t -> get_where (h :: acc) cols from_lst t
@@ -36,7 +69,7 @@ and get_from acc cols lst =
   | [] -> raise Malformed
   | SubCommand Where :: t -> get_where [] cols acc t
   | EndOfQuery EOQ :: t ->
-      select (parse_columns cols) (parse_from acc) (fun _ -> true);
+      select (parse_from acc) (parse_columns cols) (fun _ -> true);
       parse_query t
   | h :: t -> get_from (h :: acc) cols t
 
@@ -91,43 +124,14 @@ LE, COLS - lst -, VALUES - lst- to feed into controller*)
  Terminal (String "'Norway');")]*)
 
 (** turns a terminal object into its actual data *)
-let remove_parenthesis (t: Terminal) = match t with
-|Terminal (data) -> match data with
-    |Int i -> i
-    |Float f -> f
-    |String s -> f
-
-(** turns a string into a list of characters*)
-let explode (s: string): char list = List.init (String.length s) (String.get s)
-
-(** remove any instances of the character in a string *)
-let remove_char (c: char)(s: string): string = let char_list = explode s in 
-    let filtered_list = List.filter(fun letter -> letter <> c)(char_list) 
-  in List.fold_left (fun acc h -> acc ^ (String.make 1 h)) ("") (filtered_list)
-
-(** remove all the () and , in a string *)
-let trim_string (s: stirng) = s |> remove_char '(' |> remove_char ')' |> 
-remove_char ','
-
-(** input: whole tokenized list, return the table name*)
-let parse_table (tokens: tokens list): string = 
-  match tokens with
-  | [] -> raise Empty
-  | h :: t -> if (h = SubCommand Into) then remove_parenthesis (List.nth t 0)
-
-(** input: the tokenized list after the table, return a list of columns*)
-let parse_cols (tokens: tokens list): string list = 
-
-let parse_vals (tokens: tokens list): string list = 
-
-let parse_insert (tokens: token list) = failwith "Unimplemented"
+and parse_insert (tokens: token list) = failwith "Unimplemented"
     (* match tokens with
   | [] -> raise Empty
   | insert::into *)
   
-  let parse_delete tokens = failwith "Unimplemented"
+and parse_delete tokens = failwith "Unimplemented"
   
-  let parse_update tokens = failwith "Unimplemented"
+and parse_update tokens = failwith "Unimplemented"
 
 
 let parse (input : string) =

@@ -3,7 +3,7 @@ open Tokenizer
 (** Representation of dynamic adventure state. *)
 
 (** Partition the line into commands and get rid of ";" *)
-val parse : string -> 'a
+val parse : string -> unit
 
 (** Parse one command, calls parse create, insert, delete, update, which
     then calls te controller. *)
