@@ -1,4 +1,5 @@
 open Tokenizer
+open Controller
 
 exception Malformed
 exception Empty
@@ -11,6 +12,8 @@ type data =
   | Float of float
   | String of string
 
+let parse_from tokens = failwith "Unimplemented"
+let parse_where tokens = failwith "Unimplemented"
 let parse_create tokens = failwith "Unimplemented"
 let parse_select tokens = failwith "Unimplemented"
 let parse_drop tokens = failwith "Unimplemented"
@@ -54,7 +57,8 @@ let parse (input : string) =
   else parse_query tokens
 
 let expression tokens : token list -> expr list =
-  match tokens with
+  (* match tokens with
   | [] -> []
   | x1 :: op :: x2 :: xs -> []
-  | _ -> failwith "wrong"
+  | _ -> failwith "wrong" *)
+failwith "Unimplemented"
