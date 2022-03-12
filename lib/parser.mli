@@ -4,7 +4,6 @@ open Tokenizer
 
 type record 
 (** A dummy type representing a row in a table in the database. *)
-
 type table
 (** THe abstract type representing a table. *)
 type data_base
