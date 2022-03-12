@@ -13,6 +13,7 @@ let rec terminal_to_string tokens =
   | Tokenizer.Float f :: t ->
       string_of_float f ^ " " ^ terminal_to_string t
 
+(** turn a string into a list of characters*)
 let explode (s: string): char list = List.init (String.length s) (String.get s)      
 
 (* let remove_parenthesis t = match t with
@@ -20,8 +21,6 @@ let explode (s: string): char list = List.init (String.length s) (String.get s)
     |Int i -> i
     |Float f -> f
     |String s -> f *)
-
-(** turns a string into a list of characters*)
 
 
 (** remove any instances of the character in a string *)
@@ -39,6 +38,13 @@ remove_char ','
   match tokens with
   | [] -> raise Empty
   | h :: t -> if (h = SubCommand Into) then remove_parenthesis (List.nth t 0) *)
+
+let rec sublist i j l = 
+  match l with
+    [] -> failwith "empty list"
+  | h :: t -> 
+      let tail = if j = 0 then [] else sublist (i-1) (j-1) t in
+      if i >0 then tail else h :: tail
 
 (** input: the tokenized list after the table, return a list of columns*)
 let parse_cols (tokens: token list): string list = failwith "Unimplemented"
