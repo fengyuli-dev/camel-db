@@ -12,13 +12,32 @@ type data =
   | Float of float
   | String of string
 
+let rec terminal_to_string tokens = 
+  match tokens with
+  | [] -> ""
+  | Tokenizer.String s :: t -> s ^ terminal_to_string t
+  | Tokenizer.Int i :: t -> string_of_int i ^ terminal_to_string t
+  | Tokenizer.Float f :: t -> string_of_float f ^ terminal_to_string t
+
 let parse_from tokens = failwith "Unimplemented"
 let parse_where tokens = failwith "Unimplemented"
-let parse_create tokens = failwith "Unimplemented"
-let parse_select tokens = failwith "Unimplemented"
-let parse_drop tokens = failwith "Unimplemented"
+let rec parse_create tokens = failwith "Unimplemented"
+and parse_select tokens = failwith "Unimplemented"
+and parse_drop tokens = 
+  match tokens with
+  | [] -> raise Malformed
+  | Terminal s :: t -> 
+    let rec grouping acc lst = 
+      match lst with
+      | [] -> raise Malformed
+      | EndOfQuery EOQ :: t -> drop (terminal_to_string acc); parse_query lst
+      | Terminal h :: t -> grouping (h :: acc) t
+      | _ -> raise Malformed
+    in grouping [] (Terminal s :: t)
+  | _ -> raise Malformed  
 
-(** goal: parse the TABLE, COLS - lst -, VALUES - lst- to feed into controller*)
+(** goal: parse the TAB
+LE, COLS - lst -, VALUES - lst- to feed into controller*)
 (** [Command Insert; SubCommand Into; Terminal (String "Customers");
  Terminal (String "CustomerName,"); Terminal (String "ContactName,");
  Terminal (String "Address,"); Terminal (String "City,");
@@ -27,18 +46,17 @@ let parse_drop tokens = failwith "Unimplemented"
  Terminal (String "B."); Terminal (String "Erichsen','Skagen");
  Terminal (String "21','Stavanger','4006','Norway';")] *)
 
-let parse_insert (tokens: token list) = failwith "Unimplemented"
+and parse_insert (tokens: token list) = failwith "Unimplemented"
   (* match tokens with
 | [] -> raise Empty
 | insert::into *)
 
-let parse_delete tokens = failwith "Unimplemented"
+and parse_delete tokens = failwith "Unimplemented"
 
-let parse_update tokens = failwith "Unimplemented"
+and parse_update tokens = failwith "Unimplemented"
 
 
-let parse_query tokens =
-  
+and parse_query tokens =
   match tokens with
   | Command Create :: t -> parse_create t
   | Command Select :: t -> parse_select t

@@ -12,7 +12,7 @@ create —> CREATE type {db/table_name : *string*} (schema)
 
 ​	datatype —> *int* | *float* | *string*
 
-drop —> DROP type {db/table_name : *string*}
+drop —> DROP {table_name : *string*}
 
 select —> SELECT columns FROM {table_name : *string*}
 
