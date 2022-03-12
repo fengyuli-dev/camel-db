@@ -6,8 +6,8 @@ type data_type
 
 (** [create table_name col_name_col_type_list] *)
 val create : string -> string * data_type list -> unit
-(** [select columns table filter_function] *)
-val select : table -> string list -> (record -> bool) -> unit
+(** [select table columns filter_function] *)
+val select : string -> string list -> (record -> bool) -> unit
 (** [insert table_name cols value_list] *)
 val insert : string -> string list -> 'a list -> unit
 (** [delete table_name filtering_function] *)
