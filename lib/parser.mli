@@ -2,9 +2,12 @@ open Tokenizer
 
 (** Representation of dynamic adventure state. *)
 
+
+(** data type, includes int, float, string*)
+type data
+
 type record 
 (** A dummy type representing a row in a table in the database. *)
-
 type table
 (** THe abstract type representing a table. *)
 type data_base
@@ -56,10 +59,10 @@ the functions below. *)
 used as parameter for calling controller methods. *)
 val parse_from : token list -> data_base
 
+(** [parse_where input] parse where clause [token list] to a list [bool list]
+where the (n-1)th bool repersent whether the nth row satisfy the condition 
+specified in the where clause, true if satisfy and false otherwise *)
+val parse_where : token list -> terminal * terminal list -> bool list
 
-(** [parse_where input] parse the where clause and return the function that 
-takes a row in the table repersented by record and returns a boolean. True
-if the row match and False if the row does not *)
-val parse_where : token list -> (record -> bool)
-
-(** We might need a syntax tree for the expressions, it will be represented by helper functions within parse_where. *)
+(** We might need a syntax tree for the expressions, it will be represented 
+by helper functions within parse_where. *)
