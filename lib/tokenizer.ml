@@ -28,6 +28,7 @@ type binary_op =
 type logic_op =
   | AND
   | OR
+  | NOT
 
 type datatype =
   | Int
@@ -65,6 +66,7 @@ let match_terminal s =
   with _ -> (
     try Terminal (Float (float_of_string s))
     with _ -> Terminal (String s))
+
 
 let match_token = function
   | "CREATE" -> Command Create
