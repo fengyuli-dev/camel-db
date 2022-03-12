@@ -33,22 +33,6 @@ and parse_drop tokens =
       grouping [] (Terminal s :: t)
   | _ -> raise Malformed
 
-(** goal: parse the TAB LE, COLS - lst -, VALUES - lst- to feed into
-    controller*)
-(** [Command Insert; SubCommand Into; Terminal (String "Customers");
- Terminal (String "CustomerName,"); Terminal (String "ContactName,");
- Terminal (String "Address,"); Terminal (String "City,");
- Terminal (String "PostalCode,"); Terminal (String "Country");
- SubCommand Values; Terminal (String "'Cardinal','Tom");
- Terminal (String "B."); Terminal (String "Erichsen','Skagen");
- Terminal (String "21','Stavanger','4006','Norway';")] *)
-
-and parse_insert (tokens : token list) = failwith "Unimplemented"
-(* match tokens with | [] -> raise Empty | insert::into *)
-
-and parse_delete tokens = failwith "Unimplemented"
-and parse_update tokens = failwith "Unimplemented"
-
 and parse_query tokens =
   match tokens with
   | Command Create :: t -> parse_create t
@@ -58,6 +42,57 @@ and parse_query tokens =
   | Command Delete :: t -> parse_delete t
   | Command Update :: t -> parse_update t
   | _ -> raise Malformed
+
+(** goal: parse the TAB
+LE, COLS - lst -, VALUES - lst- to feed into controller*)
+(** [SubCommand Into; Terminal (String "Customers");
+ Terminal (String "(CustomerName,"); Terminal (String "ContactName,");
+ Terminal (String "Address,"); Terminal (String "City,");
+ Terminal (String "PostalCode,"); Terminal (String "Country)");
+ SubCommand Values; Terminal (String "('Cardinal',");
+ Terminal (String "'TomErichsen',"); Terminal (String "'Skagen21',");
+ Terminal (String "'Stavanger',"); Terminal (String "'4006',");
+ Terminal (String "'Norway');")]*)
+
+(** turns a terminal object into its actual data *)
+let remove_parenthesis (t: Terminal) = match t with
+|Terminal (data) -> match data with
+    |Int i -> i
+    |Float f -> f
+    |String s -> f
+
+(** turns a string into a list of characters*)
+let explode (s: string): char list = List.init (String.length s) (String.get s)
+
+(** remove any instances of the character in a string *)
+let remove_char (c: char)(s: string): string = let char_list = explode s in 
+    let filtered_list = List.filter(fun letter -> letter <> c)(char_list) 
+  in List.fold_left (fun acc h -> acc ^ (String.make 1 h)) ("") (filtered_list)
+
+(** remove all the () and , in a string *)
+let trim_string (s: stirng) = s |> remove_char '(' |> remove_char ')' |> 
+remove_char ','
+
+(** input: whole tokenized list, return the table name*)
+let parse_table (tokens: tokens list): string = 
+  match tokens with
+  | [] -> raise Empty
+  | h :: t -> if (h = SubCommand Into) then remove_parenthesis (List.nth t 0)
+
+(** input: the tokenized list after the table, return a list of columns*)
+let parse_cols (tokens: tokens list): string list = 
+
+let parse_vals (tokens: tokens list): string list = 
+
+let parse_insert (tokens: token list) = failwith "Unimplemented"
+    (* match tokens with
+  | [] -> raise Empty
+  | insert::into *)
+  
+  let parse_delete tokens = failwith "Unimplemented"
+  
+  let parse_update tokens = failwith "Unimplemented"
+
 
 let parse (input : string) =
   let tokens = tokenize input in
