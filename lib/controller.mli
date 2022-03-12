@@ -1,15 +1,20 @@
 (** Representation of dynamic adventure state. *)
 
-val create : (name : string) (lst: category*type list) -> unit
+type table
+type record
+type data_type
 
-val select : (cols: column list)(db : data_base)(function) -> unit
-
-val insert : (table : string) (cols: string list)(values: 'a list ) string : 'a listvueala list) ()
-
-val delete : (table : string) (condition : func)
-
-val update : ()
-
-val drop : (name : string)
+(** [create table_name col_name_col_type_list] *)
+val create : string -> string * data_type list -> unit
+(** [select columns table filter_function] *)
+val select : table -> string list -> (record -> bool) -> unit
+(** [insert table_name cols value_list] *)
+val insert : string -> string list -> 'a list -> unit
+(** [delete table_name filtering_function] *)
+val delete : string -> (record -> bool) -> unit
+(** [update cols values filtering_function] *)
+val update : string list -> 'a list -> (record -> bool) -> unit
+(** [drop table_name] *)
+val drop : string -> unit
 
 

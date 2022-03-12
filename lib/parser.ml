@@ -6,6 +6,11 @@ exception Empty
 (* Expression of (terminal,binary_op,terminal) *)
 type expr = token * token * token
 
+type data =
+  | Int of int
+  | Float of float
+  | String of string
+
 let parse_create tokens = failwith "Unimplemented"
 let parse_select tokens = failwith "Unimplemented"
 let parse_drop tokens = failwith "Unimplemented"
@@ -42,6 +47,6 @@ let parse (input : string) =
 
 let expression tokens : token list -> expr list =
   match tokens with
-  | [] -> [] (* TODO *)
+  | [] -> []
   | x1 :: op :: x2 :: xs -> []
   | _ -> failwith "wrong"
