@@ -10,7 +10,7 @@ let sample_tree =
   let rec generate_tree tree alist =
     match alist with
     | [] -> EmptyLeaf
-    | h :: t -> insert (fst h) (snd h) tree
+    | h :: t -> insert (fst h) (snd h) (generate_tree tree t)
   in
   generate_tree EmptyLeaf alist
 
