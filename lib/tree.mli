@@ -16,7 +16,7 @@ type 'a tree =
 val get : int -> 'a tree -> 'a
 
 (** Inserts the given key-value pair into the tree. *)
-val insert : int * 'a -> 'a tree -> 'a tree
+val insert : int -> 'a -> 'a tree -> 'a tree
 
 (** Deletes the node with the given key from the tree. Returns the tree
     with the node with the given key removed. *)
@@ -29,4 +29,4 @@ val inorder : 'a tree -> (int * 'a) list
 val empty : unit -> 'a tree
 
 (** Bottom-up fold on tree *)
-val fold : ('q -> 'b -> 'a -> 'a) -> 'a -> 'b tree -> 'a
+val fold : ('a -> 'b -> 'a -> 'a) -> 'a -> 'b tree -> 'a
