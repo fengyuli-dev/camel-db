@@ -20,14 +20,12 @@ let parse_drop tokens = failwith "Unimplemented"
 
 (** goal: parse the TABLE, COLS - lst -, VALUES - lst- to feed into controller*)
 (** [Command Insert; SubCommand Into; Terminal (String "Customers");
- Terminal (String "(CustomerName,"); Terminal (String "ContactName,");
+ Terminal (String "CustomerName,"); Terminal (String "ContactName,");
  Terminal (String "Address,"); Terminal (String "City,");
- Terminal (String "PostalCode,"); Terminal (String "Country)\nVALUES");
- Terminal (String "('Cardinal',"); Terminal (String "'Tom");
- Terminal (String "B."); Terminal (String "Erichsen',");
- Terminal (String "'Skagen"); Terminal (String "21',");
- Terminal (String "'Stavanger',"); Terminal (String "'4006',");
- Terminal (String "'Norway')")] *)
+ Terminal (String "PostalCode,"); Terminal (String "Country");
+ SubCommand Values; Terminal (String "'Cardinal','Tom");
+ Terminal (String "B."); Terminal (String "Erichsen','Skagen");
+ Terminal (String "21','Stavanger','4006','Norway';")] *)
 
 let parse_insert (tokens: token list) = match tokens with
 | [] -> raise Empty
