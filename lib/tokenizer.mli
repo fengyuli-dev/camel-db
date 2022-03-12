@@ -1,3 +1,4 @@
+(* first word*)
 type command_type =
   | Create
   | Select
@@ -5,7 +6,13 @@ type command_type =
   | Insert
   | Delete
   | Update
+
+type sub_command_type = 
   | From
+  | Where
+  | Set
+  | Values
+  | Into
 
 type target_type =
   | Database
@@ -37,6 +44,7 @@ type end_of_query = EOQ
 
 type token =
   | Command of command_type
+  | SubCommand of sub_command_type
   | Target of target_type
   | BinaryOp of binary_op
   | LogicOp of logic_op

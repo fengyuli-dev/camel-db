@@ -9,9 +9,18 @@ type expr = token * token * token
 let parse_create tokens = failwith "Unimplemented"
 let parse_select tokens = failwith "Unimplemented"
 let parse_drop tokens = failwith "Unimplemented"
-let parse_insert tokens = failwith "Unimplemented"
+
+(** goal: parse the table, cols - lst -, values - lst- to feed into controller*)
+(** sql syntax: insert into table_name values (value1, value2, value3)*)
+let parse_insert (tokens: token list) = match tokens with
+| [] -> raise Empty
+| a :: b 
+| _ -> raise Malformed
+
 let parse_delete tokens = failwith "Unimplemented"
+
 let parse_update tokens = failwith "Unimplemented"
+
 
 let parse_query tokens =
   
