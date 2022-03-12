@@ -5,8 +5,13 @@ type command_type =
   | Insert
   | Delete
   | Update
+
+type sub_command_type = 
   | From
   | Where
+  | Set
+  | Values
+  | Into
 
 type target_type =
   | Database
@@ -38,6 +43,7 @@ type end_of_query = EOQ
 
 type token =
   | Command of command_type
+  | SubCommand of sub_command_type
   | Target of target_type
   | BinaryOp of binary_op
   | LogicOp of logic_op
@@ -45,6 +51,7 @@ type token =
   | Terminal of terminal
   | EndOfQuery of end_of_query
 
+(** split the stirng based on spaces and filter out empty*)
 let to_string_list input =
   input |> String.trim
   |> String.split_on_char ' '
@@ -62,16 +69,17 @@ let match_terminal s =
 let match_token = function
   | "CREATE" -> Command Create
   | "SELECT" -> Command Select
-  | "FROM" -> Command From
-  | "WHERE" -> Command Where
   | "DROP" -> Command Drop
   | "INSERT" -> Command Insert
   | "DELETE" -> Command Delete
   | "UPDATE" -> Command Update
   | "DATABASE" -> Target Database
   | "TABLE" -> Target Table
-  | "SET" -> 
-  | "VALUES" -> 
+  | "SET" -> SubCommand Set
+  | "VALUES" -> SubCommand Values
+  | "INTO" -> SubCommand Into
+  | "FROM" -> SubCommand From
+  | "WHERE" -> SubCommand Where
   | "=" -> BinaryOp EQ
   | ">" -> BinaryOp GT
   | ">=" -> BinaryOp GE

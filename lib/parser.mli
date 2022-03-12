@@ -6,16 +6,8 @@ open Tokenizer
 (** data type, includes int, float, string*)
 type data
 
-type record 
-(** A dummy type representing a row in a table in the database. *)
-type table
-(** THe abstract type representing a table. *)
-type data_base
-(** The abstract type representing a database. *)
-
 (** Partition the line into commands and get rid of ";" *)
-val parse : token list -> unit
-
+val parse : string -> 'a
 
 (** Parse one command, calls parse create, insert, delete, update, 
 which then calls te controller. *)
@@ -57,12 +49,12 @@ the functions below. *)
 
 (** Parse the from phrase, return the target table we are manipulating, 
 used as parameter for calling controller methods. *)
-val parse_from : token list -> data_base
+val parse_from : token list -> string
 
-(** [parse_where input] parse where clause [token list] to a list [bool list]
-where the (n-1)th bool repersent whether the nth row satisfy the condition 
-specified in the where clause, true if satisfy and false otherwise *)
-val parse_where : token list -> terminal * terminal list -> bool list
+(** [parse_where expression type_row_pair] parse where clause [expression] 
+to a true or false [bool] whether the row data satisfy the specified 
+in the where clause, true if row satisfy the condition and false otherwise *)
+val parse_where : token list -> data * data list -> bool
 
 (** We might need a syntax tree for the expressions, it will be represented 
 by helper functions within parse_where. *)
