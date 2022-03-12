@@ -7,8 +7,7 @@ open Tokenizer
 type data
 
 (** Partition the line into commands and get rid of ";" *)
-val parse : token list -> unit
-
+val parse : string -> 'a
 
 (** Parse one command, calls parse create, insert, delete, update, 
 which then calls te controller. *)
