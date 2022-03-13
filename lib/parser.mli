@@ -46,6 +46,7 @@ val parse_from : token list -> string
     contain parentheses *)
 val parse_where : token list -> ETree.data * ETree.data list -> bool
 
+(** exposed helper *)
 val expressions_or : ETree.expr_type list -> ETree.expr_type list list
 
 (** We might need a syntax tree for the expressions, it will be
