@@ -218,7 +218,8 @@ let rec expression_or_helper
   | x :: xs -> expression_or_helper xs (x :: acc)
 
 (** [expression_or tokens] seperate [tokens] by OR operator and return a
-    list of list. Cut [A;OR;B;OR;C] into [\[A\];\[B\];\[C\]] *)
+    list of conditions connected only by and. Cut [A;OR;B;OR;C] into
+    [\[A\];\[B\];\[C\]] *)
 let expressions_or (tokens : expr_type list) : expr_type list list =
   expression_or_helper tokens []
 
@@ -238,7 +239,7 @@ let and_condition_evaluater_helper
   | _ -> failwith "condition not filtered right"
 
 (** [and_conditino_evaluater a op b pair_data] evaluate a single
-    condition with only one and [a op b] and see if pair_data have
+    condition with only one and [a op b] and see if [pair_data] have
     satisfy this condition. Return true if satisfied, false otherwise *)
 let rec and_condition_evaluater
     a
@@ -253,7 +254,7 @@ let rec and_condition_evaluater
       else and_condition_evaluater a op b t
 
 (** [evaluate_and_helper and_lst pair_data] evaluate a list of and
-    conditions [and_lst] and see if pair_data satisfy this condition.
+    conditions [and_lst] and see if [pair_data] satisfy this condition.
     Return true if satisfied, false otherwise *)
 let rec evaluate_and_helper and_lst pair_data : bool =
   match and_lst with
@@ -266,7 +267,7 @@ let rec evaluate_and_helper and_lst pair_data : bool =
 
 (** [evaluate_and or_lst pair_data] evaluate a list of conditions with
     or connected between each conditions that are only connected by and,
-    and see if pair_data satisfy any of these conditions. True if yes
+    and see if [pair_data] satisfy any of these conditions. True if yes
     and false if no *)
 let rec evaluate_and or_lst pair_data : bool =
   match or_lst with
@@ -274,8 +275,11 @@ let rec evaluate_and or_lst pair_data : bool =
   | h :: t ->
       evaluate_and_helper h pair_data || evaluate_and t pair_data
 
-(*
-let parse_where tokens pair_data :
-    token list -> data * data list -> bool =
+(** [parse_where tokens pair_data] evaluate conditions [tokens] and see
+    if [pair_data] satisfy any of these conditions. True if yes and
+    false if no *)
+let parse_where
+    (tokens : expr_type list)
+    (pair_data : (expr_type * expr_type) list) : bool =
   let or_lst = expressions_or tokens in
-  evaluate_and or_lst pair_data *)
+  evaluate_and or_lst pair_data
