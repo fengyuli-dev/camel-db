@@ -136,7 +136,6 @@ let get_update_vals (update_list : token list) : string list =
     update_list |> remove_eq |> get_even_elem
     |> token_list_to_terminal_list |> terminal_to_string_list
 
-
 (* parse_where helpers *)
 
 open ETree
@@ -150,7 +149,7 @@ let token_to_expr_type = function
   | BinaryOp NE -> NE
   | LogicOp AND -> AND
   | LogicOp OR -> OR
-  | Terminal (String s) -> String s
+  | Terminal (String s) -> ETree.String s
   | Terminal (Int i) -> ETree.Int i
   | Terminal (Float f) -> ETree.Float f
   | _ -> raise Malformed
@@ -243,8 +242,12 @@ let rec parse_create tokens = failwith "TODO!"
 
 (* Parse Select Functions: *)
 
-(** [parse_columns tokens] convert list of tokens involving column names into a list of column names (with stripping). *)
-and parse_columns tokens = tokens |> terminal_to_string |> String.split_on_char ',' |> List.map String.trim 
+(** [parse_columns tokens] convert list of tokens involving column names
+    into a list of column names (with stripping). *)
+and parse_columns tokens =
+  tokens |> terminal_to_string
+  |> String.split_on_char ','
+  |> List.map String.trim
 
 (** acc is accumulator, cols is token list of columns, from_lst is token
     list for parse_from, lst is the list containing parse_where and so
@@ -253,8 +256,9 @@ and get_where acc cols from_lst lst =
   match lst with
   | [] -> raise Malformed
   | EndOfQuery EOQ :: t ->
-      select (terminal_to_string from_lst) (parse_columns cols)
-        (parse_where acc);
+      select
+        (terminal_to_string from_lst)
+        (parse_columns cols) (parse_where acc);
       parse_query t
   | h :: t -> get_where (h :: acc) cols from_lst t
 
@@ -263,7 +267,8 @@ and get_from acc cols lst =
   | [] -> raise Malformed
   | SubCommand Where :: t -> get_where [] cols acc t
   | EndOfQuery EOQ :: t ->
-      select (terminal_to_string acc) (parse_columns cols) (fun _ -> true);
+      select (terminal_to_string acc) (parse_columns cols) (fun _ ->
+          true);
       parse_query t
   | Terminal h :: t -> get_from (h :: acc) cols t
   | _ -> raise Malformed
