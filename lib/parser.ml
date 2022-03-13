@@ -73,6 +73,12 @@ let parse_table (tokens : token list) (sub_command : token) : string =
         terminal_to_string [ List.nth t 0 |> token_to_terminal ]
       else raise Malformed
 
+(** helper for delete and update, get the sublist of tokens after the
+    where keyword*)
+let get_list_after_where (tokens : token list) : token list =
+  let where_index = find (SubCommand Where) tokens in
+  sublist (where_index + 1) (List.length tokens - 2) tokens
+
 (** input: the tokenized list after the table, return a list of columns *)
 let parse_cols (cols_tokens : terminal list) : string list =
   cols_tokens |> terminal_to_string_list
@@ -320,12 +326,10 @@ and parse_insert (tokens : token list) =
   let vals = get_vals_list tokens in
   Controller.insert table cols vals
 
-(** TODO: figure out how to call parse_where *)
 and parse_delete tokens =
   let table = parse_table tokens (SubCommand From) in
-  Controller.delete table (parse_where tokens)
+  Controller.delete table (parse_where (tokens |> get_list_after_where))
 
-(** TODO: figure out how to call parse_where *)
 and parse_update tokens =
   let table =
     terminal_to_string [ List.nth tokens 0 |> token_to_terminal ]
@@ -333,7 +337,7 @@ and parse_update tokens =
   Controller.update table
     (tokens |> get_update_list |> get_update_cols)
     (tokens |> get_update_list |> get_update_cols)
-    (parse_where tokens)
+    (parse_where (tokens |> get_list_after_where))
 
 let parse (input : string) =
   let tokens = tokenize input in
