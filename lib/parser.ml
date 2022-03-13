@@ -16,13 +16,6 @@ let rec terminal_to_string tokens =
 (** turn a string into a list of characters*)
 let explode (s: string): char list = List.init (String.length s) (String.get s)      
 
-(* let remove_parenthesis t = match t with
-|Terminal (data) -> match data with
-    |Int i -> i
-    |Float f -> f
-    |String s -> f *)
-
-
 (** remove any instances of the character in a string *)
 let remove_char (c: char)(s: string): string = let char_list = explode s in 
     let filtered_list = List.filter(fun letter -> letter <> c)(char_list) 
@@ -30,14 +23,7 @@ let remove_char (c: char)(s: string): string = let char_list = explode s in
 
 (** remove all the () and , in a string *)
 let trim_string (s: string) = s |> remove_char '(' |> remove_char ')' |> 
-remove_char ','
-
-(** input: whole tokenized list, return the table name*)
-
-(* let parse_table (tokens: token list): string = 
-  match tokens with
-  | [] -> raise Empty
-  | h :: t -> if (h = SubCommand Into) then remove_parenthesis (List.nth t 0) *)
+remove_char ',' |> remove_char '\''
 
 let rec sublist i j l = 
   match l with
@@ -45,6 +31,18 @@ let rec sublist i j l =
   | h :: t -> 
       let tail = if j = 0 then [] else sublist (i-1) (j-1) t in
       if i >0 then tail else h :: tail
+let token_to_terminal t = match t with
+|Terminal terminal -> terminal
+|_ -> failwith ("not a terminal")
+
+let parse_table (tokens: token list): string = 
+  match tokens with
+  | [] -> ""
+  (** first conver the token into a terminal, then convert to string*)
+  | h :: t -> if (h = SubCommand Into) then terminal_to_string 
+    ([(List.nth t 0) |> token_to_terminal])
+  else raise Malformed
+
 
 (** input: the tokenized list after the table, return a list of columns*)
 let parse_cols (tokens: token list): string list = failwith "Unimplemented"
@@ -118,18 +116,17 @@ and parse_query tokens =
   | Command Update :: t -> parse_update t
   | _ -> raise Malformed
 
-(** goal: parse the TAB
-LE, COLS - lst -, VALUES - lst- to feed into controller*)
-(** [SubCommand Into; Terminal (String "Customers");
- Terminal (String "(CustomerName,"); Terminal (String "ContactName,");
- Terminal (String "Address,"); Terminal (String "City,");
- Terminal (String "PostalCode,"); Terminal (String "Country)");
- SubCommand Values; Terminal (String "('Cardinal',");
- Terminal (String "'TomErichsen',"); Terminal (String "'Skagen21',");
- Terminal (String "'Stavanger',"); Terminal (String "'4006',");
- Terminal (String "'Norway');")]*)
-
 (** turns a terminal object into its actual data *)
+(**  [SubCommand Into; Terminal (String "Customers");
+   Terminal (String "(CustomerName,"); Terminal (String "ContactName,");
+   Terminal (String "Address,"); Terminal (String "City,");
+   Terminal (String "PostalCode,"); Terminal (String "Country)");
+   SubCommand Values; Terminal (String "('Cardinal',");
+   Terminal (String "'TomErichsen',"); Terminal (String "'Skagen21',");
+   Terminal (String "'Stavanger',"); Terminal (String "4006,");
+   Terminal (String "'Norway');")] -> insert ("Cusomters") 
+   (["CustomerName; ContactName; Address; City; PostalCode; Country"]) 
+   (["Cardinal"; "TE"; "Sk"' "ST"; 4006; "Norway"]) -> unit *)
 and parse_insert (tokens: token list) = failwith "Unimplemented"
     (* match tokens with
   | [] -> raise Empty
