@@ -40,6 +40,12 @@ let rec sublist i j l =
   | h :: t -> 
       let tail = if j = 0 then [] else sublist (i-1) (j-1) t in
       if i >0 then tail else h :: tail
+
+(** get the index of the token SubCommand Values in a tokens list*)
+let rec get_val_index (tokens: token list)(n: int): int = match tokens with
+| [] -> 0
+| h :: t -> if h == SubCommand Values then n else get_val_index t (n + 1)
+
 let token_to_terminal t = match t with
 |Terminal terminal -> terminal
 |_ -> failwith ("not a terminal")
@@ -63,10 +69,13 @@ let parse_vals (vals_tokens: terminal list): string list =
     vals_tokens |> terminal_to_string_list
 
 (** only return the list of terminals associated with columns*)
-let get_cols_list(tokens: token list): token list = failwith ("unimpl")
+let get_cols_list(tokens: token list): token list = let val_index = 
+  (get_val_index tokens 0) in sublist 2 (val_index - 1) tokens
  
 (** only return the list of temrinals associated with values*)
-let get_vals_list(tokens: token list): token list = failwith ("unimpl")
+let get_vals_list(tokens: token list): token list =  let val_index = 
+  (get_val_index tokens 0) in sublist (val_index + 1) 
+  ((List.length tokens) - 1) tokens
 
 let parse_from tokens = failwith "Unimplemented"
 let parse_where tokens = failwith "Unimplemented"
