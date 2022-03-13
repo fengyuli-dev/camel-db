@@ -210,10 +210,10 @@ let rec evaluate_and_helper and_lst pair_data : bool =
       && evaluate_and_helper t pair_data
   | _ -> failwith "invalid list of and conditions"
 
-(** [evaluate_and or_lst pair_data] evaluate a list of conditions with
-    or connected between each conditions that are only connected by and,
-    and see if [pair_data] satisfy any of these conditions. True if yes
-    and false if no *)
+(** [evaluate_and or_lst pair_data] evaluate a list of conditions
+    [or_lst] with or connected between each conditions that are only
+    connected by and, and see if [pair_data] satisfy any of these
+    conditions. True if yes and false if no *)
 let rec evaluate_and or_lst pair_data : bool =
   match or_lst with
   | [] -> false
