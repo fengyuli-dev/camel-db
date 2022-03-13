@@ -15,7 +15,3 @@ type expr_type =
   | String of string
   | Int of int
   | Float of float
-
-type expr_tree =
-  | Leaf
-  | Node of expr_tree list
