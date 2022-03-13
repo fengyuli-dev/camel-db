@@ -28,7 +28,6 @@ type binary_op =
 type logic_op =
   | AND
   | OR
-  | NOT
 
 type datatype =
   | Int
@@ -87,7 +86,6 @@ let match_token = function
   | "<" -> BinaryOp LT
   | "<=" -> BinaryOp LE
   | "!=" -> BinaryOp NE
-  | "NOT" -> LogicOp NOT
   | "AND" -> LogicOp AND
   | "OR" -> LogicOp OR
   | "INTEGER" -> Datatype Int

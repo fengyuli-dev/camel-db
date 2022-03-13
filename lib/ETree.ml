@@ -4,7 +4,6 @@ type data =
   | String of string
 
 type expr_type =
-  | NOT
   | AND
   | OR
   | EQ
@@ -14,6 +13,8 @@ type expr_type =
   | LE
   | NE
   | String of string
+  | Int of int
+  | Float of float
 
 type expr_tree =
   | Leaf

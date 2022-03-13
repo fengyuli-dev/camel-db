@@ -56,7 +56,7 @@ let rec get_val_index (tokens: token list)(n: int): int = match tokens with
 let parse_table (tokens: token list)(sub_command: token): string = 
   match tokens with
   | [] -> ""
-  (** first conver the token into a terminal, then convert to string*)
+(** first conver the token into a terminal, then convert to string*)
   | h :: t -> if (h = sub_command) then terminal_to_string 
     ([(List.nth t 0) |> token_to_terminal])
   else raise Malformed
@@ -192,10 +192,37 @@ let rec expression_or_helper
 (** Cut [A;OR;B;OR;C] into [\[A\];\[B\];\[C\]] *)
 let expressions_or (tokens : expr_type list) : expr_type list list =
   expression_or_helper tokens []
-  
 
-(* let expression tokens : token list -> expr_tree = let or_lists =
-   expressions_or tokens in match or_lists with | [] -> failwith "NO"
 
-   let parse_where tokens pair_list : token list -> data * data list ->
-   bool = let expr = expression tokens in *)
+let and_condition_evaluater_helper (a : expr_type) (op:expr_type) (b : expr_type) (data : expr_type * expr_type) : bool =
+  let (data_a, data_b) = data in
+  match op with
+  | EQ -> data_b = b
+  | GT -> data_b > b
+  | LT -> data_b < b
+  | GE -> data_b >= b
+  | LE -> data_b < b
+  | NE -> data_b != b
+  | _ -> failwith "condition not filtered right"
+
+let rec and_condition_evaluater a op b (pair_data : (expr_type * expr_type) list) =
+  match pair_data with
+  | [] -> failwith "data base type not found"
+  | (data_a,data_b)::t -> if data_a = a then and_condition_evaluater_helper a op b (data_a,data_b) else and_condition_evaluater a op b t
+
+  (*
+let rec evaluate_and_helper and_lst pair_data : bool = 
+  match and_lst with
+  | [] -> true
+  | AND :: t -> evaluate_and_helper t pair_data
+  | a :: op :: b -> 
+
+let rec evaluate_and or_lst pair_data : bool =
+  match or_lst with
+  | [] -> false
+  | h::t -> evaluate_and_helper h pair_data || evaluate_and t pair_data
+
+let parse_where tokens pair_data : token list -> data * data list -> bool = 
+  let or_lst = expressions_or tokens in
+  evaluate_and or_lst pair_data
+  *)
