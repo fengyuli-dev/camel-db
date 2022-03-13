@@ -41,8 +41,7 @@ val parse_drop : token list -> unit
     and false otherwise. Requires: where clause [expression] does not
     contain parentheses *)
 
-val parse_where :
-  token list -> (ETree.expr_type * ETree.expr_type) list -> bool
+val parse_where : token list -> (token * token) list -> bool
 
 (** exposed helper below *)
 val expressions_or : ETree.expr_type list -> ETree.expr_type list list

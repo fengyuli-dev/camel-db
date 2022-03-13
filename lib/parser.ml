@@ -231,9 +231,15 @@ let rec evaluate_and or_lst pair_data : bool =
     and false if no *)
 let parse_where_helper
     (tokens : expr_type list)
-    (pair_data : (expr_type * expr_type) list) : bool =
+    (pair_data : token list * token list) : bool =
+  let pair_data_a, pair_data_b = pair_data in
+  let pair_data' =
+    List.combine
+      (List.map token_to_expr_type pair_data_a)
+      (List.map token_to_expr_type pair_data_b)
+  in
   let or_lst = expressions_or tokens in
-  evaluate_and or_lst pair_data
+  evaluate_and or_lst pair_data'
 
 (** [parse_where tokens] is a partial function that takes in data in
     form of pair_data and return a bool. True if data satisfy condition
