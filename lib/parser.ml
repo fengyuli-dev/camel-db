@@ -208,14 +208,19 @@ let rec evaluate_and or_lst pair_data : bool =
   | h :: t ->
       evaluate_and_helper h pair_data || evaluate_and t pair_data
 
-(** [parse_where tokens pair_data] evaluate conditions [tokens] and see
-    if [pair_data] satisfy any of these conditions. True if yes and
-    false if no *)
-let parse_where
+(** [parse_where_helper tokens pair_data] evaluate conditions [tokens]
+    and see if [pair_data] satisfy any of these conditions. True if yes
+    and false if no *)
+let parse_where_helper
     (tokens : expr_type list)
     (pair_data : (expr_type * expr_type) list) : bool =
   let or_lst = expressions_or tokens in
   evaluate_and or_lst pair_data
+
+(** [parse_where tokens] is a partial function that takes in data in
+    form of pair_data and return a bool. True if data satisfy condition
+    [tokens] and false otherwise *)
+let parse_where (tokens : expr_type list) = parse_where_helper tokens
 
 (* end of parse_where *)
 
