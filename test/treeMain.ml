@@ -57,7 +57,6 @@ let (tokens3 : expr_type list) =
     LE;
     String "3";
     OR;
-    NOT;
     String "D";
     EQ;
     String "4";
@@ -67,7 +66,7 @@ let tokens3_or =
   [
     [ String "A"; EQ; String "1" ];
     [ String "B"; GT; String "2"; AND; String "C"; LE; String "3" ];
-    [ NOT; String "D"; EQ; String "4" ];
+    [ String "D"; EQ; String "4" ];
   ]
 
 let or_tests =
