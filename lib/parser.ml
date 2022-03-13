@@ -164,10 +164,21 @@ and parse_insert (tokens: token list) = let table = parse_table(tokens)
 let cols = get_cols_list(tokens) in let vals = get_vals_list(tokens) in
   Controller.insert(table)(cols)(vals)
 
-(** TODO: figure out how to call parse_whre *)
+(** TODO: figure out how to call parse_where *)
 and parse_delete tokens = let table = parse_table (tokens)(SubCommand From)
     in Controller.delete(table)(parse_where tokens)
   
+(** example*)
+(**  [Command Update; Terminal (String "Customers"); SubCommand Set;
+   Terminal (String "ContactName"); BinaryOp EQ;
+   Terminal (String "'AlfredSchmidt',"); Terminal (String "City"); BinaryOp EQ;
+   Terminal (String "'Frankfurt',"); Terminal (String "Address"); BinaryOp EQ;
+   Terminal (String "'3',"); Terminal (String "Country"); BinaryOp EQ;
+   Terminal (Int 0); SubCommand Where; Terminal (String "CustomerID");
+   BinaryOp EQ; Terminal (Int 1)*)
+ (** controller.update("Customers")(["ContactName"; "City"; "Address";"Country"])(["AlfredSchmidt"; "Frankfurt"; "3"; 0])(where call)*)
+ (** currently, the parser only putting spaces around =, and the column
+ names and values should not contain apostrophes nor parenthesis*)
 and parse_update tokens = failwith "Unimplemented"
 
 

@@ -1,4 +1,3 @@
 (library
  (name camel_db)
- (public_name Camel_db)
-)
+ (public_name Camel_db))
