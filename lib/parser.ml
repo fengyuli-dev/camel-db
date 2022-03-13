@@ -147,9 +147,8 @@ let parse (input : string) =
     raise Malformed
   else parse_query tokens
 
+  
 open ETree
-
-
 
 let rec expression_or_helper
     (tokens : expr_type list)
@@ -159,7 +158,7 @@ let rec expression_or_helper
   | [] -> [ List.rev acc ]
   | x :: xs -> expression_or_helper xs (x :: acc)
 
-(** Cut [A;or;B;or;C] into [\[A\];\[B\];\[C\]] *)
+(** Cut [A;OR;B;OR;C] into [\[A\];\[B\];\[C\]] *)
 let expressions_or (tokens : expr_type list) : expr_type list list =
   expression_or_helper tokens []
   
