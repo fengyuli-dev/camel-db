@@ -35,10 +35,6 @@ val parse_drop : token list -> unit
 (** 这一波return the parameters of controllers, the functions above will
     call the functions below. *)
 
-(** Parse the from phrase, return the target table we are manipulating,
-    used as parameter for calling controller methods. *)
-val parse_from : token list -> string
-
 (** [parse_where expression type_row_pair] parse where clause
     [expression] to a true or false [bool] whether the row data satisfy
     the specified in the where clause, true if row satisfy the condition
