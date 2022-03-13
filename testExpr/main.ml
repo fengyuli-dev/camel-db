@@ -90,17 +90,24 @@ let four = Int 4
 let one = Int 1
 let pair_list = [ (a, one); (b, two); (c, three); (d, four) ]
 
+let and_test name expected actual =
+  name >:: fun _ -> assert_equal expected actual ~printer:string_of_bool
+
 let and_tests =
   [
-    ( "EQ" >:: fun _ ->
-      assert_equal (and_condition_evaluater a EQ one pair_list) true );
-    ( "NE" >:: fun _ ->
-      assert_equal (and_condition_evaluater b NE two pair_list) false );
-    ( "LE" >:: fun _ ->
-      assert_equal (and_condition_evaluater c LE three pair_list) true
-    );
-    ( "GE" >:: fun _ ->
-      assert_equal (and_condition_evaluater d GE two pair_list) false );
+    and_test "EQ_true" true (and_condition_evaluater a EQ one pair_list);
+    and_test "EQ_false" false
+      (and_condition_evaluater a EQ two pair_list);
+    and_test "NE_true" true (and_condition_evaluater a EQ a pair_list);
+    and_test "NE_false" false
+      (and_condition_evaluater b NE two pair_list);
+    and_test "LE_true" true
+      (and_condition_evaluater c LE three pair_list);
+    and_test "LE_false" false
+      (and_condition_evaluater c LE two pair_list);
+    and_test "GE_true" true (and_condition_evaluater d GE two pair_list);
+    and_test "GE_fale" false
+      (and_condition_evaluater a GE two pair_list);
   ]
 
 let suite =

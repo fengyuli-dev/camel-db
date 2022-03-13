@@ -142,19 +142,18 @@ let parse_from tokens = failwith "Unimplemented"
 
 open ETree
 
-let token_to_expr_type =
-  function 
-  |BinaryOp EQ -> EQ
-  |BinaryOp GT -> GT
-  |BinaryOp LT -> LT
-  |BinaryOp GE -> GE
-  |BinaryOp LE -> LE
-  |BinaryOp NE -> NE
-  |LogicOp AND -> AND
-  |LogicOp OR -> OR
-  |Terminal String s -> String s
-  |Terminal Int i -> ETree.Int i
-  |Terminal Float f -> ETree.Float f
+let token_to_expr_type = function
+  | BinaryOp EQ -> EQ
+  | BinaryOp GT -> GT
+  | BinaryOp LT -> LT
+  | BinaryOp GE -> GE
+  | BinaryOp LE -> LE
+  | BinaryOp NE -> NE
+  | LogicOp AND -> AND
+  | LogicOp OR -> OR
+  | Terminal (String s) -> String s
+  | Terminal (Int i) -> ETree.Int i
+  | Terminal (Float f) -> ETree.Float f
   | _ -> raise Malformed
 
 let rec expression_or_helper
@@ -182,7 +181,7 @@ let and_condition_evaluater_helper
   | GT -> data_b > b
   | LT -> data_b < b
   | GE -> data_b >= b
-  | LE -> data_b < b
+  | LE -> data_b <= b
   | NE -> data_b != b
   | _ -> failwith "condition not filtered right"
 
@@ -235,8 +234,8 @@ let parse_where_helper
 (** [parse_where tokens] is a partial function that takes in data in
     form of pair_data and return a bool. True if data satisfy condition
     [tokens] and false otherwise *)
-let parse_where (tokens : token list) = 
-  let exprs = List.map token_to_expr_type tokens in 
+let parse_where (tokens : token list) =
+  let exprs = List.map token_to_expr_type tokens in
   parse_where_helper exprs
 
 (* end of parse_where *)
