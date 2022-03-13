@@ -103,5 +103,8 @@ let and_tests =
       assert_equal (and_condition_evaluater d GE two pair_list) false );
   ]
 
-let suite = "test suite for expression tree" >::: List.flatten []
+let suite =
+  "test suite for expression tree"
+  >::: List.flatten [ or_tests; and_tests ]
+
 let _ = run_test_tt_main suite
