@@ -89,12 +89,19 @@ let parse_where_tests =
   [
     parse_where_test "condition1_USA" false
       (parse_where condition1 pair_list_USA);
-    parse_where_test "condition1_China" parse_where_test
-      "condition1_Mexico" parse_where_test "condition2_USA"
-      parse_where_test "condition2_China" parse_where_test
-      "condition2_Mexico" parse_where_test "condition3_USA"
-      parse_where_test "condition3_China" parse_where_test
-      "condition3_Mexico";
   ]
 
+(* parse_where_test "condition1_China" parse_where_test
+   "condition1_Mexico" parse_where_test "condition2_USA"
+   parse_where_test "condition2_China" parse_where_test
+   "condition2_Mexico" parse_where_test "condition3_USA"
+   parse_where_test "condition3_China" parse_where_test
+   "condition3_Mexico"; *)
+
 let parse_where_tests = []
+
+let suite =
+  "test suite for expression tree"
+  >::: List.flatten [ parse_where_tests ]
+
+let _ = run_test_tt_main suite
