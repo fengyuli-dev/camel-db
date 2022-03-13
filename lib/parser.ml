@@ -53,11 +53,11 @@ let rec get_val_index (tokens: token list)(n: int): int = match tokens with
 | [] -> 0
 | h :: t -> if h == SubCommand Values then n else get_val_index t (n + 1)
 
-let parse_table (tokens: token list): string = 
+let parse_table (tokens: token list)(sub_command: token): string = 
   match tokens with
   | [] -> ""
   (** first conver the token into a terminal, then convert to string*)
-  | h :: t -> if (h = SubCommand Into) then terminal_to_string 
+  | h :: t -> if (h = sub_command) then terminal_to_string 
     ([(List.nth t 0) |> token_to_terminal])
   else raise Malformed
 
@@ -159,14 +159,14 @@ and parse_query tokens =
    Terminal (String "'Norway');")] -> insert ("Cusomters") 
    (["CustomerName; ContactName; Address; City; PostalCode; Country"]) 
    (["Cardinal"; "TE"; "Sk"' "ST"; 4006; "Norway"]) -> unit *)
-and parse_insert (tokens: token list) = let table = parse_table(tokens) in 
+and parse_insert (tokens: token list) = let table = parse_table(tokens)
+(SubCommand Into) in 
 let cols = get_cols_list(tokens) in let vals = get_vals_list(tokens) in
   Controller.insert(table)(cols)(vals)
 
-(** example*)
-(** *)
-(**controller.delete string -> (record -> bool) -> unit *)
-and parse_delete tokens = failwith "Unimplemented"
+(** TODO: figure out how to call parse_whre *)
+and parse_delete tokens = let table = parse_table (tokens)(SubCommand From)
+    in Controller.delete(table)(parse_where tokens)
   
 and parse_update tokens = failwith "Unimplemented"
 
