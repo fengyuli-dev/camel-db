@@ -54,17 +54,20 @@ let rec sublist i j l =
       let tail = if j = 0 then [] else sublist (i - 1) (j - 1) t in
       if i > 0 then tail else h :: tail
 
-(** get the index of the token SubCommand Values in a tokens list *)
-let rec get_val_index (tokens : token list) (n : int) : int =
-  match tokens with
-  | [] -> 0
-  | h :: t ->
-      if h == SubCommand Values then n else get_val_index t (n + 1)
+(** find the index of the first x in the list*)
+let rec find elt lst =
+  match lst with
+  | [] -> failwith "not found"
+  | h :: t -> if h = elt then 0 else 1 + find elt t
 
+(** get the index of the token SubCommand Values in a tokens list *)
+let rec get_val_index (tokens : token list) : int =
+  find (SubCommand Values) tokens
+
+(** helper functions for parse_insert*)
 let parse_table (tokens : token list) (sub_command : token) : string =
   match tokens with
   | [] -> ""
-  (* first conver the token into a terminal, then convert to string *)
   | h :: t ->
       if h = sub_command then
         terminal_to_string [ List.nth t 0 |> token_to_terminal ]
@@ -81,15 +84,57 @@ let parse_vals (vals_tokens : terminal list) : string list =
 (** only return the list of terminals associated with columns *)
 let get_cols_list (tokens : token list) : string list =
   let sub_list =
-    let val_index = get_val_index tokens 0 in
+    let val_index = get_val_index tokens in
     sublist 2 (val_index - 1) tokens
   in
   terminal_to_string_list (token_list_to_terminal_list sub_list)
 
 (** only return the list of temrinals associated with values *)
 let get_vals_list (tokens : token list) : token list =
-  let val_index = get_val_index tokens 0 in
+  let val_index = get_val_index tokens in
   sublist (val_index + 1) (List.length tokens - 1) tokens
+
+(** helper function for update: return the sublist that contain columns
+    and values to update*)
+let get_update_list (tokens : token list) : token list =
+  let set_index = find (SubCommand Set) tokens in
+  let where_index = find (SubCommand Where) tokens in
+  sublist (set_index + 1) (where_index - 1) tokens
+
+(** return true if the update command is formatted correctly, with the
+    column to update, followed by =, and then the value, with spaces
+    surrounding the equal sign*)
+let check_update_list (update_list : token list) : bool =
+  let len = List.length update_list in
+  len mod 3 = 0
+
+(** remove the binary EQ elements in a token list*)
+let remove_eq (update_list : token list) : token list =
+  List.filter (fun elt -> elt <> BinaryOp EQ) update_list
+
+(** return only the odd elements of a given list*)
+let get_odd_elem (lst : token list) : token list =
+  List.filter (fun elt -> find elt lst mod 2 = 1) lst
+
+(** return only the even elements of a given list*)
+let get_even_elem (lst : token list) : token list =
+  List.filter (fun elt -> find elt lst mod 2 = 0) lst
+
+(** return the list of columns to update. precondition: the update_list
+    is correctly formatted*)
+let get_update_cols (update_list : token list) : string list =
+  if not (check_update_list update_list) then raise Malformed
+  else
+    update_list |> remove_eq |> get_odd_elem
+    |> token_list_to_terminal_list |> terminal_to_string_list
+
+(** return the list of values to update for the correponding columns.
+    precondition: the update_list is correctly formatted*)
+let get_update_vals (update_list : token list) : string list =
+  if not (check_update_list update_list) then raise Malformed
+  else
+    update_list |> remove_eq |> get_even_elem
+    |> token_list_to_terminal_list |> terminal_to_string_list
 
 let parse_from tokens = failwith "Unimplemented"
 
@@ -182,7 +227,6 @@ and parse_columns tokens = [ "dadada "; "hahaha " ]
 (** acc is accumulator, cols is token list of columns, from_lst is token
     list for parse_from, lst is the list containing parse_where and so
     on. *)
-
 and get_where acc cols from_lst lst =
   match lst with
   | [] -> raise Malformed
@@ -241,17 +285,6 @@ and parse_query tokens =
   | Command Update :: t -> parse_update t
   | _ -> raise Malformed
 
-(* turns a terminal object into its actual data *)
-(* [SubCommand Into; Terminal (String "Customers"); Terminal (String
-   "(CustomerName,"); Terminal (String "ContactName,"); Terminal (String
-   "Address,"); Terminal (String "City,"); Terminal (String
-   "PostalCode,"); Terminal (String "Country)"); SubCommand Values;
-   Terminal (String "('Cardinal',"); Terminal (String "'TomErichsen',");
-   Terminal (String "'Skagen21',"); Terminal (String "'Stavanger',");
-   Terminal (String "4006,"); Terminal (String "'Norway');")] -> insert
-   ("Cusomters") (["CustomerName; ContactName; Address; City;
-   PostalCode; Country"]) (["Cardinal"; "TE"; "Sk"' "ST"; 4006;
-   "Norway"]) -> unit *)
 and parse_insert (tokens : token list) =
   let table = parse_table tokens (SubCommand Into) in
   let cols = get_cols_list tokens in
@@ -263,20 +296,15 @@ and parse_delete tokens =
   let table = parse_table tokens (SubCommand From) in
   Controller.delete table (parse_where tokens)
 
-(* example *)
-(* [Command Update; Terminal (String "Customers"); SubCommand Set;
-   Terminal (String "ContactName"); BinaryOp EQ; Terminal (String
-   "'AlfredSchmidt',"); Terminal (String "City"); BinaryOp EQ; Terminal
-   (String "'Frankfurt',"); Terminal (String "Address"); BinaryOp EQ;
-   Terminal (String "'3',"); Terminal (String "Country"); BinaryOp EQ;
-   Terminal (Int 0); SubCommand Where; Terminal (String "CustomerID");
-   BinaryOp EQ; Terminal (Int 1) *)
-(* controller.update("Customers")(["ContactName"; "City";
-   "Address";"Country"])(["AlfredSchmidt"; "Frankfurt"; "3"; 0])(where
-   call) *)
-(* currently, the parser only putting spaces around =, and the column
-   names and values should not contain apostrophes nor parenthesis *)
-and parse_update tokens = failwith "Unimplemented"
+(** TODO: figure out how to call parse_where *)
+and parse_update tokens =
+  let table =
+    terminal_to_string [ List.nth tokens 0 |> token_to_terminal ]
+  in
+  Controller.update table
+    (tokens |> get_update_list |> get_update_cols)
+    (tokens |> get_update_list |> get_update_cols)
+    (parse_where tokens)
 
 let parse (input : string) =
   let tokens = tokenize input in
