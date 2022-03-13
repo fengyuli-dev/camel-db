@@ -162,7 +162,10 @@ and parse_query tokens =
 and parse_insert (tokens: token list) = let table = parse_table(tokens) in 
 let cols = get_cols_list(tokens) in let vals = get_vals_list(tokens) in
   Controller.insert(table)(cols)(vals)
-  
+
+(** example*)
+(** *)
+(**controller.delete string -> (record -> bool) -> unit *)
 and parse_delete tokens = failwith "Unimplemented"
   
 and parse_update tokens = failwith "Unimplemented"
