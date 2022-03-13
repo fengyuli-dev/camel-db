@@ -27,17 +27,19 @@ let (tokens2 : expr_type list) =
 
 let tokens2_or =
   [
-    String "A";
-    EQ;
-    String "1";
-    AND;
-    String "B";
-    EQ;
-    String "2";
-    AND;
-    String "C";
-    LE;
-    String "3";
+    [
+      String "A";
+      EQ;
+      String "1";
+      AND;
+      String "B";
+      EQ;
+      String "2";
+      AND;
+      String "C";
+      LE;
+      String "3";
+    ];
   ]
 
 (** (A = 1) or ( B > 2 and C >= 3 ) or ( NOT D = 4 ) *)
