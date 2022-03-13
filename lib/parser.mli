@@ -44,7 +44,7 @@ val parse_from : token list -> string
     the specified in the where clause, true if row satisfy the condition
     and false otherwise. Requires: where clause [expression] does not
     contain parentheses *)
-val parse_where : token list -> ETree.data * ETree.data list -> bool
+val parse_where : token list -> (ETree.expr_type * ETree.expr_type) list -> bool
 
 (** exposed helper below *)
 val expressions_or : ETree.expr_type list -> ETree.expr_type list list
