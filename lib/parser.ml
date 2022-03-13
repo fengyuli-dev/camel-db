@@ -54,9 +54,19 @@ let parse_table (tokens: token list): string =
 
 
 (** input: the tokenized list after the table, return a list of columns*)
-let parse_cols (tokens: token list): string list = failwith "Unimplemented"
+(** input: the tokenized list after the table, return a list of columns*)
+let parse_cols (cols_tokens: terminal list): string list =
+  cols_tokens |> terminal_to_string_list
+ 
+(** return a list of values to insert into columns*)
+let parse_vals (vals_tokens: terminal list): string list =
+    vals_tokens |> terminal_to_string_list
 
-let parse_vals (tokens: token list): string list = failwith "Unimplemented"
+(** only return the list of terminals associated with columns*)
+let get_cols_list(tokens: token list): token list = failwith ("unimpl")
+ 
+(** only return the list of temrinals associated with values*)
+let get_vals_list(tokens: token list): token list = failwith ("unimpl")
 
 let parse_from tokens = failwith "Unimplemented"
 let parse_where tokens = failwith "Unimplemented"
