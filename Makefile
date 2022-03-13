@@ -6,6 +6,9 @@ build:
 test:
 	OCAMLRUNPARAM=b dune exec test/main.exe
 
+test2:
+	OCAMLRUNPARAM=b dune exec testExpr/main.exe
+
 start:
 	OCAMLRUNPARAM=b dune exec bin/main.exe
 
