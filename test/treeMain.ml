@@ -79,5 +79,29 @@ let or_tests =
       assert_equal (expressions_or tokens3) tokens3_or );
   ]
 
+let a = String "A"
+let b = String "B"
+let c = String "C"
+let d = String "D"
+let one = Int 1
+let two = Int 2
+let three = Int 3
+let four = Int 4
+let one = Int 1
+let pair_list = [ (a, one); (b, two); (c, three); (d, four) ]
+
+let and_tests =
+  [
+    ( "EQ" >:: fun _ ->
+      assert_equal (and_condition_evaluater a EQ one pair_list) true );
+    ( "NE" >:: fun _ ->
+      assert_equal (and_condition_evaluater b NE two pair_list) false );
+    ( "LE" >:: fun _ ->
+      assert_equal (and_condition_evaluater c LE three pair_list) true
+    );
+    ( "GE" >:: fun _ ->
+      assert_equal (and_condition_evaluater d GE two pair_list) false );
+  ]
+
 let suite = "test suite for expression tree" >::: List.flatten []
 let _ = run_test_tt_main suite

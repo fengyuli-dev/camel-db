@@ -46,8 +46,17 @@ val parse_from : token list -> string
     contain parentheses *)
 val parse_where : token list -> ETree.data * ETree.data list -> bool
 
-(** exposed helper *)
+(** exposed helper below *)
 val expressions_or : ETree.expr_type list -> ETree.expr_type list list
+
+val and_condition_evaluater :
+  ETree.expr_type ->
+  ETree.expr_type ->
+  ETree.expr_type ->
+  (ETree.expr_type * ETree.expr_type) list ->
+  bool
+
+(* end exposed helper *)
 
 (** We might need a syntax tree for the expressions, it will be
     represented by helper functions within parse_where. *)
