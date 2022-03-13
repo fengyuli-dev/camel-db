@@ -13,6 +13,13 @@ let rec terminal_to_string tokens =
   | Tokenizer.Float f :: t ->
       string_of_float f ^ " " ^ terminal_to_string t
 
+
+let token_to_terminal t = match t with
+|Terminal terminal -> terminal
+|_ -> failwith ("not a terminal")
+
+let token_list_to_terminal_list l = List.map(fun x -> token_to_terminal x)l
+
 (** return a string list for the data in the terminal list*)
 let rec terminal_to_string_list (tokens: terminal list): string list =
   match tokens with
@@ -46,10 +53,6 @@ let rec get_val_index (tokens: token list)(n: int): int = match tokens with
 | [] -> 0
 | h :: t -> if h == SubCommand Values then n else get_val_index t (n + 1)
 
-let token_to_terminal t = match t with
-|Terminal terminal -> terminal
-|_ -> failwith ("not a terminal")
-
 let parse_table (tokens: token list): string = 
   match tokens with
   | [] -> ""
@@ -69,8 +72,9 @@ let parse_vals (vals_tokens: terminal list): string list =
     vals_tokens |> terminal_to_string_list
 
 (** only return the list of terminals associated with columns*)
-let get_cols_list(tokens: token list): token list = let val_index = 
-  (get_val_index tokens 0) in sublist 2 (val_index - 1) tokens
+let get_cols_list(tokens: token list): string list = let sub_list = 
+  let val_index = (get_val_index tokens 0) in sublist 2 (val_index - 1) tokens
+in terminal_to_string_list (token_list_to_terminal_list sub_list)
  
 (** only return the list of temrinals associated with values*)
 let get_vals_list(tokens: token list): token list =  let val_index = 
@@ -155,10 +159,9 @@ and parse_query tokens =
    Terminal (String "'Norway');")] -> insert ("Cusomters") 
    (["CustomerName; ContactName; Address; City; PostalCode; Country"]) 
    (["Cardinal"; "TE"; "Sk"' "ST"; 4006; "Norway"]) -> unit *)
-and parse_insert (tokens: token list) = failwith "Unimplemented"
-    (* match tokens with
-  | [] -> raise Empty
-  | insert::into *)
+and parse_insert (tokens: token list) = let table = parse_table(tokens) in 
+let cols = get_cols_list(tokens) in let vals = get_vals_list(tokens) in
+  Controller.insert(table)(cols)(vals)
   
 and parse_delete tokens = failwith "Unimplemented"
   
