@@ -13,6 +13,15 @@ let rec terminal_to_string tokens =
   | Tokenizer.Float f :: t ->
       string_of_float f ^ " " ^ terminal_to_string t
 
+(** return a string list for the data in the terminal list*)
+let rec terminal_to_string_list (tokens: terminal list): string list =
+  match tokens with
+  | [] -> []
+  | Tokenizer.String s :: t -> s :: terminal_to_string_list t
+  | Tokenizer.Int i :: t -> string_of_int i :: terminal_to_string_list t
+  | Tokenizer.Float f :: t ->
+      string_of_float f :: terminal_to_string_list t
+
 (** turn a string into a list of characters*)
 let explode (s: string): char list = List.init (String.length s) (String.get s)      
 
