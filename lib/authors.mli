@@ -9,7 +9,7 @@
 
     @author Li Fengyu (fl334)
     @author Yolanda Wang (yw583)
-    @author Ouyang Chuhan (co232)
+    @author Chuhan Ouyang (co232)
     @author Emerald Liu (sl2322) *)
 
 (************************************************************
