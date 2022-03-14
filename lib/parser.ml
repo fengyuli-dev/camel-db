@@ -266,6 +266,14 @@ let parse_where (tokens : token list) =
 
 (* end of parse_where *)
 
+(** converts a terminal string/int/float to the value_type
+    string/int/float*)
+let terminal_to_value_type (t : terminal) : Value.value_type =
+  match t with
+  | Tokenizer.String s -> Value.String s
+  | Tokenizer.Int i -> Value.Int i
+  | Tokenizer.Float f -> Value.Float f
+
 let rec parse_create tokens = failwith "TODO!"
 
 (* Parse Select Functions: *)
