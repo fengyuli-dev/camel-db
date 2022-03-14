@@ -5,12 +5,12 @@
    or use it for commercial purposes.
  ************************************************************)
 
-(** CS 3110 Spring 2022 Assignment A2 Adventure
+(** CS 3110 Spring 2022 Final Project Camel Database
 
     @author Li Fengyu (fl334)
     @author Yolanda Wang (yw583)
-    @author Ouyang Chuhan (pancake)
-    @author Emerald Liu (elephant) *)
+    @author Ouyang Chuhan (co232)
+    @author Emerald Liu (sl2322) *)
 
 (************************************************************
 
