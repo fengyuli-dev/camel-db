@@ -7,12 +7,12 @@ test:
 	OCAMLRUNPARAM=b dune exec test/main.exe
 
 test_tree:
-	OCAMLRUNPARAM=b dune exec testTree/main.exe
+	OCAMLRUNPARAM=b dune exec test/tree.exe
 
-test2:
-	OCAMLRUNPARAM=b dune exec testExpr/main.exe
+test_expr:
+	OCAMLRUNPARAM=b dune exec test/expr.exe
 
-testall: test test_tree test2
+testall: test test_tree test_expr
 
 start:
 	OCAMLRUNPARAM=b dune exec bin/main.exe
