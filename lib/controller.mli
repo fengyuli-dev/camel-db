@@ -1,5 +1,5 @@
 (** Representation of dynamic adventure state. *)
-
+open Tokenizer
 
 (** [create table_name col_name_col_type_list] *)
 val create : string -> string * 'a list -> unit

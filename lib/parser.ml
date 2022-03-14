@@ -77,7 +77,7 @@ let parse_table (tokens : token list) (sub_command : token) : string =
     where keyword*)
 let get_list_after_where (tokens : token list) : token list =
   let where_index = find (SubCommand Where) tokens in
-  sublist (where_index + 1) (List.length tokens - 2) tokens
+  sublist (where_index + 1) (List.length tokens - 1) tokens
 
 (** input: the tokenized list after the table, return a list of columns *)
 let parse_cols (cols_tokens : terminal list) : string list =
@@ -141,6 +141,16 @@ let get_update_vals (update_list : token list) : string list =
   else
     update_list |> remove_eq |> get_even_elem
     |> token_list_to_terminal_list |> terminal_to_string_list
+
+(** return the sublist up to everything before the first EOQ*)
+let get_this_command (tokens : token list) : token list =
+  let eoq_index = find (EndOfQuery EOQ) tokens in
+  sublist 0 (eoq_index - 1) tokens
+
+(** return the sublist of everything after EOQ, to pass into parse_query*)
+let get_other_commands (tokens : token list) : token list =
+  let eoq_index = find (EndOfQuery EOQ) tokens in
+  sublist (eoq_index + 1) (List.length tokens - 1) tokens
 
 (* parse_where helpers *)
 
@@ -326,23 +336,30 @@ and parse_query tokens =
   | _ -> raise Malformed
 
 and parse_insert (tokens : token list) =
-  let table = parse_table tokens (SubCommand Into) in
-  let cols = get_cols_list tokens in
-  let vals = get_vals_list tokens in
-  Controller.insert table cols vals
+  let this_command = get_this_command tokens in
+  let table = parse_table this_command (SubCommand Into) in
+  let cols = get_cols_list this_command in
+  let vals = get_vals_list this_command in
+  Controller.insert table cols vals;
+  get_other_commands tokens |> parse_query
 
 and parse_delete tokens =
-  let table = parse_table tokens (SubCommand From) in
-  Controller.delete table (parse_where (tokens |> get_list_after_where))
+  let this_command = get_this_command tokens in
+  let table = parse_table this_command (SubCommand From) in
+  Controller.delete table
+    (parse_where (this_command |> get_list_after_where));
+  get_other_commands tokens |> parse_query
 
 and parse_update tokens =
+  let this_command = get_this_command tokens in
   let table =
-    terminal_to_string [ List.nth tokens 0 |> token_to_terminal ]
+    terminal_to_string [ List.nth this_command 0 |> token_to_terminal ]
   in
   Controller.update table
-    (tokens |> get_update_list |> get_update_cols)
-    (tokens |> get_update_list |> get_update_cols)
-    (parse_where (tokens |> get_list_after_where))
+    (this_command |> get_update_list |> get_update_cols)
+    (this_command |> get_update_list |> get_update_cols)
+    (parse_where (this_command |> get_list_after_where));
+  get_other_commands tokens |> parse_query
 
 let parse (input : string) =
   let tokens = tokenize input in
