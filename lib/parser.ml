@@ -21,7 +21,6 @@ let token_to_terminal t =
 let token_list_to_terminal_list l =
   List.map (fun x -> token_to_terminal x) l
 
-(** return a string list for the data in the terminal list *)
 let rec terminal_to_string_list (tokens : terminal list) : string list =
   match tokens with
   | [] -> []
@@ -30,11 +29,11 @@ let rec terminal_to_string_list (tokens : terminal list) : string list =
   | Tokenizer.Float f :: t ->
       string_of_float f :: terminal_to_string_list t
 
-(** turn a string into a list of characters*)
+(** [explode s] turn a string into a list of characters*)
 let explode (s : string) : char list =
   List.init (String.length s) (String.get s)
 
-(** remove any instances of the character in a string *)
+(** [remove_char c s] remove any instances of the character in a string *)
 let remove_char (c : char) (s : string) : string =
   let char_list = explode s in
   let filtered_list =
@@ -42,7 +41,7 @@ let remove_char (c : char) (s : string) : string =
   in
   List.fold_left (fun acc h -> acc ^ String.make 1 h) "" filtered_list
 
-(** remove all the () and , in a string *)
+(** [trim_stirng s] remove all the () and , in a string *)
 let trim_string (s : string) =
   s |> remove_char '(' |> remove_char ')' |> remove_char ','
   |> remove_char '\''
@@ -54,17 +53,19 @@ let rec sublist i j l =
       let tail = if j = 0 then [] else sublist (i - 1) (j - 1) t in
       if i > 0 then tail else h :: tail
 
-(** find the index of the first x in the list*)
+(** [find elt lst] find the index of the first elt in the list*)
 let rec find elt lst =
   match lst with
   | [] -> failwith "not found"
   | h :: t -> if h = elt then 0 else 1 + find elt t
 
-(** get the index of the token SubCommand Values in a tokens list *)
+(** [get_val_index tokens] get the index of the occurence token
+    SubCommand Values in a tokens list *)
 let rec get_val_index (tokens : token list) : int =
   find (SubCommand Values) tokens
 
-(** helper function that parses table name*)
+(** [parse_table tokens sub_command] is a helper function that parses
+    table name based on a sub_command keyword*)
 let parse_table (tokens : token list) (sub_command : token) : string =
   match tokens with
   | [] -> ""
@@ -73,21 +74,24 @@ let parse_table (tokens : token list) (sub_command : token) : string =
         terminal_to_string [ List.nth t 0 |> token_to_terminal ]
       else raise Malformed
 
-(** helper for delete and update, get the sublist of tokens after the
+(** [get_list_after_where tokens] return the sublist of tokens after the
     where keyword*)
 let get_list_after_where (tokens : token list) : token list =
   let where_index = find (SubCommand Where) tokens in
   sublist (where_index + 1) (List.length tokens - 1) tokens
 
-(** input: the tokenized list after the table, return a list of columns *)
+(** [parse_cols col_tokens] return the list of columns to according to
+    the tokens*)
 let parse_cols (cols_tokens : terminal list) : string list =
   cols_tokens |> terminal_to_string_list
 
-(** return a list of values to insert into columns *)
+(** [parse_vals vals_tokens] return a list of values to insert into
+    columns *)
 let parse_vals (vals_tokens : terminal list) : string list =
   vals_tokens |> terminal_to_string_list
 
-(** only return the list of terminals associated with columns *)
+(** [get_cols_list tokens] only return the list of terminals associated
+    with columns *)
 let get_cols_list (tokens : token list) : string list =
   let sub_list =
     let val_index = get_val_index tokens in
@@ -95,59 +99,63 @@ let get_cols_list (tokens : token list) : string list =
   in
   terminal_to_string_list (token_list_to_terminal_list sub_list)
 
-(** only return the list of temrinals associated with values *)
+(**[get_vals_list tokens] only return the list of temrinals associated
+   with values*)
 let get_vals_list (tokens : token list) : token list =
   let val_index = get_val_index tokens in
   sublist (val_index + 1) (List.length tokens - 1) tokens
 
-(** helper function for update: return the sublist that contain columns
-    and values to update*)
+(** [get_update_list tokens] return the sublist that contain columns and
+    values to update*)
 let get_update_list (tokens : token list) : token list =
   let set_index = find (SubCommand Set) tokens in
   let where_index = find (SubCommand Where) tokens in
   sublist (set_index + 1) (where_index - 1) tokens
 
-(** return true if the update command is formatted correctly, with the
-    column to update, followed by =, and then the value, with spaces
-    surrounding the equal sign*)
+(** [check_update_list] update_list return true if the update command is
+    formatted correctly*)
 let check_update_list (update_list : token list) : bool =
   let len = List.length update_list in
   len mod 3 = 0
 
-(** remove the binary EQ elements in a token list*)
+(** [remove_eq] update_list remove the binary EQ elements in a token
+    list*)
 let remove_eq (update_list : token list) : token list =
   List.filter (fun elt -> elt <> BinaryOp EQ) update_list
 
-(** return only the odd elements of a given list*)
+(** [get_odd_elem] lst return only the odd elements of a given list*)
 let get_odd_elem (lst : token list) : token list =
   List.filter (fun elt -> find elt lst mod 2 = 1) lst
 
-(** return only the even elements of a given list*)
+(** [get_even_elem] lst return only the even elements of a given list*)
 let get_even_elem (lst : token list) : token list =
   List.filter (fun elt -> find elt lst mod 2 = 0) lst
 
-(** return the list of columns to update. precondition: the update_list
-    is correctly formatted*)
+(** [get_update_cols update_list] return the list of columns to update.
+    Precondition: the update_list is correctly formatted*)
 let get_update_cols (update_list : token list) : string list =
   if not (check_update_list update_list) then raise Malformed
   else
     update_list |> remove_eq |> get_odd_elem
     |> token_list_to_terminal_list |> terminal_to_string_list
 
-(** return the list of values to update for the correponding columns.
-    precondition: the update_list is correctly formatted*)
+(** [get_update_vals update_list] return the list of values to update
+    for the correponding columns. Precondition: the update_list is
+    correctly formatted*)
 let get_update_vals (update_list : token list) : string list =
   if not (check_update_list update_list) then raise Malformed
   else
     update_list |> remove_eq |> get_even_elem
     |> token_list_to_terminal_list |> terminal_to_string_list
 
-(** return the sublist up to everything before the first EOQ*)
+(** [get_this_command tokens] return the sublist up to everything before
+    the first EOQ*)
 let get_this_command (tokens : token list) : token list =
   let eoq_index = find (EndOfQuery EOQ) tokens in
   sublist 0 (eoq_index - 1) tokens
 
-(** return the sublist of everything after EOQ, to pass into parse_query*)
+(** [get_other_commands tokens] return the sublist of everything after
+    EOQ, to pass into parse_query*)
 let get_other_commands (tokens : token list) : token list =
   let eoq_index = find (EndOfQuery EOQ) tokens in
   sublist (eoq_index + 1) (List.length tokens - 1) tokens
