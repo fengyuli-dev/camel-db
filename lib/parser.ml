@@ -250,9 +250,7 @@ let parse_where_helper
   let or_lst = expressions_or tokens in
   evaluate_or or_lst pair_data'
 
-(** [parse_where tokens] is a partial function that takes in data in
-    form of pair_data and return a bool. True if data satisfy condition
-    [tokens] and false otherwise *)
+(** see mli file for discription *)
 let parse_where (tokens : token list) =
   let exprs = List.map token_to_expr_type tokens in
   parse_where_helper exprs

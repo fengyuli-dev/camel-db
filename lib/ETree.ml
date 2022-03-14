@@ -1,3 +1,4 @@
+(* type for condition expression in parse_where*)
 type expr_type =
   | AND
   | OR
