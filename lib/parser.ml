@@ -196,7 +196,7 @@ let and_condition_evaluater_helper
   | LT -> data_b < b
   | GE -> data_b >= b
   | LE -> data_b <= b
-  | NE -> data_b != b
+  | NE -> data_b <> b
   | _ -> failwith "condition not filtered right"
 
 (** [and_conditino_evaluater a op b pair_data] evaluate a single
@@ -230,11 +230,10 @@ let rec evaluate_and_helper and_lst pair_data : bool =
     [or_lst] with or connected between each conditions that are only
     connected by and, and see if [pair_data] satisfy any of these
     conditions. True if yes and false if no *)
-let rec evaluate_and or_lst pair_data : bool =
+let rec evaluate_or or_lst pair_data : bool =
   match or_lst with
   | [] -> false
-  | h :: t ->
-      evaluate_and_helper h pair_data || evaluate_and t pair_data
+  | h :: t -> evaluate_and_helper h pair_data || evaluate_or t pair_data
 
 (** [parse_where_helper tokens pair_data] evaluate conditions [tokens]
     and see if [pair_data] satisfy any of these conditions. True if yes
@@ -249,7 +248,7 @@ let parse_where_helper
       (List.map token_to_expr_type pair_data_b)
   in
   let or_lst = expressions_or tokens in
-  evaluate_and or_lst pair_data'
+  evaluate_or or_lst pair_data'
 
 (** [parse_where tokens] is a partial function that takes in data in
     form of pair_data and return a bool. True if data satisfy condition

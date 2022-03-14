@@ -53,7 +53,7 @@ val and_condition_evaluater :
   (ETree.expr_type * ETree.expr_type) list ->
   bool
 
-val evaluate_and :
+val evaluate_or :
   ETree.expr_type list list ->
   (ETree.expr_type * ETree.expr_type) list ->
   bool
