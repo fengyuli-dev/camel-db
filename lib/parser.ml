@@ -330,31 +330,38 @@ and parse_drop tokens =
       grouping [] (Terminal s :: t)
   | _ -> raise Malformed
 
-and parse_insert (tokens : token list) =
-  let this_command = get_this_command tokens in
-  let table = parse_table this_command (SubCommand Into) in
-  let cols = get_cols_list this_command in
-  let vals = get_vals_list this_command in
-  Controller.insert table cols vals;
-  get_other_commands tokens |> parse_query
+(** and parse_insert (tokens : token list) = let this_command =
+    get_this_command tokens in let table = parse_table this_command
+    (SubCommand Into) in let cols = get_cols_list this_command in let
+    vals = get_vals_list this_command in Controller.insert table cols
+    vals; get_other_commands tokens |> parse_query
 
-and parse_delete tokens =
-  let this_command = get_this_command tokens in
-  let table = parse_table this_command (SubCommand From) in
-  Controller.delete table
-    (parse_where (this_command |> get_list_after_where));
-  get_other_commands tokens |> parse_query
+    (** [parse_insert_test_version tokens] is parse_insert but it is
+    friendly for testing because it has a concrete output type instead
+    of unit and parse_insert_test_version (tokens : token list):
+    (string, string list, 'a list) = let this_command = get_this_command
+    tokens in let table = parse_table this_command (SubCommand Into) in
+    let cols = get_cols_list this_command in let vals = get_vals_list
+    this_command in Controller.insert table cols vals;
+    get_other_commands tokens |> parse_query *)
 
-and parse_update tokens =
-  let this_command = get_this_command tokens in
-  let table =
-    terminal_to_string [ List.nth this_command 0 |> token_to_terminal ]
-  in
-  Controller.update table
-    (this_command |> get_update_list |> get_update_cols)
-    (this_command |> get_update_list |> get_update_cols)
-    (parse_where (this_command |> get_list_after_where));
-  get_other_commands tokens |> parse_query
+    and parse_delete tokens = let this_command = get_this_command tokens
+    in let table = parse_table this_command (SubCommand From) in
+    Controller.delete table (parse_where (this_command |>
+    get_list_after_where)); get_other_commands tokens |> parse_query
+
+    and parse_update tokens = let this_command = get_this_command tokens
+    in let table = terminal_to_string
+    [ List.nth this_command 0 |> token_to_terminal ] in
+    Controller.update table (this_command |> get_update_list |>
+    get_update_cols) (this_command |> get_update_list |>
+    get_update_cols) (parse_where (this_command |>
+    get_list_after_where)); get_other_commands tokens |> parse_query *)
+
+and parse_insert t = failwith "Unimplemented"
+
+and parse_delete t = failwith "Unimplemented"
+and parse_update t = failwith "Unimplemented"
 
 and parse_query tokens =
   match tokens with
