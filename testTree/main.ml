@@ -12,7 +12,7 @@ let sample_tree =
     | [] -> EmptyLeaf
     | h :: t -> insert (fst h) (snd h) (generate_tree tree t)
   in
-  generate_tree EmptyLeaf alist
+  generate_tree EmptyLeaf (List.rev alist)
 
 let tree_tests =
   [
@@ -21,6 +21,8 @@ let tree_tests =
     ("get2" >:: fun _ -> assert_equal 8 (get 7 sample_tree));
     ( "get3" >:: fun _ ->
       assert_raises NotFound (fun () -> get 15 sample_tree) );
+    ( "duplicate" >:: fun _ ->
+      assert_raises Duplicate (fun () -> insert 5 9 sample_tree) );
     ( "delete" >:: fun _ ->
       assert_raises NotFound (fun () -> get 1 (delete 1 sample_tree)) );
     ("size1" >:: fun _ -> assert_equal 5 (size sample_tree));

@@ -35,9 +35,9 @@ let rec insert key value = function
         let new_leaf = Leaf (key, value) in
         if k < key then
           if is_empty r then Node (k, v, l, new_leaf)
-          else insert key value r
+          else Node (k, v, l, insert key value r)
         else if is_empty l then Node (k, v, new_leaf, r)
-        else insert key value l
+        else Node (k, v, insert key value l, r)
 
 let rec get_min = function
   | EmptyLeaf -> raise NotFound
@@ -64,7 +64,7 @@ let rec inorder = function
 
 let rec fold f init = function
   | EmptyLeaf -> init
-  | Leaf (k, v) -> init
+  | Leaf (k, v) -> f init v init
   | Node (k, v, l, r) ->
       let l' = fold f init l in
       let r' = fold f init r in
