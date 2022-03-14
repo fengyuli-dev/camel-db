@@ -1,5 +1,6 @@
 open Tokenizer
 open Controller
+open Value
 
 exception Malformed
 exception Empty
