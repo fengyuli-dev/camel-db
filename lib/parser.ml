@@ -360,8 +360,16 @@ and parse_insert (tokens : token list) =
   Controller.insert table cols vals;
   get_other_commands tokens |> parse_query
 
-(**[parse_insert_test_version tokens] is parse_insert but it is friendly
-   for testing because it has a concrete output type instead of unit*)
+(**[parse_insert_test_version tokens] runs parse_insert but it is
+   friendly for testing because it has a concrete output type instead of
+   unit*)
+and parse_insert_test_version (tokens : token list) :
+    string * string list * value_type list =
+  let this_command = get_this_command tokens in
+  let table = parse_table this_command (SubCommand Into) in
+  let cols = get_cols_list this_command in
+  let vals = get_vals_list this_command in
+  (table, cols, vals)
 
 and parse_delete tokens =
   let this_command = get_this_command tokens in
@@ -369,6 +377,14 @@ and parse_delete tokens =
   Controller.delete table
     (parse_where (this_command |> get_list_after_where));
   get_other_commands tokens |> parse_query
+
+(**[parse_delete_test_version tokens] runs parse_delete but it is
+   friendly for testing because it has a concrete output type instead of
+   unit*)
+and parse_delete_test_version (tokens : token list) : string =
+  let this_command = get_this_command tokens in
+  let table = parse_table this_command (SubCommand From) in
+  table
 
 and parse_update tokens =
   let this_command = get_this_command tokens in
@@ -380,6 +396,19 @@ and parse_update tokens =
     (this_command |> get_update_list |> get_update_vals)
     (parse_where (this_command |> get_list_after_where));
   get_other_commands tokens |> parse_query
+
+(**[parse_update_test_version tokens] runs parse_update but it is
+   friendly for testing because it has a concrete output type instead of
+   unit*)
+and parse_update_test_version tokens :
+    string * string list * value_type list =
+  let this_command = get_this_command tokens in
+  let table =
+    terminal_to_string [ List.nth this_command 0 |> token_to_terminal ]
+  in
+  ( table,
+    this_command |> get_update_list |> get_update_cols,
+    this_command |> get_update_list |> get_update_vals )
 
 and parse_query tokens =
   match tokens with
