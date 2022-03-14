@@ -18,8 +18,13 @@ After that, we implemented the parser, creating individual functions to due with
 
 
 ##### Activity Breakdown
+- Lee
+- Emerald
+- Yolanda
+- Chuhan: Chuhan contributes to discussion of the interfaces for contrller and parser. Chuhan implemented the parsing functions for insert, delete, and update, and added tests for these functions. Chuhan worked for 8 hours.
 
 ##### Productivity Analysis
+As a team, we were productive. During team meetings, we mainly focused on discussing the big ideas for project, specifically the interfaces for parsers, controller, tokens and the implementation for our tree. Then, we worked individually to implement the functions that we are assigned to complete. We accompolished what we planned and our estimates were accurate.
 
 ##### Scope Grade
 
