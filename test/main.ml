@@ -40,6 +40,43 @@ let condition3 =
     Terminal (String "Country"); BinaryOp NE; Terminal (String "Mexico");
   ]
 
+let condition4 =
+  [
+    Terminal (String "Country");
+    BinaryOp EQ;
+    Terminal (String "Neverland");
+  ]
+
+let condition5 =
+  [
+    Terminal (String "LandSize");
+    BinaryOp EQ;
+    Terminal (Int 10000);
+    LogicOp OR;
+    Terminal (String "LandSize");
+    BinaryOp EQ;
+    Terminal (Int 5000);
+    LogicOp OR;
+    Terminal (String "LandSize");
+    BinaryOp EQ;
+    Terminal (Int 100);
+  ]
+
+let condition6 =
+  [
+    Terminal (String "LandSize");
+    BinaryOp EQ;
+    Terminal (Int 10001);
+    LogicOp OR;
+    Terminal (String "LandSize");
+    BinaryOp EQ;
+    Terminal (Int 5001);
+    LogicOp OR;
+    Terminal (String "LandSize");
+    BinaryOp EQ;
+    Terminal (Int 101);
+  ]
+
 let pair_list_title =
   [
     Terminal (String "Language");
@@ -50,7 +87,7 @@ let pair_list_title =
   ]
 
 (* condition1 true; condition2 false; *)
-let pair_list_china =
+let pair_list_China =
   ( pair_list_title,
     [
       Terminal (String "Chinese");
@@ -89,16 +126,41 @@ let parse_where_tests =
   [
     parse_where_test "condition1_USA" false
       (parse_where condition1 pair_list_USA);
+    parse_where_test "condition1_China" true
+      (parse_where condition1 pair_list_China);
+    parse_where_test "condition1_Mexico" true
+      (parse_where condition1 pair_list_Mexico);
+    parse_where_test "condition2_USA" false
+      (parse_where condition2 pair_list_USA);
+    parse_where_test "condition2_China" false
+      (parse_where condition2 pair_list_China);
+    parse_where_test "condition2_Mexico" true
+      (parse_where condition2 pair_list_Mexico);
+    parse_where_test "condition3_USA" true
+      (parse_where condition3 pair_list_USA);
+    parse_where_test "condition3_China" true
+      (parse_where condition3 pair_list_China);
+    parse_where_test "condition3_Mexico" false
+      (parse_where condition3 pair_list_Mexico);
+    parse_where_test "condition4_USA" false
+      (parse_where condition4 pair_list_USA);
+    parse_where_test "condition4_China" false
+      (parse_where condition4 pair_list_China);
+    parse_where_test "condition4_Mexico" false
+      (parse_where condition4 pair_list_Mexico);
+    parse_where_test "condition5_USA" true
+      (parse_where condition5 pair_list_USA);
+    parse_where_test "condition5_China" true
+      (parse_where condition5 pair_list_China);
+    parse_where_test "condition5_Mexico" true
+      (parse_where condition5 pair_list_Mexico);
+    parse_where_test "condition6_USA" false
+      (parse_where condition6 pair_list_USA);
+    parse_where_test "condition6_China" false
+      (parse_where condition6 pair_list_China);
+    parse_where_test "condition6_Mexico" false
+      (parse_where condition6 pair_list_Mexico);
   ]
-
-(* parse_where_test "condition1_China" parse_where_test
-   "condition1_Mexico" parse_where_test "condition2_USA"
-   parse_where_test "condition2_China" parse_where_test
-   "condition2_Mexico" parse_where_test "condition3_USA"
-   parse_where_test "condition3_China" parse_where_test
-   "condition3_Mexico"; *)
-
-let parse_where_tests = []
 
 let suite =
   "test suite for expression tree"

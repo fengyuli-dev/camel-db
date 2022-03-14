@@ -151,15 +151,15 @@ let multiple_and_test name expected actual =
 let multiple_and_tests =
   [
     multiple_and_test "two_and_true1" true
-      (evaluate_and or_lst1 pair_list);
+      (evaluate_or or_lst1 pair_list);
     multiple_and_test "two_and_false1" false
-      (evaluate_and or_lst2 pair_list);
+      (evaluate_or or_lst2 pair_list);
     multiple_and_test "two_and_true2" true
-      (evaluate_and or_lst3 pair_list);
+      (evaluate_or or_lst3 pair_list);
     multiple_and_test "three_and_true" true
-      (evaluate_and or_lst4 pair_list);
+      (evaluate_or or_lst4 pair_list);
     multiple_and_test "three_and_false" false
-      (evaluate_and or_lst5 pair_list);
+      (evaluate_or or_lst5 pair_list);
   ]
 
 let suite =
