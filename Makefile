@@ -12,6 +12,8 @@ test1:
 test2:
 	OCAMLRUNPARAM=b dune exec testExpr/main.exe
 
+testall:	test	test1	test2
+
 start:
 	OCAMLRUNPARAM=b dune exec bin/main.exe
 
