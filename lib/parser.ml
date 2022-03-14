@@ -100,11 +100,30 @@ let get_cols_list (tokens : token list) : string list =
   in
   terminal_to_string_list (token_list_to_terminal_list sub_list)
 
+(** converts a token to a terminal string/int/float*)
+let token_to_terminal (t : token) : terminal =
+  match t with
+  | Terminal t -> t
+  | _ -> failwith "not a terminal"
+
+(** converts a terminal string/int/float to the value_type
+    string/int/float*)
+let terminal_to_value_type (t : terminal) : Value.value_type =
+  match t with
+  | Tokenizer.String s -> Value.String s
+  | Tokenizer.Int i -> Value.Int i
+  | Tokenizer.Float f -> Value.Float f
+
 (**[get_vals_list tokens] only return the list of temrinals associated
    with values*)
-let get_vals_list (tokens : token list) : token list =
-  let val_index = get_val_index tokens in
-  sublist (val_index + 1) (List.length tokens - 1) tokens
+let get_vals_list (tokens : token list) : value_type list =
+  let sublist =
+    let val_index = get_val_index tokens in
+    sublist (val_index + 1) (List.length tokens - 1) tokens
+  in
+  List.map
+    (fun elt -> elt |> token_to_terminal |> terminal_to_value_type)
+    sublist
 
 (** [get_update_list tokens] return the sublist that contain columns and
     values to update*)
@@ -143,11 +162,13 @@ let get_update_cols (update_list : token list) : string list =
 (** [get_update_vals update_list] return the list of values to update
     for the correponding columns. Precondition: the update_list is
     correctly formatted*)
-let get_update_vals (update_list : token list) : string list =
+let get_update_vals (update_list : token list) : value_type list =
   if not (check_update_list update_list) then raise Malformed
   else
-    update_list |> remove_eq |> get_even_elem
-    |> token_list_to_terminal_list |> terminal_to_string_list
+    let token_list = update_list |> remove_eq |> get_even_elem in
+    List.map
+      (fun elt -> elt |> token_to_terminal |> terminal_to_value_type)
+      token_list
 
 (** [get_this_command tokens] return the sublist up to everything before
     the first EOQ*)
@@ -266,14 +287,6 @@ let parse_where (tokens : token list) =
 
 (* end of parse_where *)
 
-(** converts a terminal string/int/float to the value_type
-    string/int/float*)
-let terminal_to_value_type (t : terminal) : Value.value_type =
-  match t with
-  | Tokenizer.String s -> Value.String s
-  | Tokenizer.Int i -> Value.Int i
-  | Tokenizer.Float f -> Value.Float f
-
 let rec parse_create tokens = failwith "TODO!"
 
 (* Parse Select Functions: *)
@@ -339,38 +352,34 @@ and parse_drop tokens =
       grouping [] (Terminal s :: t)
   | _ -> raise Malformed
 
-(** and parse_insert (tokens : token list) = let this_command =
-    get_this_command tokens in let table = parse_table this_command
-    (SubCommand Into) in let cols = get_cols_list this_command in let
-    vals = get_vals_list this_command in Controller.insert table cols
-    vals; get_other_commands tokens |> parse_query
+and parse_insert (tokens : token list) =
+  let this_command = get_this_command tokens in
+  let table = parse_table this_command (SubCommand Into) in
+  let cols = get_cols_list this_command in
+  let vals = get_vals_list this_command in
+  Controller.insert table cols vals;
+  get_other_commands tokens |> parse_query
 
-    (** [parse_insert_test_version tokens] is parse_insert but it is
-    friendly for testing because it has a concrete output type instead
-    of unit and parse_insert_test_version (tokens : token list):
-    (string, string list, 'a list) = let this_command = get_this_command
-    tokens in let table = parse_table this_command (SubCommand Into) in
-    let cols = get_cols_list this_command in let vals = get_vals_list
-    this_command in Controller.insert table cols vals;
-    get_other_commands tokens |> parse_query *)
+(**[parse_insert_test_version tokens] is parse_insert but it is friendly
+   for testing because it has a concrete output type instead of unit*)
 
-    and parse_delete tokens = let this_command = get_this_command tokens
-    in let table = parse_table this_command (SubCommand From) in
-    Controller.delete table (parse_where (this_command |>
-    get_list_after_where)); get_other_commands tokens |> parse_query
+and parse_delete tokens =
+  let this_command = get_this_command tokens in
+  let table = parse_table this_command (SubCommand From) in
+  Controller.delete table
+    (parse_where (this_command |> get_list_after_where));
+  get_other_commands tokens |> parse_query
 
-    and parse_update tokens = let this_command = get_this_command tokens
-    in let table = terminal_to_string
-    [ List.nth this_command 0 |> token_to_terminal ] in
-    Controller.update table (this_command |> get_update_list |>
-    get_update_cols) (this_command |> get_update_list |>
-    get_update_cols) (parse_where (this_command |>
-    get_list_after_where)); get_other_commands tokens |> parse_query *)
-
-and parse_insert t = failwith "Unimplemented"
-
-and parse_delete t = failwith "Unimplemented"
-and parse_update t = failwith "Unimplemented"
+and parse_update tokens =
+  let this_command = get_this_command tokens in
+  let table =
+    terminal_to_string [ List.nth this_command 0 |> token_to_terminal ]
+  in
+  Controller.update table
+    (this_command |> get_update_list |> get_update_cols)
+    (this_command |> get_update_list |> get_update_vals)
+    (parse_where (this_command |> get_list_after_where));
+  get_other_commands tokens |> parse_query
 
 and parse_query tokens =
   match tokens with
