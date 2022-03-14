@@ -162,8 +162,24 @@ let parse_where_tests =
       (parse_where condition6 pair_list_Mexico);
   ]
 
+let parse_insert_test name expected actual =
+  name >:: fun _ -> assert_equal expected actual ~printer:string_of_bool
+
+let parse_insert_tests = []
+
+let parse_delete_test name expected actual =
+  name >:: fun _ -> assert_equal expected actual ~printer:string_of_bool
+
+let parse_delete_tests = []
+
+let parse_update_test name expected actual =
+  name >:: fun _ -> assert_equal expected actual ~printer:string_of_bool
+
+let parse_update_tests = []
+
 let suite =
   "test suite for expression tree"
-  >::: List.flatten [ parse_where_tests ]
+  >::: List.flatten
+         [ parse_where_tests; parse_insert_tests; parse_delete_tests ]
 
 let _ = run_test_tt_main suite

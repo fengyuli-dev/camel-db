@@ -330,17 +330,6 @@ and parse_drop tokens =
       grouping [] (Terminal s :: t)
   | _ -> raise Malformed
 
-and parse_query tokens =
-  match tokens with
-  | [] -> ()
-  | Command Create :: t -> parse_create t
-  | Command Select :: t -> parse_select t
-  | Command Drop :: t -> parse_drop t
-  | Command Insert :: t -> parse_insert t
-  | Command Delete :: t -> parse_delete t
-  | Command Update :: t -> parse_update t
-  | _ -> raise Malformed
-
 and parse_insert (tokens : token list) =
   let this_command = get_this_command tokens in
   let table = parse_table this_command (SubCommand Into) in
@@ -366,6 +355,17 @@ and parse_update tokens =
     (this_command |> get_update_list |> get_update_cols)
     (parse_where (this_command |> get_list_after_where));
   get_other_commands tokens |> parse_query
+
+and parse_query tokens =
+  match tokens with
+  | [] -> ()
+  | Command Create :: t -> parse_create t
+  | Command Select :: t -> parse_select t
+  | Command Drop :: t -> parse_drop t
+  | Command Insert :: t -> parse_insert t
+  | Command Delete :: t -> parse_delete t
+  | Command Update :: t -> parse_update t
+  | _ -> raise Malformed
 
 let parse (input : string) =
   let tokens = tokenize input in

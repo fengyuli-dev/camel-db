@@ -40,3 +40,5 @@ update —> UPDATE {table_name : *string*} SET pairs WHERE condition {logic_op c
 
 
 
+
+
