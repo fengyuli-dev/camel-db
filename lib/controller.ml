@@ -4,7 +4,7 @@ type table = None
 type record = None
 type data_type = None
 
-let create table_name col_name_col_type_list = print_endline ("Created " ^ table_name); ()
+let create table_name cols col_types = print_endline ("Created " ^ table_name); ()
 let select table_name cols filter_function = print_endline ("Selected " ^ table_name); ()
 let insert table_name cols value_list = print_endline ("Inserted " ^ table_name); ()
 let delete table_name filtering_function = print_endline ("Deleted " ^ table_name); ()

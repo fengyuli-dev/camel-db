@@ -1,5 +1,5 @@
 open Tokenizer
-open Value
+open Database
 
 (** Representation of dynamic adventure state. *)
 
@@ -21,7 +21,7 @@ val parse_insert : token list -> unit
 (** [parse_insert input] parse an insert databse command to send to
     controller_insert to insert a new row into an existing table*)
 val parse_insert_test_version :
-  token list -> string * string list * value_type list
+  token list -> string * string list * val_type list
 
 (** [parse_delete input] parses a delete database command to send to
     controller_delete to delete rows that satisfies a certain condition *)

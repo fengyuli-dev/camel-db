@@ -1,6 +1,6 @@
 open Tokenizer
 open Controller
-open Value
+open Database
 
 exception Malformed of string
 exception Empty
@@ -106,23 +106,23 @@ let token_to_terminal (t : token) : terminal =
   | Terminal t -> t
   | _ -> raise (Malformed "not a terminal")
 
-(** converts a terminal string/int/float to the value_type
+(** converts a terminal string/int/float to the val_type
     string/int/float*)
-let terminal_to_value_type (t : terminal) : Value.value_type =
+let terminal_to_val_type (t : terminal) : Database.val_type =
   match t with
-  | Tokenizer.String s -> Value.String s
-  | Tokenizer.Int i -> Value.Int i
-  | Tokenizer.Float f -> Value.Float f
+  | Tokenizer.String s -> Database.String s
+  | Tokenizer.Int i -> Database.Int i
+  | Tokenizer.Float f -> Database.Float f
 
 (**[get_vals_list tokens] only return the list of temrinals associated
    with values*)
-let get_vals_list (tokens : token list) : value_type list =
+let get_vals_list (tokens : token list) : val_type list =
   let sublist =
     let val_index = get_val_index tokens in
     sublist (val_index + 1) (List.length tokens - 1) tokens
   in
   List.map
-    (fun elt -> elt |> token_to_terminal |> terminal_to_value_type)
+    (fun elt -> elt |> token_to_terminal |> terminal_to_val_type)
     sublist
 
 (** [get_update_list tokens] return the sublist that contain columns and
@@ -162,12 +162,12 @@ let get_update_cols (update_list : token list) : string list =
 (** [get_update_vals update_list] return the list of values to update
     for the correponding columns. Precondition: the update_list is
     correctly formatted*)
-let get_update_vals (update_list : token list) : value_type list =
+let get_update_vals (update_list : token list) : val_type list =
   if not (check_update_list update_list) then raise (Malformed "TODO")
   else
     let token_list = update_list |> remove_eq |> get_even_elem in
     List.map
-      (fun elt -> elt |> token_to_terminal |> terminal_to_value_type)
+      (fun elt -> elt |> token_to_terminal |> terminal_to_val_type)
       token_list
 
 (** [get_this_command tokens] return the sublist up to everything before
@@ -364,7 +364,7 @@ and parse_insert (tokens : token list) =
    friendly for testing because it has a concrete output type instead of
    unit*)
 and parse_insert_test_version (tokens : token list) :
-    string * string list * value_type list =
+    string * string list * val_type list =
   let this_command = get_this_command tokens in
   let table = parse_table this_command (SubCommand Into) in
   let cols = get_cols_list this_command in
@@ -401,7 +401,7 @@ and parse_update tokens =
    friendly for testing because it has a concrete output type instead of
    unit*)
 and parse_update_test_version tokens :
-    string * string list * value_type list =
+    string * string list * val_type list =
   let this_command = get_this_command tokens in
   let table =
     terminal_to_string [ List.nth this_command 0 |> token_to_terminal ]
