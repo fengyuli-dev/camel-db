@@ -2,7 +2,7 @@ open Tokenizer
 open Controller
 open Value
 
-exception Malformed
+exception Malformed of string
 exception Empty
 
 (** General Helpers within Parser *)
@@ -17,7 +17,7 @@ let rec terminal_to_string tokens =
 let token_to_terminal t =
   match t with
   | Terminal terminal -> terminal
-  | _ -> failwith "not a terminal"
+  | _ -> raise (Malformed "not a terminal")
 
 let token_list_to_terminal_list l =
   List.map (fun x -> token_to_terminal x) l
@@ -49,7 +49,7 @@ let trim_string (s : string) =
 
 let rec sublist i j l =
   match l with
-  | [] -> failwith "empty list"
+  | [] -> raise (Malformed "empty list")
   | h :: t ->
       let tail = if j = 0 then [] else sublist (i - 1) (j - 1) t in
       if i > 0 then tail else h :: tail
@@ -57,7 +57,7 @@ let rec sublist i j l =
 (** [find elt lst] find the index of the first elt in the list*)
 let rec find elt lst =
   match lst with
-  | [] -> failwith "not found"
+  | [] -> raise (Malformed "not found")
   | h :: t -> if h = elt then 0 else 1 + find elt t
 
 (** [get_val_index tokens] get the index of the occurence token
@@ -73,7 +73,7 @@ let parse_table (tokens : token list) (sub_command : token) : string =
   | h :: t ->
       if h = sub_command then
         terminal_to_string [ List.nth t 0 |> token_to_terminal ]
-      else raise Malformed
+      else raise (Malformed "TODO")
 
 (** [get_list_after_where tokens] return the sublist of tokens after the
     where keyword*)
@@ -104,7 +104,7 @@ let get_cols_list (tokens : token list) : string list =
 let token_to_terminal (t : token) : terminal =
   match t with
   | Terminal t -> t
-  | _ -> failwith "not a terminal"
+  | _ -> raise (Malformed "not a terminal")
 
 (** converts a terminal string/int/float to the value_type
     string/int/float*)
@@ -154,7 +154,7 @@ let get_even_elem (lst : token list) : token list =
 (** [get_update_cols update_list] return the list of columns to update.
     Precondition: the update_list is correctly formatted*)
 let get_update_cols (update_list : token list) : string list =
-  if not (check_update_list update_list) then raise Malformed
+  if not (check_update_list update_list) then raise (Malformed "TODO")
   else
     update_list |> remove_eq |> get_odd_elem
     |> token_list_to_terminal_list |> terminal_to_string_list
@@ -163,7 +163,7 @@ let get_update_cols (update_list : token list) : string list =
     for the correponding columns. Precondition: the update_list is
     correctly formatted*)
 let get_update_vals (update_list : token list) : value_type list =
-  if not (check_update_list update_list) then raise Malformed
+  if not (check_update_list update_list) then raise (Malformed "TODO")
   else
     let token_list = update_list |> remove_eq |> get_even_elem in
     List.map
@@ -198,7 +198,7 @@ let token_to_expr_type = function
   | Terminal (String s) -> ETree.String s
   | Terminal (Int i) -> ETree.Int i
   | Terminal (Float f) -> ETree.Float f
-  | _ -> raise Malformed
+  | _ -> raise (Malformed "token not expr_type")
 
 let rec expression_or_helper
     (tokens : expr_type list)
@@ -227,7 +227,7 @@ let and_condition_evaluater_helper
   | GE -> data_b >= b
   | LE -> data_b <= b
   | NE -> data_b <> b
-  | _ -> failwith "condition not filtered right"
+  | _ -> raise (Malformed "condition not filtered right")
 
 (** [and_conditino_evaluater a op b pair_data] evaluate a single
     condition with only one and [a op b] and see if [pair_data] have
@@ -238,7 +238,7 @@ let rec and_condition_evaluater
     b
     (pair_data : (expr_type * expr_type) list) =
   match pair_data with
-  | [] -> failwith "data base type not found"
+  | [] -> raise (Malformed "data base type not found")
   | (data_a, data_b) :: t ->
       if data_a = a then
         and_condition_evaluater_helper a op b (data_a, data_b)
@@ -254,7 +254,7 @@ let rec evaluate_and_helper and_lst pair_data : bool =
   | a :: op :: b :: t ->
       and_condition_evaluater a op b pair_data
       && evaluate_and_helper t pair_data
-  | _ -> failwith "invalid list of and conditions"
+  | _ -> raise (Malformed "invalid list of and conditions")
 
 (** [evaluate_and or_lst pair_data] evaluate a list of conditions
     [or_lst] with or connected between each conditions that are only
@@ -280,7 +280,7 @@ let parse_where_helper
   let or_lst = expressions_or tokens in
   evaluate_or or_lst pair_data'
 
-(** see mli file for discription *)
+(** see mli file for details discription *)
 let parse_where (tokens : token list) =
   let exprs = List.map token_to_expr_type tokens in
   parse_where_helper exprs
@@ -303,7 +303,7 @@ and parse_columns tokens =
     on. *)
 and get_where acc cols from_lst lst =
   match lst with
-  | [] -> raise Malformed
+  | [] -> raise (Malformed "TODO")
   | EndOfQuery EOQ :: t ->
       select
         (terminal_to_string from_lst)
@@ -313,44 +313,44 @@ and get_where acc cols from_lst lst =
 
 and get_from acc cols lst =
   match lst with
-  | [] -> raise Malformed
+  | [] -> raise (Malformed "TODO")
   | SubCommand Where :: t -> get_where [] cols acc t
   | EndOfQuery EOQ :: t ->
       select (terminal_to_string acc) (parse_columns cols) (fun _ ->
           true);
       parse_query t
   | Terminal h :: t -> get_from (h :: acc) cols t
-  | _ -> raise Malformed
+  | _ -> raise (Malformed "TODO")
 
 and get_cols acc lst =
   match lst with
-  | [] -> raise Malformed
+  | [] -> raise (Malformed "TODO")
   | SubCommand From :: t -> get_from [] acc t
   | Terminal h :: t -> get_cols (h :: acc) t
-  | _ -> raise Malformed
+  | _ -> raise (Malformed "TODO")
 
 and parse_select tokens =
   match tokens with
-  | [] -> raise Malformed
+  | [] -> raise (Malformed "TODO")
   | Terminal s :: t -> get_cols [] (Terminal s :: t)
-  | _ -> raise Malformed
+  | _ -> raise (Malformed "TODO")
 
 (** Parse Drop: *)
 and parse_drop tokens =
   match tokens with
-  | [] -> raise Malformed
+  | [] -> raise (Malformed "TODO")
   | Terminal s :: t ->
       let rec grouping acc lst =
         match lst with
-        | [] -> raise Malformed
+        | [] -> raise (Malformed "TODO")
         | EndOfQuery EOQ :: t ->
             drop (terminal_to_string acc);
             parse_query t
         | Terminal h :: t -> grouping (h :: acc) t
-        | _ -> raise Malformed
+        | _ -> raise (Malformed "TODO")
       in
       grouping [] (Terminal s :: t)
-  | _ -> raise Malformed
+  | _ -> raise (Malformed "TODO")
 
 and parse_insert (tokens : token list) =
   let this_command = get_this_command tokens in
@@ -419,11 +419,11 @@ and parse_query tokens =
   | Command Insert :: t -> parse_insert t
   | Command Delete :: t -> parse_delete t
   | Command Update :: t -> parse_update t
-  | _ -> raise Malformed
+  | _ -> raise (Malformed "TODO")
 
 let parse (input : string) =
   let tokens = tokenize input in
   if List.length tokens = 0 then raise Empty
   else if List.hd (List.rev tokens) <> EndOfQuery EOQ then
-    raise Malformed
+    raise (Malformed "TODO")
   else parse_query tokens
