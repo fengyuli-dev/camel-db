@@ -22,7 +22,7 @@ After that, we implemented the parser, creating individual functions to due with
 - Lee: Implement the tokenizer that extracts tokens from the input text. Implement and test a binary search tree that support all basic operations as well as high-order functions. Approximate hours spend: 9 hours.
 - Emerald: Breakdown structures of the project which includes controller and parse. Build WHERE parse that evaluate condition expression that includes AND, OR. Other parser functionality is build upon this evaluation parser whenever WHERE parse is used. WHERE parse takes in condition expression and data check if the data satisfies the condition. Wrote tests to test the implemented functions with glass and black box testing, peer-reviewed for others code, and wrote part of the progress report. Approximate hours spend: 9 hours.
 - Yolanda: TODO
-- Chuhan: Contributes to discussion of the interfaces for controller and parser. Implemented the parsing functions for insert, delete, and update, and added tests for these functions. Chuhan Worked for 8 hours.
+- Chuhan: Contributes to discussion of the interfaces for controller and parser. Implemented the parsing functions for insert, delete, and update, and added tests for these functions. Approximate hours spent: 8 hours.
 
 ## Productivity Analysis
 As a team, we were productive. During team meetings, we mainly focused on discussing the big ideas for project, specifically the interfaces for parsers, controller, tokens and the implementation for our tree. Then, we worked individually to implement the functions that we are assigned to complete. We accomplished what we planned and our estimates were accurate.

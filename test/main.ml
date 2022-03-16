@@ -2,6 +2,7 @@ open OUnit2
 open Camel_db.Tokenizer
 open Camel_db.Parser
 open Camel_db.Database
+open Camel_db.Helper
 
 (* (Country = Mexico) or (LandSize >= 1000 and Population >= 1000) *)
 let condition1 =
@@ -174,7 +175,7 @@ let parse_insert_test
     (tokens : token list)
     (expected_output : string * string list * val_type list) : test =
   name >:: fun _ ->
-  assert_equal expected_output (parse_update_test_version tokens)
+  assert_equal expected_output (parse_insert_test_version tokens)
 
 (** helper: return the list with the head removed*)
 let remove_hd lst =
@@ -246,6 +247,7 @@ let parse_insert_tests =
           Camel_db.Database.String "Caridnal";
           Camel_db.Database.String "TomErichsen";
           Camel_db.Database.String "Skagen21";
+          Camel_db.Database.String "Stavanger";
           Camel_db.Database.Int 4006;
           Camel_db.Database.String "Norway";
         ] );
@@ -263,6 +265,7 @@ let parse_insert_tests =
           Camel_db.Database.String "Caridnal";
           Camel_db.Database.String "TomErichsen";
           Camel_db.Database.String "Skagen21";
+          Camel_db.Database.String "Stavanger";
           Camel_db.Database.Float 400.6;
           Camel_db.Database.String "Norway";
         ] );
@@ -333,8 +336,111 @@ let parse_update_tests =
         ] );
   ]
 
+let get_list_after_where_test
+    (name : string)
+    (tokens : token list)
+    (expected_output : token list) : test =
+  name >:: fun _ ->
+  assert_equal expected_output
+    (tokens |> get_this_command |> get_list_after_where)
+
+let get_list_after_where_tests =
+  [
+    get_list_after_where_test "command1" update_token_1
+      [ Terminal (String "CustomerID"); BinaryOp EQ; Terminal (Int 1) ];
+    get_list_after_where_test "command2" update_token_2
+      [
+        Terminal (Camel_db.Tokenizer.String "CustomerID");
+        BinaryOp Camel_db.Tokenizer.EQ;
+        Terminal (Camel_db.Tokenizer.Int 1);
+      ];
+  ]
+
+let long_command =
+  "INTO Customers (CustomerName, ContactName, Address, PostalCode, \
+   Country) VALUES ('Cardinal', 'TomErichsen', 'Skagen21', \
+   'Stavanger', '4006', 'Norway') ;  UPDATE Customers SET ContactName \
+   = 'Alfred Schmidt', City = 'Frankfurt', Address = 9.0 WHERE \
+   CustomerID = 1 ; DELETE FROM Customers WHERE CustomerID = 1 ; "
+  |> tokenize
+
+let get_this_command_test
+    (name : string)
+    (tokens : token list)
+    (expected_output : token list) : test =
+  name >:: fun _ ->
+  assert_equal expected_output (tokens |> get_this_command)
+
+let get_this_command_tests =
+  [
+    get_this_command_test "complex command" long_command
+      [
+        SubCommand Into;
+        Terminal (String "Customers");
+        Terminal (String "(CustomerName,");
+        Terminal (String "ContactName,");
+        Terminal (String "Address,");
+        Terminal (String "PostalCode,");
+        Terminal (String "Country)");
+        SubCommand Values;
+        Terminal (String "('Cardinal',");
+        Terminal (String "'TomErichsen',");
+        Terminal (String "'Skagen21',");
+        Terminal (String "'Stavanger',");
+        Terminal (String "'4006',");
+        Terminal (String "'Norway')");
+      ];
+  ]
+
+let get_other_command_test
+    (name : string)
+    (tokens : token list)
+    (expected_output : token list) : test =
+  name >:: fun _ ->
+  assert_equal expected_output (tokens |> get_other_commands)
+
+let get_other_commands_tests =
+  [
+    get_other_command_test "complex command" long_command
+      [
+        Command Update;
+        Terminal (String "Customers");
+        SubCommand Set;
+        Terminal (String "ContactName");
+        BinaryOp EQ;
+        Terminal (String "'Alfred");
+        Terminal (String "Schmidt',");
+        Terminal (String "City");
+        BinaryOp EQ;
+        Terminal (String "'Frankfurt',");
+        Terminal (String "Address");
+        BinaryOp EQ;
+        Terminal (Float 9.);
+        SubCommand Where;
+        Terminal (String "CustomerID");
+        BinaryOp EQ;
+        Terminal (Int 1);
+        EndOfQuery EOQ;
+        Command Delete;
+        SubCommand From;
+        Terminal (String "Customers");
+        SubCommand Where;
+        Terminal (String "CustomerID");
+        BinaryOp EQ;
+        Terminal (Int 1);
+        EndOfQuery EOQ;
+      ];
+  ]
+
 let suite =
   "test suite for expression tree"
-  >::: List.flatten [ parse_where_tests ]
+  >::: List.flatten
+         [
+           parse_where_tests;
+           get_list_after_where_tests;
+           get_this_command_tests;
+           get_other_commands_tests;
+           parse_update_tests;
+         ]
 
 let _ = run_test_tt_main suite
