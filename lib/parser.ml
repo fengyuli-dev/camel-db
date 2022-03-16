@@ -113,12 +113,11 @@ let parse_select_columns tokens =
   |> String.split_on_char ','
   |> List.map String.trim
 
-let rec parse_odd_for_columns tokens =
-  match tokens with
-  | Terminal (String s) :: t -> trim_string s :: parse_odd_for_columns t
-  | Terminal (Int i) :: t -> string_of_int i :: parse_odd_for_columns t
-  | Terminal (Float f) :: t ->
-      string_of_float f :: parse_odd_for_columns t
+let extract_name token =
+  match token with
+  | Terminal (String s) -> trim_string s
+  | Terminal (Int i) -> string_of_int i
+  | Terminal (Float f) -> string_of_float f
   | _ -> raise (Malformed "Invalid Column Name.")
 
 (** [parse_vals vals_tokens] return a list of values to insert into
@@ -338,32 +337,34 @@ let parse_where (tokens : token list) =
 
 (* end of parse_where *)
 
-(* ( PersonID int, LastName varchar(255), FirstName varchar(255),
-   Address varchar(255), City varchar(255) ) *)
-let parse_datatype tokens =
-  match tokens with
-  | Terminal (String "INTEGER") -> Database.Int
-  | Terminal (String "INT") -> Database.Int
-  | Terminal (String "FLOAT") -> Database.Float
-  | Terminal (String "DOUBLE") -> Database.Float
-  | Terminal (String "CHAR") -> Database.String
-  | Terminal (String "TEXT") -> Database.String
-  | Terminal (String "VARCHAR") -> Database.String
-  | Terminal (String "BOOL") -> Database.Boolean
+let parse_datatype token =
+  match extract_name token with
+  | "INTEGER" -> Database.Int
+  | "INT" -> Database.Int
+  | "FLOAT" -> Database.Float
+  | "DOUBLE" -> Database.Float
+  | "CHAR" -> Database.String
+  | "TEXT" -> Database.String
+  | "VARCHAR" -> Database.String
+  | "BOOL" -> Database.Boolean
   | _ -> raise (Malformed "Not a valid datatype of column")
 
-let extract_name token =
-  match token with
-  | Terminal (String s) -> s
-  | _ -> raise (Malformed "Bad Column Name")
-
 let rec parse_create tokens =
-  (* TODO: parse the table name first *)
-  let name = extract_name (List.hd tokens) in
-  let tail = List.tl tokens in
-  let cols = tail |> get_odd_elem |> parse_odd_for_columns in
-  let types = tail |> get_even_elem |> List.map parse_datatype in
-  create name cols types
+  let this_command = get_this_command tokens in
+  let other_commands = get_other_commands tokens in
+  try
+    (* print_endline ("\n" ^ Helper.pp_tokens this_command); *)
+    let name = extract_name (List.hd this_command) in
+    let tail = List.tl this_command in
+    (* print_endline "Columns: "; *)
+    let cols = tail |> get_even_elem |> List.map extract_name in
+    (* print_endline (String.concat " " cols); print_endline "Types: ";
+       print_endline (String.concat " " (List.map extract_name
+       (get_odd_elem(tail)))); *)
+    let types = tail |> get_odd_elem |> List.map parse_datatype in
+    create name cols types;
+    parse_query other_commands
+  with Failure _ -> raise (Malformed "Syntax in Create is malformed")
 
 (* Parse Select Functions: *)
 

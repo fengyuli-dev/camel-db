@@ -5,7 +5,7 @@ type record = None
 type data_type = None
 
 let create table_name cols col_types =
-  print_endline ("Created " ^ table_name);
+  print_endline ("Created " ^ table_name ^ "\n");
   ()
 
 let select table_name cols filter_function =

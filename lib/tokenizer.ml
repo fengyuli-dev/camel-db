@@ -67,6 +67,7 @@ let match_terminal s =
     with _ -> Terminal (String s))
 
 let match_token = function
+  | "QUIT" -> exit 0
   | "CREATE" -> Command Create
   | "SELECT" -> Command Select
   | "DROP" -> Command Drop

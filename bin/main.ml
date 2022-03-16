@@ -8,8 +8,15 @@ let main () =
     print_endline "Please enter commands below.\n";
     print_string "> ";
     let rec recursive_parse () =
-      Parser.parse (read_line ());
-      print_string "> ";
+      try
+        let line = read_line () in 
+        print_endline (Helper.pp_tokens(Tokenizer.tokenize (line)));
+        Parser.parse (line);
+      with 
+      | Parser.Malformed m -> print_endline m; print_string "\n> ";
+      recursive_parse ()
+      | Parser.Empty -> print_endline "The command cannot be empty. \n"; 
+      print_string "\n> ";
       recursive_parse ()
     in
     recursive_parse ()

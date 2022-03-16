@@ -10,4 +10,4 @@ val print_list_newline : ('a -> string) -> 'a list -> unit
 val key_value_pair_to_string : ('a -> string) -> int * 'a -> string
 
 (** Convert a list of tokens to a string *)
-val token_to_string : token -> string
+val pp_tokens : token list -> string
