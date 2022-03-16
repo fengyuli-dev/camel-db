@@ -378,9 +378,6 @@ and parse_delete tokens =
     (parse_where (this_command |> get_list_after_where));
   get_other_commands tokens |> parse_query
 
-(**[parse_delete_test_version tokens] runs parse_delete but it is
-   friendly for testing because it has a concrete output type instead of
-   unit*)
 and parse_delete_test_version (tokens : token list) : string =
   let this_command = get_this_command tokens in
   let table = parse_table this_command (SubCommand From) in
@@ -397,9 +394,6 @@ and parse_update tokens =
     (parse_where (this_command |> get_list_after_where));
   get_other_commands tokens |> parse_query
 
-(**[parse_update_test_version tokens] runs parse_update but it is
-   friendly for testing because it has a concrete output type instead of
-   unit*)
 and parse_update_test_version tokens :
     string * string list * val_type list =
   let this_command = get_this_command tokens in
@@ -427,6 +421,3 @@ let parse (input : string) =
   else if List.hd (List.rev tokens) <> EndOfQuery EOQ then
     raise (Malformed "TODO")
   else parse_query tokens
-
-let p (input : token list) =
-  ("hi", [ "h"; "i" ], [ Value.String "hi"; Value.Int 5 ])

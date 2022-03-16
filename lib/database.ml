@@ -7,7 +7,7 @@ type val_type =
   | Float of float
   | Boolean of bool
 
-type col_type =   
+type col_type =
   | String
   | Char
   | Int
