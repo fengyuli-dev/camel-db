@@ -1,0 +1,63 @@
+# MS1 Progress Report
+
+Authors:
+
+1. Li Fengyu (fl334)
+2. Yolanda Wang (yw583)
+3. Chuhan Ouyang (co232)
+4. Emerald Liu (sl2322)
+
+## Vision
+The vision for our project is still what we had descripted in MS0, to create a database management system (DBS) that stores data and supports basic SQL queries. Our system supports users to create and drop tables, insert, and update an entry in the table, read input and create an output. To be specific, it supports CRUD (Create, Read, Update, Delete) operations such as SELECT…FROM…WHERE, CREATE, DROP, INSERT, UPDATE, DELETE. Detailed decription of these operations can be found in "doc/grammar.md". We use REPL (Read-eval-print loop) to allow clients to interact with the DBS. We followed the plan for MS1 strickly that was written in MS0 besides one minor change that our data base will suport one data table right now.
+
+
+## Summary of Progress
+During this sprint, we first set up our poject with dune and makefile, so we can build our project with "dune build" as we do in the programming assignments (see dune, dune-project, dune-workspace, and Makefile). Then, we worked on implementing the following 5 functionalities. First, we defined the legal grammar and outline the token types for the SQL commands that we support (see Grammar.md). Then, we implemented a tokenizer that turns a string that the user enters into a list of tokens. We also define the various subtypes for a token, such as a command type, binary operator, or a terminal type (see tokenizer.ml).
+We also defined the interfaces for our parser, which parses sql commands, and our controller, which reads the parsed sql commands and start manipulating the databse (see parser.mli and controller.mli)
+
+After that, we implemented the parser, creating individual functions to due with each of the sql CRUD operations (see parser.ml), and we also created a test suite for our parser (see test/main.ml). To parse conditional expressions in SQL commands, we used a n-ary tree like structure implemented by nested lists (expression type see Etree.m). We created a test suite for the expression tree (see test/expr.ml). We also implemented the data structure that provides indexing for the database as a tree. It supports basic operations such as find, insert, and delete (see tree.ml) We created test suite for the tree (see test/tree.ml)
+
+
+### Activity Breakdown
+- Lee
+- Emerald
+- Yolanda
+- Chuhan: Chuhan contributes to discussion of the interfaces for contrller and parser. Chuhan implemented the parsing functions for insert, delete, and update, and added tests for these functions. Chuhan worked for 8 hours.
+
+## Productivity Analysis
+As a team, we were productive. During team meetings, we mainly focused on discussing the big ideas for project, specifically the interfaces for parsers, controller, tokens and the implementation for our tree. Then, we worked individually to implement the functions that we are assigned to complete. We accompolished what we planned and our estimates were accurate.
+
+## Scope Grade
+### Satisfactory : 40/40
+1. Write test cases for parser.
+We carefully tested out our parser code with glass box testing. See all files in "test\" for different tests. This includes many tests for the fundation helper functions that are sealed by mli file.
+2. Define the grammer of language.
+We defined all grammar that's needed to understand our data base. See "doc\Grammar.md" for the work and specification.
+3. Implement parser that parses SQL and custom commands with a naive data base.
+We successfuly implement the parser that is functioning that can take in SQL commands including create, delete, update, select..where, drop, etc. For one example, if given a data table repersentation such as the following:
+
+| Name        | Gender      | Age         | School      |
+| ----------- | ----------- | ----------- | ----------- |
+| Emerald     | Female      | 19          | Cornell     |
+| Chuhan      | Female      | 19          | Cornell     |
+| Yolanda     | Female      | 18          | Cornell     |
+| Lee         | Male        | 19          | Cornell     |
+
+SELECT * WHERE "Gender" = "Female" AND "Age" = 19
+
+will return data that repersent the following:
+
+Emerald Female 19 Cornell
+
+Chuhan Female 19 Cornell
+
+### Good :
+
+
+
+### Excellent: 
+
+
+
+
+##### Goals for the Next Sprint
