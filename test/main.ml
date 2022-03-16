@@ -335,12 +335,6 @@ let parse_update_tests =
 
 let suite =
   "test suite for expression tree"
-  >::: List.flatten
-         [
-           parse_where_tests;
-           parse_insert_tests;
-           parse_update_tests;
-           parse_delete_tests;
-         ]
+  >::: List.flatten [ parse_where_tests ]
 
 let _ = run_test_tt_main suite
