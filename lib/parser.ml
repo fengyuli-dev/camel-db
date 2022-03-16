@@ -69,10 +69,17 @@ let rec sublist i j l =
       let tail = if j = 0 then [] else sublist (i - 1) (j - 1) t in
       if i > 0 then tail else h :: tail
 
+(** [find elt lst] find the index of the first elt in the list*)
+
+let rec find elt lst acc =
+  match lst with
+  | [] -> acc
+  | h :: t -> if h = elt then acc else find elt t (acc + 1)
+
 (** [get_val_index tokens] get the index of the occurence token
     SubCommand Values in a tokens list *)
 let rec get_val_index (tokens : token list) : int =
-  find (SubCommand Values) tokens
+  find (SubCommand Values) tokens 0
 
 (** [parse_table tokens sub_command] is a helper function that parses
     table name based on a sub_command keyword*)
@@ -87,7 +94,7 @@ let parse_table (tokens : token list) (sub_command : token) : string =
 (** [get_list_after_where tokens] return the sublist of tokens after the
     where keyword*)
 let get_list_after_where (tokens : token list) : token list =
-  let where_index = find (SubCommand Where) tokens in
+  let where_index = find (SubCommand Where) tokens 0 in
   sublist (where_index + 1) (List.length tokens - 1) tokens
 
 (** [parse_cols col_tokens] return the list of columns to according to
@@ -151,8 +158,8 @@ let get_vals_list (tokens : token list) : val_type list =
 (** [get_update_list tokens] return the sublist that contain columns and
     values to update*)
 let get_update_list (tokens : token list) : token list =
-  let set_index = find (SubCommand Set) tokens in
-  let where_index = find (SubCommand Where) tokens in
+  let set_index = find (SubCommand Set) tokens 0 in
+  let where_index = find (SubCommand Where) tokens 0 in
   sublist (set_index + 1) (where_index - 1) tokens
 
 (** [check_update_list] update_list return true if the update command is
@@ -165,6 +172,14 @@ let check_update_list (update_list : token list) : bool =
     list*)
 let remove_eq (update_list : token list) : token list =
   List.filter (fun elt -> elt <> BinaryOp EQ) update_list
+
+(** [get_odd_elem] lst return only the odd elements of a given list*)
+let get_odd_elem (lst : token list) : token list =
+  List.filter (fun elt -> find elt lst 0 mod 2 = 1) lst
+
+(** [get_even_elem] lst return only the even elements of a given list*)
+let get_even_elem (lst : token list) : token list =
+  List.filter (fun elt -> find elt lst 0 mod 2 = 0) lst
 
 (** [get_update_cols update_list] return the list of columns to update.
     Precondition: the update_list is correctly formatted*)
@@ -188,13 +203,13 @@ let get_update_vals (update_list : token list) : val_type list =
 (** [get_this_command tokens] return the sublist up to everything before
     the first EOQ*)
 let get_this_command (tokens : token list) : token list =
-  let eoq_index = find (EndOfQuery EOQ) tokens in
+  let eoq_index = find (EndOfQuery EOQ) tokens 0 in
   sublist 0 (eoq_index - 1) tokens
 
 (** [get_other_commands tokens] return the sublist of everything after
     EOQ, to pass into parse_query*)
 let get_other_commands (tokens : token list) : token list =
-  let eoq_index = find (EndOfQuery EOQ) tokens in
+  let eoq_index = find (EndOfQuery EOQ) tokens 0 in
   sublist (eoq_index + 1) (List.length tokens - 1) tokens
 
 (* parse_where helpers *)

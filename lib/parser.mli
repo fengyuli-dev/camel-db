@@ -55,7 +55,7 @@ val parse_drop : token list -> unit
     [tokens] and false otherwise. Requires condition expression to be
     token type but each must be one of expr type, and pair_data must
     have data with same length, column value must be in String and data
-    value must be in the corrisponidng String or Int or Float *)
+    value must be in the corrisponidng String or Int or Float. *)
 val parse_where : token list -> token list * token list -> bool
 
 (* exposed helper to test, starting below, comment out when submit *)
