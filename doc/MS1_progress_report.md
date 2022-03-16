@@ -66,8 +66,8 @@ get, insert, and delete.
 2)Implement a data structure that provides indexing for the database. Most likely be a tree. It should support basic operations such as find and insert. More operations are pending a better understanding of a database’s internal representation.
 
 The data structure is indeed implemented as a tree. The tree support functions 
-of to return the values assoicated with a key in the tree, calculting the size
-of the tree, isnerting a new key value pair, deleting a node, return an inorder
+of to return the values associated with a key in the tree, calculating the size
+of the tree, inserting a new key value pair, deleting a node, return an inorder
 representation of the node, constructing an empty tree, and fold the tree.
 
 For example, suppose we generate a tree from the list
@@ -83,7 +83,7 @@ There is one task for excellent scope.
 1) Implement a REPL command-line interface and connect it to the parser. The interface can be built in a similar way as the one in A2. It will ask for commands and then call parser methods. For the purpose of the demo, swiftly implement a printing method to visualize the parsed input i.e. the syntax tree.
 
 We did implement a REPL for the user to interact with the parser (see main.ml) The REPL
-first greets the user wiht hello world, and then it prompts the user to start using the database. The user can enter parsing commands for now.
+first greets the user with hello world, and then it prompts the user to start using the database. The user can enter parsing commands for now.
 
 
 ##### Goals for the Next Sprint
