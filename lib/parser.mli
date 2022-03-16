@@ -30,8 +30,7 @@ val parse_delete : token list -> unit
 
 (** [parse_delete_test_version input] parse an delete databse command to
     send to controller_insert to insert a new row into an existing table*)
-val parse_delete_test_version :
-  token list -> string * string list * val_type list
+val parse_delete_test_version : token list -> string
 
 (** [parse_update tokens] parses an update database command to send to
     controller_update to update rows in an existing dataabase*)

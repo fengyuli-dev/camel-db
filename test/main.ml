@@ -186,7 +186,7 @@ let parse_update_test
     (tokens : token list)
     (expected_output : string * string list * val_type list) : test =
   name >:: fun _ ->
-  assert_equal expected_output (parse_insert_test_version tokens)
+  assert_equal expected_output (parse_update_test_version tokens)
 
 let parse_update_tests = []
 
