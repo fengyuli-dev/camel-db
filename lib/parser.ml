@@ -427,3 +427,6 @@ let parse (input : string) =
   else if List.hd (List.rev tokens) <> EndOfQuery EOQ then
     raise Malformed
   else parse_query tokens
+
+let p (input : token list) =
+  ("hi", [ "h"; "i" ], [ Value.String "hi"; Value.Int 5 ])

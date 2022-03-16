@@ -1,6 +1,7 @@
 open OUnit2
 open Camel_db.Tokenizer
-open Camel_db.Parser
+include Camel_db.Parser
+open Camel_db.Value
 
 (* (Country = Mexico) or (LandSize >= 1000 and Population >= 1000) *)
 let condition1 =
@@ -162,8 +163,15 @@ let parse_where_tests =
       (parse_where condition6 pair_list_Mexico);
   ]
 
-let parse_insert_test name expected actual =
+let parse_insert_test_no name expected actual =
   name >:: fun _ -> assert_equal expected actual ~printer:string_of_bool
+
+let narse_insert_test
+    (name : string)
+    (tokens : token list)
+    (expected_output : string * string list * value_type list) : test =
+  name >:: fun _ ->
+  assert_equal expected_output (parse_insert_test_version tokens)
 
 let parse_insert_tests = []
 
