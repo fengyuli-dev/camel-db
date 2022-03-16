@@ -14,6 +14,8 @@ let rec terminal_to_string tokens =
   | Tokenizer.Float f :: t ->
       string_of_float f ^ " " ^ terminal_to_string t
 
+let tokens_to_terminals tokens = 
+  List.map (fun t -> match t with | Terminal x -> x | _ -> raise (Malformed "Wrong Format in CREATE")) tokens 
 let token_to_terminal t =
   match t with
   | Terminal terminal -> terminal
@@ -34,6 +36,19 @@ let rec terminal_to_string_list (tokens : terminal list) : string list =
 let explode (s : string) : char list =
   List.init (String.length s) (String.get s)
 
+(** [find elt lst] find the index of the first elt in the list*)
+let rec find elt lst =
+  match lst with
+  | [] -> raise (Malformed "not found")
+  | h :: t -> if h = elt then 0 else 1 + find elt t
+
+(** [get_odd_elem] lst return only the odd elements of a given list*)
+let get_odd_elem (lst : token list) : token list =
+  List.filter (fun elt -> find elt lst mod 2 = 1) lst
+
+(** [get_even_elem] lst return only the even elements of a given list*)
+let get_even_elem (lst : token list) : token list =
+  List.filter (fun elt -> find elt lst mod 2 = 0) lst
 (** [remove_char c s] remove any instances of the character in a string *)
 let remove_char (c : char) (s : string) : string =
   let char_list = explode s in
@@ -42,7 +57,7 @@ let remove_char (c : char) (s : string) : string =
   in
   List.fold_left (fun acc h -> acc ^ String.make 1 h) "" filtered_list
 
-(** [trim_stirng s] remove all the () and , in a string *)
+(** [trim_string s] remove all the () and , in a string *)
 let trim_string (s : string) =
   s |> remove_char '(' |> remove_char ')' |> remove_char ','
   |> remove_char '\''
@@ -86,6 +101,20 @@ let get_list_after_where (tokens : token list) : token list =
     the tokens*)
 let parse_cols (cols_tokens : terminal list) : string list =
   cols_tokens |> terminal_to_string_list
+
+(** [parse_select_columns tokens] convert list of tokens involving column names
+    into a list of column names (with stripping). (used for select) *)
+let parse_select_columns tokens =
+    tokens |> terminal_to_string
+    |> String.split_on_char ','
+    |> List.map String.trim
+
+let rec parse_odd_for_columns tokens = 
+  match tokens with
+  | Terminal String s :: t -> trim_string s :: parse_odd_for_columns t
+  | Terminal Int i :: t -> string_of_int i :: parse_odd_for_columns t
+  | Terminal Float f :: t -> string_of_float f :: parse_odd_for_columns t
+  | _ -> raise (Malformed "Invalid Column Name.")   
 
 (** [parse_vals vals_tokens] return a list of values to insert into
     columns *)
@@ -288,70 +317,97 @@ let parse_where (tokens : token list) =
 
 (* end of parse_where *)
 
-let rec parse_create tokens = failwith "TODO!"
+
+(*
+(
+    PersonID int,
+    LastName varchar(255),
+    FirstName varchar(255),
+    Address varchar(255),
+    City varchar(255) 
+)
+*) 
+let parse_datatype tokens = 
+  match tokens with
+  | Terminal String "INTEGER" -> Database.Int
+  | Terminal String "INT" -> Database.Int
+  | Terminal String "FLOAT" -> Database.Float
+  | Terminal String "DOUBLE" -> Database.Float
+  | Terminal String "CHAR" -> Database.String
+  | Terminal String "TEXT" -> Database.String
+  | Terminal String "VARCHAR" -> Database.String
+  | Terminal String "BOOL" -> Database.Boolean
+  | _ -> raise (Malformed "Not a valid datatype of column")
+
+let extract_name token = 
+  match token with Terminal String s -> s | _ -> raise (Malformed "Bad Column Name")
+let rec parse_create tokens = 
+  (* TODO: parse the table name first *)
+  let name = extract_name (List.hd tokens) in 
+  let tail = List.tl tokens in 
+  let cols = tail 
+  |> get_odd_elem
+  |> parse_odd_for_columns in 
+  let types = tail
+  |> get_even_elem
+  |> List.map parse_datatype in
+  create name cols types
 
 (* Parse Select Functions: *)
-
-(** [parse_columns tokens] convert list of tokens involving column names
-    into a list of column names (with stripping). *)
-and parse_columns tokens =
-  tokens |> terminal_to_string
-  |> String.split_on_char ','
-  |> List.map String.trim
 
 (** acc is accumulator, cols is token list of columns, from_lst is token
     list for parse_from, lst is the list containing parse_where and so
     on. *)
 and get_where acc cols from_lst lst =
   match lst with
-  | [] -> raise (Malformed "TODO")
+  | [] -> raise (Malformed "No condition after WHERE")
   | EndOfQuery EOQ :: t ->
       select
         (terminal_to_string from_lst)
-        (parse_columns cols) (parse_where acc);
+        (parse_select_columns cols) (parse_where acc);
       parse_query t
   | h :: t -> get_where (h :: acc) cols from_lst t
 
 and get_from acc cols lst =
   match lst with
-  | [] -> raise (Malformed "TODO")
+  | [] -> raise (Malformed "No restrictions after FROM")
   | SubCommand Where :: t -> get_where [] cols acc t
   | EndOfQuery EOQ :: t ->
-      select (terminal_to_string acc) (parse_columns cols) (fun _ ->
+      select (terminal_to_string acc) (parse_select_columns cols) (fun _ ->
           true);
       parse_query t
   | Terminal h :: t -> get_from (h :: acc) cols t
-  | _ -> raise (Malformed "TODO")
+  | _ -> raise (Malformed "Wrong Syntax in FROM")
 
 and get_cols acc lst =
   match lst with
-  | [] -> raise (Malformed "TODO")
+  | [] -> raise (Malformed "No FROM statement after SELECT")
   | SubCommand From :: t -> get_from [] acc t
   | Terminal h :: t -> get_cols (h :: acc) t
-  | _ -> raise (Malformed "TODO")
+  | _ -> raise (Malformed "Wrong Syntax in SELECT")
 
 and parse_select tokens =
   match tokens with
-  | [] -> raise (Malformed "TODO")
+  | [] -> raise (Malformed "No column list after SELECT")
   | Terminal s :: t -> get_cols [] (Terminal s :: t)
-  | _ -> raise (Malformed "TODO")
+  | _ -> raise (Malformed "Wrong Syntax in SELECT")
 
 (** Parse Drop: *)
 and parse_drop tokens =
   match tokens with
-  | [] -> raise (Malformed "TODO")
+  | [] -> raise (Malformed "No table name after DROP")
   | Terminal s :: t ->
       let rec grouping acc lst =
         match lst with
-        | [] -> raise (Malformed "TODO")
+        | [] -> raise (Malformed "Wrong Syntax in DROP")
         | EndOfQuery EOQ :: t ->
             drop (terminal_to_string acc);
             parse_query t
         | Terminal h :: t -> grouping (h :: acc) t
-        | _ -> raise (Malformed "TODO")
+        | _ -> raise (Malformed "Wrong Syntax in DROP")
       in
       grouping [] (Terminal s :: t)
-  | _ -> raise (Malformed "TODO")
+  | _ -> raise (Malformed "Wrong Syntax in DROP")
 
 and parse_insert (tokens : token list) =
   let this_command = get_this_command tokens in
@@ -414,11 +470,11 @@ and parse_query tokens =
   | Command Insert :: t -> parse_insert t
   | Command Delete :: t -> parse_delete t
   | Command Update :: t -> parse_update t
-  | _ -> raise (Malformed "TODO")
+  | _ -> raise (Malformed "Not a valid Command")
 
 let parse (input : string) =
   let tokens = tokenize input in
   if List.length tokens = 0 then raise Empty
   else if List.hd (List.rev tokens) <> EndOfQuery EOQ then
-    raise (Malformed "TODO")
+    raise (Malformed "No ';' after query, or no appropriate spacing between every symbol")
   else parse_query tokens
