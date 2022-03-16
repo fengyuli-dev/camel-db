@@ -1,6 +1,6 @@
 open OUnit2
 open Camel_db.Tokenizer
-include Camel_db.Parser
+open Camel_db.Parser
 open Camel_db.Database
 
 (* (Country = Mexico) or (LandSize >= 1000 and Population >= 1000) *)
@@ -163,27 +163,68 @@ let parse_where_tests =
       (parse_where condition6 pair_list_Mexico);
   ]
 
+type t = string * string list * val_type list
+
+(** let string_of_t (my_type : string * string list * val_type list) =
+    match my_type with | string, string_list, val_type_list -> string ^
+    " " ^ string_list ^ " " ^ val_type_list *)
+
 let parse_insert_test
     (name : string)
     (tokens : token list)
     (expected_output : string * string list * val_type list) : test =
   name >:: fun _ ->
-  assert_equal expected_output (parse_insert_test_version tokens)
+  assert_equal expected_output (parse_update_test_version tokens)
+
+(** helper: return the list with the head removed*)
+let remove_hd lst =
+  match lst with
+  | [] -> []
+  | h :: t -> t
 
 let insert_token_1 =
-  tokenize "INSERT INTO Customers (CustomerName) VALUES ('Cardinal')"
+  tokenize "INSERT INTO Customers (CustomerName) VALUES ('Cardinal') ;"
+  |> remove_hd
 
 let insert_token_2 =
-  tokenize
-    "INSERT INTO Customers (CustomerName, ContactName, Address, City, \
-     PostalCode, Country) VALUES ('Cardinal', 'TomErichsen', \
-     'Skagen21', 'Stavanger', 4006, 'Norway');"
+  [
+    SubCommand Into;
+    Terminal (Camel_db.Tokenizer.String "Customers");
+    Terminal (Camel_db.Tokenizer.String "(CustomerName,");
+    Terminal (Camel_db.Tokenizer.String "ContactName,");
+    Terminal (Camel_db.Tokenizer.String "Address,");
+    Terminal (Camel_db.Tokenizer.String "City,");
+    Terminal (Camel_db.Tokenizer.String "PostalCode,");
+    Terminal (Camel_db.Tokenizer.String "Country)");
+    SubCommand Values;
+    Terminal (Camel_db.Tokenizer.String "('Cardinal',");
+    Terminal (Camel_db.Tokenizer.String "'TomErichsen',");
+    Terminal (Camel_db.Tokenizer.String "'Skagen21',");
+    Terminal (Camel_db.Tokenizer.String "'Stavanger',");
+    Terminal (Camel_db.Tokenizer.Int 4006);
+    Terminal (Camel_db.Tokenizer.String "'Norway')");
+    EndOfQuery EOQ;
+  ]
 
 let insert_token_3 =
-  tokenize
-    "INSERT INTO Customers (CustomerName, ContactName, Address, City, \
-     PostalCode, Country) VALUES ('Cardinal', 'TomErichsen', \
-     'Skagen21', 'Stavanger', 400.6, 'Norway');"
+  [
+    SubCommand Into;
+    Terminal (Camel_db.Tokenizer.String "Customers");
+    Terminal (Camel_db.Tokenizer.String "(CustomerName,");
+    Terminal (Camel_db.Tokenizer.String "ContactName,");
+    Terminal (Camel_db.Tokenizer.String "Address,");
+    Terminal (Camel_db.Tokenizer.String "City,");
+    Terminal (Camel_db.Tokenizer.String "PostalCode,");
+    Terminal (Camel_db.Tokenizer.String "Country)");
+    SubCommand Values;
+    Terminal (Camel_db.Tokenizer.String "('Cardinal',");
+    Terminal (Camel_db.Tokenizer.String "'TomErichsen',");
+    Terminal (Camel_db.Tokenizer.String "'Skagen21',");
+    Terminal (Camel_db.Tokenizer.String "'Stavanger',");
+    Terminal (Camel_db.Tokenizer.Float 400.6);
+    Terminal (Camel_db.Tokenizer.String "'Norway')");
+    EndOfQuery EOQ;
+  ]
 
 let parse_insert_tests =
   [
@@ -202,10 +243,9 @@ let parse_insert_tests =
           "Country";
         ],
         [
-          Camel_db.Database.String "Cardinal";
+          Camel_db.Database.String "Caridnal";
           Camel_db.Database.String "TomErichsen";
           Camel_db.Database.String "Skagen21";
-          Camel_db.Database.String "Stavanger";
           Camel_db.Database.Int 4006;
           Camel_db.Database.String "Norway";
         ] );
@@ -220,10 +260,9 @@ let parse_insert_tests =
           "Country";
         ],
         [
-          Camel_db.Database.String "Cardinal";
+          Camel_db.Database.String "Caridnal";
           Camel_db.Database.String "TomErichsen";
           Camel_db.Database.String "Skagen21";
-          Camel_db.Database.String "Stavanger";
           Camel_db.Database.Float 400.6;
           Camel_db.Database.String "Norway";
         ] );
@@ -236,7 +275,8 @@ let parse_delete_test
   name >:: fun _ ->
   assert_equal expected_output (parse_delete_test_version tokens)
 
-let delete_token = tokenize "DELETE FROM Customers WHERE CustomerID = 1"
+let delete_token =
+  tokenize "DELETE FROM Customers WHERE CustomerID = 1 ;" |> remove_hd
 
 let parse_delete_tests =
   [ parse_delete_test "delete command" delete_token "Customers" ]
@@ -250,13 +290,29 @@ let parse_update_test
 
 let update_token_1 =
   tokenize
-    "UPDATE Customers SET ContactName = 'Alfred Schmidt', City = \
-     'Frankfurt' WHERE CustomerID = 1"
+    "UPDATE Customers SET ContactName = 'AlfredSchmidt', City = \
+     'Frankfurt' WHERE CustomerID = 1 ;"
+  |> remove_hd
 
 let update_token_2 =
-  tokenize
-    "UPDATE Customers SET ContactName = 6.2, City = 'Frankfurt', \
-     Address = 9 WHERE CustomerID = 1"
+  [
+    Terminal (Camel_db.Tokenizer.String "Customers");
+    SubCommand Set;
+    Terminal (Camel_db.Tokenizer.String "ContactName");
+    BinaryOp Camel_db.Tokenizer.EQ;
+    Terminal (Camel_db.Tokenizer.Float 6.2);
+    Terminal (Camel_db.Tokenizer.String "City");
+    BinaryOp Camel_db.Tokenizer.EQ;
+    Terminal (Camel_db.Tokenizer.String "'Frankfurt',");
+    Terminal (Camel_db.Tokenizer.String "Address");
+    BinaryOp Camel_db.Tokenizer.EQ;
+    Terminal (Camel_db.Tokenizer.Int 9);
+    SubCommand Where;
+    Terminal (Camel_db.Tokenizer.String "CustomerID");
+    BinaryOp Camel_db.Tokenizer.EQ;
+    Terminal (Camel_db.Tokenizer.Int 1);
+    EndOfQuery EOQ;
+  ]
 
 let parse_update_tests =
   [
@@ -264,7 +320,7 @@ let parse_update_tests =
       ( "Customers",
         [ "ContactName"; "City" ],
         [
-          Camel_db.Database.String "Alfred Schmidt";
+          Camel_db.Database.String "AlfredSchmidt";
           Camel_db.Database.String "Frankfurt";
         ] );
     parse_update_test "update command with mixed types" update_token_2
@@ -279,6 +335,12 @@ let parse_update_tests =
 
 let suite =
   "test suite for expression tree"
-  >::: List.flatten [ parse_where_tests ]
+  >::: List.flatten
+         [
+           parse_where_tests;
+           parse_insert_tests;
+           parse_update_tests;
+           parse_delete_tests;
+         ]
 
 let _ = run_test_tt_main suite
