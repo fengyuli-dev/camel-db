@@ -22,7 +22,7 @@ After that, we implemented the parser, creating individual functions to due with
 - Lee: TODO
 - Emerald: Breakdown structures of the project which includes controller adn parse. Build WHERE parse parser that evaluate condition expression that includes AND, OR. Other parser functionality is build upon this evaluation parser whenever WHERE parse is used. WHERE parse takes in condition expression and data check if the data satisfies the condition. Wrote tests to test the implemented functions with glass and black box testing, peer-reviewed for others code, and wrote part of the progress report. Approximate hours spend: 9 hours.
 - Yolanda: TODO
-- Chuhan: Chuhan contributes to discussion of the interfaces for controller and parser. Chuhan implemented the parsing functions for insert, delete, and update, and added tests for these functions. Chuhan worked for 8 hours.
+- Chuhan: Contributes to discussion of the interfaces for controller and parser. Implemented the parsing functions for insert, delete, and update, and added tests for these functions. Chuhan Worked for 8 hours.
 
 ## Productivity Analysis
 As a team, we were productive. During team meetings, we mainly focused on discussing the big ideas for project, specifically the interfaces for parsers, controller, tokens and the implementation for our tree. Then, we worked individually to implement the functions that we are assigned to complete. We accomplished what we planned and our estimates were accurate.
@@ -53,12 +53,37 @@ will return data that represents the following:
 
 
 ### Good : 40/40
+There are two tasks for good scope.
 
+1)Write a test suite for the data structure that provides indexing.
+
+We carefully tested the "tree.ml" file which is a data structure that provides
+indexing into the database (see test/tree.ml). The testing file contains
+functions to generate a sample tree and tests for method such like
+get, insert, and delete.
+
+
+2)Implement a data structure that provides indexing for the database. Most likely be a tree. It should support basic operations such as find and insert. More operations are pending a better understanding of a database’s internal representation.
+
+The data structure is indeed implemented as a tree. The tree support functions 
+of to return the values assoicated with a key in the tree, calculting the size
+of the tree, isnerting a new key value pair, deleting a node, return an inorder
+representation of the node, constructing an empty tree, and fold the tree.
+
+For example, suppose we generate a tree from the list
+[ (3, 4); (1, 2); (5, 6); (9, 10); (7, 8) ]
+
+If we construct a tree from the list and traverse the tree inorder, the result
+will be [ (1, 2); (3, 4); (5, 6); (7, 8); (9, 10)]. 
 
 
 ### Excellent: 20/20
+There is one task for excellent scope.
 
+1) Implement a REPL command-line interface and connect it to the parser. The interface can be built in a similar way as the one in A2. It will ask for commands and then call parser methods. For the purpose of the demo, swiftly implement a printing method to visualize the parsed input i.e. the syntax tree.
 
+We did implement a REPL for the user to interact with the parser (see main.ml) The REPL
+first greets the user wiht hello world, and then it prompts the user to start using the database. The user can enter parsing commands for now.
 
 
 ##### Goals for the Next Sprint
