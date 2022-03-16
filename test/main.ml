@@ -170,7 +170,64 @@ let parse_insert_test
   name >:: fun _ ->
   assert_equal expected_output (parse_insert_test_version tokens)
 
-let parse_insert_tests = []
+let insert_token_1 =
+  tokenize "INSERT INTO Customers (CustomerName) VALUES ('Cardinal')"
+
+let insert_token_2 =
+  tokenize
+    "INSERT INTO Customers (CustomerName, ContactName, Address, City, \
+     PostalCode, Country) VALUES ('Cardinal', 'TomErichsen', \
+     'Skagen21', 'Stavanger', 4006, 'Norway');"
+
+let insert_token_3 =
+  tokenize
+    "INSERT INTO Customers (CustomerName, ContactName, Address, City, \
+     PostalCode, Country) VALUES ('Cardinal', 'TomErichsen', \
+     'Skagen21', 'Stavanger', 400.6, 'Norway');"
+
+let parse_insert_tests =
+  [
+    parse_insert_test "all strings" insert_token_1
+      ( "Cusomters",
+        [ "CustomerName" ],
+        [ Camel_db.Database.String "Cardinal" ] );
+    parse_insert_test "has ints" insert_token_2
+      ( "Cusomters",
+        [
+          "CustomerName";
+          "ContactName";
+          "Address";
+          "City";
+          "PostalCode";
+          "Country";
+        ],
+        [
+          Camel_db.Database.String "Cardinal";
+          Camel_db.Database.String "TomErichsen";
+          Camel_db.Database.String "Skagen21";
+          Camel_db.Database.String "Stavanger";
+          Camel_db.Database.Int 4006;
+          Camel_db.Database.String "Norway";
+        ] );
+    parse_insert_test "has floats" insert_token_3
+      ( "Cusomters",
+        [
+          "CustomerName";
+          "ContactName";
+          "Address";
+          "City";
+          "PostalCode";
+          "Country";
+        ],
+        [
+          Camel_db.Database.String "Cardinal";
+          Camel_db.Database.String "TomErichsen";
+          Camel_db.Database.String "Skagen21";
+          Camel_db.Database.String "Stavanger";
+          Camel_db.Database.Float 400.6;
+          Camel_db.Database.String "Norway";
+        ] );
+  ]
 
 let parse_delete_test
     (name : string)
@@ -179,7 +236,10 @@ let parse_delete_test
   name >:: fun _ ->
   assert_equal expected_output (parse_delete_test_version tokens)
 
-let parse_delete_tests = []
+let delete_token = tokenize "DELETE FROM Customers WHERE CustomerID = 1"
+
+let parse_delete_tests =
+  [ parse_delete_test "delete command" delete_token "Customers" ]
 
 let parse_update_test
     (name : string)
@@ -188,11 +248,37 @@ let parse_update_test
   name >:: fun _ ->
   assert_equal expected_output (parse_update_test_version tokens)
 
-let parse_update_tests = []
+let update_token_1 =
+  tokenize
+    "UPDATE Customers SET ContactName = 'Alfred Schmidt', City = \
+     'Frankfurt' WHERE CustomerID = 1"
+
+let update_token_2 =
+  tokenize
+    "UPDATE Customers SET ContactName = 6.2, City = 'Frankfurt', \
+     Address = 9 WHERE CustomerID = 1"
+
+let parse_update_tests =
+  [
+    parse_update_test "update command with strings only" update_token_1
+      ( "Customers",
+        [ "ContactName"; "City" ],
+        [
+          Camel_db.Database.String "Alfred Schmidt";
+          Camel_db.Database.String "Frankfurt";
+        ] );
+    parse_update_test "update command with mixed types" update_token_2
+      ( "Customers",
+        [ "ContactName"; "City"; "Address" ],
+        [
+          Camel_db.Database.Float 6.2;
+          Camel_db.Database.String "Frankfurt";
+          Camel_db.Database.Int 9;
+        ] );
+  ]
 
 let suite =
   "test suite for expression tree"
-  >::: List.flatten
-         [ parse_where_tests; parse_insert_tests; parse_delete_tests ]
+  >::: List.flatten [ parse_where_tests ]
 
 let _ = run_test_tt_main suite
