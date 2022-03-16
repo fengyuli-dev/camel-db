@@ -19,8 +19,8 @@ After that, we implemented the parser, creating individual functions to due with
 
 
 ### Activity Breakdown
-- Lee: TODO
-- Emerald: Breakdown structures of the project which includes controller adn parse. Build WHERE parse parser that evaluate condition expression that includes AND, OR. Other parser functionality is build upon this evaluation parser whenever WHERE parse is used. WHERE parse takes in condition expression and data check if the data satisfies the condition. Wrote tests to test the implemented functions with glass and black box testing, peer-reviewed for others code, and wrote part of the progress report. Approximate hours spend: 9 hours.
+- Lee: Implement the tokenizer that extracts tokens from the input text. Implement and test a binary search tree that support all basic operations as well as high-order functions. Approximate hours spend: 9 hours.
+- Emerald: Breakdown structures of the project which includes controller and parse. Build WHERE parse that evaluate condition expression that includes AND, OR. Other parser functionality is build upon this evaluation parser whenever WHERE parse is used. WHERE parse takes in condition expression and data check if the data satisfies the condition. Wrote tests to test the implemented functions with glass and black box testing, peer-reviewed for others code, and wrote part of the progress report. Approximate hours spend: 9 hours.
 - Yolanda: TODO
 - Chuhan: Contributes to discussion of the interfaces for controller and parser. Implemented the parsing functions for insert, delete, and update, and added tests for these functions. Chuhan Worked for 8 hours.
 
@@ -36,20 +36,20 @@ We defined all grammar that's needed to understand our data base. See "doc\Gramm
 3. Implement parser that parses SQL and custom commands with a naive data base.
 We successfully implement the parser that is functioning that can take in SQL commands including create, delete, update, select..where, drop, etc. For one example, if given a data table representation such as the following:
 
-| Name        | Gender      | Age         | FavColor    |
-| ----------- | ----------- | ----------- | ----------- |
-| Emerald     | Female      | 19          | Blue        |
-| Chuhan      | Female      | 19          | Purple      |
-| Yolanda     | Female      | 18          | White       |
-| Lee         | Male        | 19          | LightBlue   |
+| Name    | Gender | Age | FavColor  |
+| ------- | ------ | --- | --------- |
+| Emerald | Female | 19  | Blue      |
+| Chuhan  | Female | 19  | Purple    |
+| Yolanda | Female | 18  | White     |
+| Lee     | Male   | 19  | LightBlue |
 
 SELECT * WHERE "Gender" = "Female" AND "Age" = 19
 
 will return data that represents the following:
-| <!-- -->    | <!-- -->    | <!-- -->    | <!-- -->    |
-|-------------|-------------|-------------|-------------|
-| Emerald     | Female      | 19          | Blue        |
-| Chuhan      | Female      | 19          | Purple      |
+| <!-- --> | <!-- --> | <!-- --> | <!-- --> |
+| -------- | -------- | -------- | -------- |
+| Emerald  | Female   | 19       | Blue     |
+| Chuhan   | Female   | 19       | Purple   |
 
 
 ### Good : 40/40
