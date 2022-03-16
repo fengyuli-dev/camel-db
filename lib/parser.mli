@@ -1,5 +1,5 @@
 open Tokenizer
-open Value
+open Database
 
 (** Representation of dynamic adventure state. *)
 
@@ -21,7 +21,7 @@ val parse_insert : token list -> unit
 (** [parse_insert input] parse an insert databse command to send to
     controller_insert to insert a new row into an existing table*)
 val parse_insert_test_version :
-  token list -> string * string list * value_type list
+  token list -> string * string list * val_type list
 
 (** [parse_delete input] parses a delete database command to send to
     controller_delete to delete rows that satisfies a certain condition *)
@@ -39,9 +39,12 @@ val parse_select : token list -> unit
     either an entire database or entire table. *)
 val parse_drop : token list -> unit
 
-(** [parse_where tokens] is a partial function that takes in data in
-    form of pair_data and return a bool. True if data satisfy condition
-    [tokens] and false otherwise *)
+(** [parse_where tokens] is a partial function that takes condition
+    expression and a pair_data. Return true if data satisfy condition
+    [tokens] and false otherwise. Requires condition expression to be
+    token type but each must be one of expr type, and pair_data must
+    have data with same length, column value must be in String and data
+    value must be in the corrisponidng String or Int or Float *)
 val parse_where : token list -> token list * token list -> bool
 
 (* exposed helper to test, starting below, comment out when submit *)
