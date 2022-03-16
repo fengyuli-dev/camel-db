@@ -52,13 +52,17 @@ will return data that represents the following:
 | Chuhan      | Female      | 19          | Purple      |
 
 
-### Good :
+### Good : 40/40
 
 
 
-### Excellent: 
+### Excellent: 20/20
 
 
 
 
 ##### Goals for the Next Sprint
+In MS2 we plan to accomplish the following:
+1. (Satisfactory) Implement internal representation of data, and achieve storing data in a file on the hard drive.
+2. (Good) Implement database CRUD operations using the indexing data structure and the internal representation.
+3. (Excellent) Connect the command line interface and the parser to the database to demo database operations easier.
