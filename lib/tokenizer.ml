@@ -88,13 +88,6 @@ let match_token = function
   | "!=" -> BinaryOp NE
   | "AND" -> LogicOp AND
   | "OR" -> LogicOp OR
-  | "INTEGER" -> Datatype Int
-  | "INT" -> Datatype Int
-  | "FLOAT" -> Datatype Float
-  | "DOUBLE" -> Datatype Float
-  | "CHAR" -> Datatype String
-  | "TEXT" -> Datatype String
-  | "VARCHAR" -> Datatype String
   | ";" -> EndOfQuery EOQ
   | s -> match_terminal s
 

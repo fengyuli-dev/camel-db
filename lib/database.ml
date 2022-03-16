@@ -9,7 +9,6 @@ type val_type =
 
 type col_type =   
   | String
-  | Char
   | Int
   | Float
   | Boolean
