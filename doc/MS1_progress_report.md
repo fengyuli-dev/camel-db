@@ -1,7 +1,6 @@
 # MS1 Progress Report
 
-Authors:
-
+### Authors:
 1. Li Fengyu (fl334)
 2. Yolanda Wang (yw583)
 3. Chuhan Ouyang (co232)
@@ -81,12 +80,14 @@ If we traverse the tree inorder, the result will be [ (1, 2); (3, 4); (5, 6); (7
 ### Excellent: 15/15
 There is one task for excellent scope.
 
-1. Implement a REPL command-line interface and connect it to the parser. The interface can be built in a similar way as the one in A2. It will ask for commands and then call parser methods. For the purpose of the demo, swiftly implement a printing method to visualize the parsed.
+1. Implement a REPL command-line interface and connect it to the parser. The interface can be built in a similar way as the one in A2. It will ask for commands and then call parser methods. For the purpose of the demo, also implement a pretty printer method to visualize the parsed.
 
 We did implement a REPL for the user to interact with the parser (see "doc\install.md"). We used "make start" command to indicate starting of the program. The REPL first greets the user with hello world, and then it prompts the user to start using the database. The user can enter parsing commands for now.
 
+The pretty printer that demonstrate the command is successfully parsed and the data base had been updated.
 
-##### Goals for the Next Sprint
+
+## Goals for the Next Sprint
 In MS2 we plan to accomplish the following:
 ### Satisfactory
 1. Implement internal representation of data base.
