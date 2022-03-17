@@ -366,6 +366,7 @@ let rec print_function exprs =
 (** see mli file for details discription *)
 let parse_where (tokens : token list) =
   let exprs = List.map token_to_expr_type tokens in
+  if print_condition then print_function exprs else print_string "";
   parse_where_helper exprs
 
 (* end of parse_where *)
