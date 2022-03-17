@@ -9,10 +9,10 @@ test:
 test_tree:
 	OCAMLRUNPARAM=b dune exec test/tree.exe
 
-test_expr:
-	OCAMLRUNPARAM=b dune exec test/expr.exe
+# test_expr:
+#	OCAMLRUNPARAM=b dune exec test/expr.exe
 
-testall: test test_tree test_expr
+testall: test test_tree
 
 start:
 	OCAMLRUNPARAM=b dune exec bin/main.exe

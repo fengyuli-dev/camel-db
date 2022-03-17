@@ -324,9 +324,49 @@ let parse_where_helper
   let or_lst = expressions_or tokens in
   evaluate_or or_lst pair_data'
 
+let print_condition = true
+
+let rec print_function exprs =
+  match exprs with
+  | AND :: t ->
+      print_string "AND ";
+      print_function t
+  | OR :: t ->
+      print_string "OR ";
+      print_function t
+  | EQ :: t ->
+      print_string "= ";
+      print_function t
+  | GT :: t ->
+      print_string "> ";
+      print_function t
+  | LT :: t ->
+      print_string "< ";
+      print_function t
+  | GE :: t ->
+      print_string ">= ";
+      print_function t
+  | LE :: t ->
+      print_string "<= ";
+      print_function t
+  | NE :: t ->
+      print_string "!= ";
+      print_function t
+  | String s :: t ->
+      print_string s;
+      print_function t
+  | Int i :: t ->
+      print_int i;
+      print_function t
+  | Float f :: t ->
+      print_float f;
+      print_function t
+  | [] -> print_string ""
+
 (** see mli file for details discription *)
 let parse_where (tokens : token list) =
   let exprs = List.map token_to_expr_type tokens in
+  if print_condition then print_function exprs;
   parse_where_helper exprs
 
 (* end of parse_where *)
@@ -347,14 +387,9 @@ let rec parse_create tokens =
   let this_command = get_this_command tokens in
   let other_commands = get_other_commands tokens in
   try
-    (* print_endline ("\n" ^ Helper.pp_tokens this_command); *)
     let name = extract_name (List.hd this_command) in
     let tail = List.tl this_command in
-    (* print_endline "Columns: "; *)
     let cols = tail |> get_even_elem |> List.map extract_name in
-    (* print_endline (String.concat " " cols); print_endline "Types: ";
-       print_endline (String.concat " " (List.map extract_name
-       (get_odd_elem(tail)))); *)
     let types = tail |> get_odd_elem |> List.map parse_datatype in
     create name cols types;
     parse_query other_commands

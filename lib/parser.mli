@@ -61,7 +61,7 @@ val parse_drop : token list -> unit
 val parse_where : token list -> token list * token list -> bool
 
 (* exposed helper to test, starting below, comment out when submit *)
-val expressions_or : ETree.expr_type list -> ETree.expr_type list list
+(* val expressions_or : ETree.expr_type list -> ETree.expr_type list list
 
 val and_condition_evaluater :
   ETree.expr_type ->
@@ -73,6 +73,6 @@ val and_condition_evaluater :
 val evaluate_or :
   ETree.expr_type list list ->
   (ETree.expr_type * ETree.expr_type) list ->
-  bool
+  bool *)
 
 (* end exposed helper *)

@@ -1,3 +1,3 @@
 (tests
- (names main expr tree)
+ (names main tree)
  (libraries Camel_db ounit2))
