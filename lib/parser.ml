@@ -398,8 +398,10 @@ let rec parse_create tokens =
     let tail = List.tl this_command in
     let cols = tail |> get_even_elem |> List.map extract_name in
     let types = tail |> get_odd_elem |> List.map parse_datatype in
-    create name cols types;
-    parse_query other_commands
+    if List.length cols <> List.length types then
+    (create name cols types;
+    parse_query other_commands)
+    else raise (Malformed "Not correct number of columns / types")
   with Failure _ -> raise (Malformed "Syntax in Create is malformed")
 
 (* Parse Select Functions: *)
