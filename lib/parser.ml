@@ -387,14 +387,9 @@ let rec parse_create tokens =
   let this_command = get_this_command tokens in
   let other_commands = get_other_commands tokens in
   try
-    (* print_endline ("\n" ^ Helper.pp_tokens this_command); *)
     let name = extract_name (List.hd this_command) in
     let tail = List.tl this_command in
-    (* print_endline "Columns: "; *)
     let cols = tail |> get_even_elem |> List.map extract_name in
-    (* print_endline (String.concat " " cols); print_endline "Types: ";
-       print_endline (String.concat " " (List.map extract_name
-       (get_odd_elem(tail)))); *)
     let types = tail |> get_odd_elem |> List.map parse_datatype in
     create name cols types;
     parse_query other_commands
