@@ -23,3 +23,7 @@ The condition expression following WHERE phase can only use AND, OR to connect e
 Especially note that all symbols should be separated with spaces, including the ";" at the end. Here is an example for inspiration: 
 
 " CREATE Persons (PersonID INT, LastName TEXT, FirstName TEXT, Address TEXT, City TEXT) ; "
+
+### Count Lines of Code
+Run the count.sh to count the lines of code using `cloc`, this is a required dependency just for this file.
+
