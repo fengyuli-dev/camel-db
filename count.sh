@@ -5,4 +5,3 @@ echo "cloc is a required dependency."
 make clean
 cloc --by-file --include-lang=OCaml .
 make build
-make zip
