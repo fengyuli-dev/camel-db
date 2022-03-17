@@ -326,43 +326,49 @@ let parse_where_helper
 
 let print_condition = true
 
-let rec print_function exprs =
-  print_endline "\n Conditions: ";
+let rec print_function_helper exprs =
   match exprs with
   | AND :: t ->
       print_string "AND ";
-      print_function t
+      print_function_helper t
   | OR :: t ->
       print_string "OR ";
-      print_function t
+      print_function_helper t
   | EQ :: t ->
       print_string "= ";
-      print_function t
+      print_function_helper t
   | GT :: t ->
       print_string "> ";
-      print_function t
+      print_function_helper t
   | LT :: t ->
       print_string "< ";
-      print_function t
+      print_function_helper t
   | GE :: t ->
       print_string ">= ";
-      print_function t
+      print_function_helper t
   | LE :: t ->
       print_string "<= ";
-      print_function t
+      print_function_helper t
   | NE :: t ->
       print_string "!= ";
-      print_function t
+      print_function_helper t
   | String s :: t ->
       print_string s;
-      print_function t
+      print_string " ";
+      print_function_helper t
   | Int i :: t ->
       print_int i;
-      print_function t
+      print_string " ";
+      print_function_helper t
   | Float f :: t ->
       print_float f;
-      print_function t
+      print_string " ";
+      print_function_helper t
   | [] -> print_string ""
+
+let print_function exprs =
+  print_string "Condition: ";
+  print_function_helper exprs
 
 (** see mli file for details discription *)
 let parse_where (tokens : token list) =
