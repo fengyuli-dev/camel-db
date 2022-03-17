@@ -13,3 +13,9 @@ type col_type =
   | Float
   | Boolean
   
+let col_type_to_string t = 
+  match t with 
+  | String -> "String"
+  | Int -> "Int"
+  | Float -> "Float"
+  | Boolean -> "Boolean"
