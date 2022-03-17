@@ -1,4 +1,7 @@
 open Tokenizer
+open Parser
+
+exception Malformed of string
 
 let rec print_list to_string = function
   | [] -> ()
@@ -49,5 +52,32 @@ let token_to_string = function
   | Datatype String -> "Datatype String"
   | Terminal t -> terminal_to_string t
 
-let pp_tokens tokens = " { \n" ^ 
-  String.concat "\n" (List.map token_to_string tokens) ^ "\n  } "
+let pp_tokens tokens =
+  " { \n"
+  ^ String.concat "\n" (List.map token_to_string tokens)
+  ^ "\n  } "
+
+let rec find elt lst =
+  match lst with
+  | [] ->
+      raise (Malformed "command does not have the correct subcommand")
+  | h :: t -> if h = elt then 0 else 1 + find elt t
+
+let rec sublist i j l =
+  match l with
+  | [] -> raise (Malformed "empty list")
+  | h :: t ->
+      let tail = if j = 0 then [] else sublist (i - 1) (j - 1) t in
+      if i > 0 then tail else h :: tail
+
+let get_this_command (tokens : token list) : token list =
+  let eoq_index = find (EndOfQuery EOQ) tokens in
+  sublist 0 (eoq_index - 1) tokens
+
+let get_list_after_where (tokens : token list) : token list =
+  let where_index = find (SubCommand Where) tokens in
+  sublist (where_index + 1) (List.length tokens - 1) tokens
+
+let get_other_commands (tokens : token list) : token list =
+  let eoq_index = find (EndOfQuery EOQ) tokens in
+  sublist (eoq_index + 1) (List.length tokens - 1) tokens

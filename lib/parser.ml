@@ -30,14 +30,6 @@ let token_to_terminal t =
 let token_list_to_terminal_list l =
   List.map (fun x -> token_to_terminal x) l
 
-let rec terminal_to_string_list (tokens : terminal list) : string list =
-  match tokens with
-  | [] -> []
-  | Tokenizer.String s :: t -> s :: terminal_to_string_list t
-  | Tokenizer.Int i :: t -> string_of_int i :: terminal_to_string_list t
-  | Tokenizer.Float f :: t ->
-      string_of_float f :: terminal_to_string_list t
-
 (** [explode s] turn a string into a list of characters*)
 let explode (s : string) : char list =
   List.init (String.length s) (String.get s)
@@ -70,6 +62,15 @@ let trim_string (s : string) =
   s |> remove_char '(' |> remove_char ')' |> remove_char ','
   |> remove_char '\'' |> String.trim
 
+let rec terminal_to_string_list (tokens : terminal list) : string list =
+  match tokens with
+  | [] -> []
+  | Tokenizer.String s :: t ->
+      trim_string s :: terminal_to_string_list t
+  | Tokenizer.Int i :: t -> string_of_int i :: terminal_to_string_list t
+  | Tokenizer.Float f :: t ->
+      string_of_float f :: terminal_to_string_list t
+
 let rec sublist i j l =
   match l with
   | [] -> raise (Malformed "empty list")
@@ -86,8 +87,7 @@ let rec get_val_index (tokens : token list) : int =
     table name based on a sub_command keyword*)
 let parse_table (tokens : token list) (sub_command : token) =
   match tokens with
-  | [] ->
-      raise (Malformed "illegal command: does not contain table name")
+  | [] -> failwith "no table"
   | h :: t ->
       if h = sub_command then
         terminal_to_string [ List.nth t 0 |> token_to_terminal ]
@@ -188,32 +188,26 @@ let get_even_elem (lst : token list) : token list =
 (** [get_update_cols update_list] return the list of columns to update.
     Precondition: the update_list is correctly formatted*)
 let get_update_cols (update_list : token list) : string list =
-  if not (check_update_list update_list) then
-    raise (Malformed "command format is not valid")
+  if not (check_update_list update_list) then raise (Malformed "TODO")
   else
-    update_list |> remove_eq |> get_odd_elem
+    update_list |> remove_eq |> get_even_elem
     |> token_list_to_terminal_list |> terminal_to_string_list
 
 (** [get_update_vals update_list] return the list of values to update
     for the correponding columns. Precondition: the update_list is
     correctly formatted*)
 let get_update_vals (update_list : token list) : val_type list =
-  if not (check_update_list update_list) then
-    raise (Malformed "command format is not valid")
+  if not (check_update_list update_list) then raise (Malformed "TODO")
   else
-    let token_list = update_list |> remove_eq |> get_even_elem in
+    let token_list = update_list |> remove_eq |> get_odd_elem in
     List.map
       (fun elt -> elt |> token_to_terminal |> terminal_to_val_type)
       token_list
 
-(** [get_this_command tokens] return the sublist up to everything before
-    the first EOQ*)
 let get_this_command (tokens : token list) : token list =
   let eoq_index = find (EndOfQuery EOQ) tokens in
   sublist 0 (eoq_index - 1) tokens
 
-(** [get_other_commands tokens] return the sublist of everything after
-    EOQ, to pass into parse_query*)
 let get_other_commands (tokens : token list) : token list =
   let eoq_index = find (EndOfQuery EOQ) tokens in
   sublist (eoq_index + 1) (List.length tokens - 1) tokens
@@ -436,7 +430,8 @@ and parse_insert (tokens : token list) =
 (**[parse_insert_test_version tokens] runs parse_insert but it is
    friendly for testing because it has a concrete output type instead of
    unit*)
-and parse_insert_test_version (tokens : token list) =
+and parse_insert_test_version (tokens : token list) :
+    string * string list * val_type list =
   let this_command = get_this_command tokens in
   let table =
     parse_table this_command (SubCommand Into) |> trim_string
