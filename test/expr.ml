@@ -1,3 +1,11 @@
+(************************************************************
+   To run this test, you must first expose the functions
+   that's being tested under "parser.mli", and add "expr" in 
+   "test\dune".
+   This test is test only the sealed functions and is primarly
+   for developing stage and debugging during emergency only.
+ ************************************************************)
+
 open OUnit2
 open Camel_db.ETree
 open Camel_db.Parser

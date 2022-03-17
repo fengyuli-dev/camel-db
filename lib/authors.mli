@@ -29,5 +29,6 @@
 
  ************************************************************)
 
-(** [hours_worked] is the number of hours you worked on this assignment. *)
+(** [hours_worked] is the number of hours you worked on this assignment
+    (average of person). *)
 val hours_worked : int

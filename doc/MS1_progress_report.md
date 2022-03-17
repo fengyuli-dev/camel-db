@@ -20,7 +20,7 @@ After that, we implemented the parser, creating individual functions to due with
 
 ### Activity Breakdown
 - Lee: Implement the tokenizer that extracts tokens from the input text. Implement and test a binary search tree that support all basic operations as well as high-order functions. Approximate hours spend: 9 hours.
-- Emerald: Breakdown structures of the project which includes controller and parse. Build WHERE parse that evaluate condition expression that includes AND, OR. Other parser functionality is build upon this evaluation parser whenever WHERE parse is used. WHERE parse takes in condition expression and data check if the data satisfies the condition. Wrote tests to test the implemented functions with glass and black box testing, peer-reviewed for others code, and wrote part of the progress report. Approximate hours spend: 9 hours.
+- Emerald: Breakdown structures of the project which includes controller and parse. Build WHERE parse that evaluate condition expression that includes AND, OR. Other parser functionality is build upon this evaluation parser whenever WHERE parse is used. WHERE parse takes in condition expression and data check if the data satisfies the condition. Wrote tests to test for different implemented functions with glass and black box testing, peer-reviewed for others code, and wrote part of the progress report. Approximate hours spend: 10 hours.
 - Yolanda: Serve as the task manager to organize tasks of the project. Set up dune structure of the project. Implement the following core parse methods - parse, parse_query, parse_create, parse_drop, parse_select - and some of the related helper methods. Implement the REPL interface. Implement the structure of Controller.ml for future use, and created dummy printing methods for demo purposes. Approximate hours spent: 12 hours.
 - Chuhan: Contributes to discussion of the interfaces for controller and parser. Implemented the parsing functions for insert, delete, and update, and construct helper functions for general use in the parser.  Added tests for these functions. Approximate hours spent: 8 hours.
 
@@ -28,7 +28,7 @@ After that, we implemented the parser, creating individual functions to due with
 As a team, we were productive. During team meetings, we mainly focused on discussing the big ideas for project, specifically the interfaces for parsers, controller, tokens and the implementation for our tree. Then, we worked individually to implement the functions that we are assigned to complete. We accomplished what we planned and our estimates were accurate.
 
 ## Scope Grade
-### Satisfactory : 40/40
+### Satisfactory : 45/45
 1. Write test cases for parser.
 We carefully tested out our parser code with glass box testing. See all files in "test\" for different tests. This includes many tests for the foundation helper functions that are sealed by mli file.
 2. Define the grammar of language.
@@ -65,8 +65,7 @@ get, insert, and delete.
 
 2. Implement a data structure that provides indexing for the database. Most likely be a tree. It should support basic operations such as find and insert. More operations are pending a better understanding of a database’s internal representation.
 
-The data structure is implemented as a tree. The tree support functions 
-of to return the values associated with a key in the tree, calculating the size
+The data structure is implemented as a tree. The tree support functions of to return the values associated with a key in the tree, calculating the size
 of the tree, inserting a new key value pair, deleting a node, return an inorder
 representation of the node, constructing an empty tree, and fold the tree.
 
@@ -79,17 +78,20 @@ The tree representation would be visually look like the following:
 If we traverse the tree inorder, the result will be [ (1, 2); (3, 4); (5, 6); (7, 8); (9, 10)]. 
 
 
-### Excellent: 20/20
+### Excellent: 15/15
 There is one task for excellent scope.
 
-1. Implement a REPL command-line interface and connect it to the parser. The interface can be built in a similar way as the one in A2. It will ask for commands and then call parser methods. For the purpose of the demo, swiftly implement a printing method to visualize the parsed input i.e. the syntax tree.
+1. Implement a REPL command-line interface and connect it to the parser. The interface can be built in a similar way as the one in A2. It will ask for commands and then call parser methods. For the purpose of the demo, swiftly implement a printing method to visualize the parsed.
 
-We did implement a REPL for the user to interact with the parser (see main.ml) The REPL
-first greets the user with hello world, and then it prompts the user to start using the database. The user can enter parsing commands for now.
+We did implement a REPL for the user to interact with the parser (see "doc\install.md"). We used "make start" command to indicate starting of the program. The REPL first greets the user with hello world, and then it prompts the user to start using the database. The user can enter parsing commands for now.
 
 
 ##### Goals for the Next Sprint
 In MS2 we plan to accomplish the following:
-1. (Satisfactory) Implement internal representation of data, and achieve storing data in a file on the hard drive.
-2. (Good) Implement database CRUD operations using the indexing data structure and the internal representation.
-3. (Excellent) Connect the command line interface and the parser to the database to demo database operations easier.
+### Satisfactory
+1. Implement internal representation of data base.
+2. Achieve storing data in a file on the hard drive so data will be kept after accidental or regular shut down like a real data base managing system.
+### Good
+1. Implement database CRUD operations using the indexing data structure and the internal representation of tree. Right now we have parser and data base tree working on their own separately but not connected to work together yet. Manipulation and filtering of data base is needed to accomplish this.
+### Excellent
+1. Connect the command line interface and the parser to the database to demo database operations easier. We will have the command line to print out the actual representation of the data.
