@@ -55,7 +55,7 @@ will return data that represents the following:
 ### Good : 40/40
 There are two tasks for good scope.
 
-1)Write a test suite for the data structure that provides indexing.
+1. Write a test suite for the data structure that provides indexing.
 
 We carefully tested the "tree.ml" file which is a data structure that provides
 indexing into the database (see test/tree.ml). The testing file contains
@@ -63,24 +63,26 @@ functions to generate a sample tree and tests for method such like
 get, insert, and delete.
 
 
-2)Implement a data structure that provides indexing for the database. Most likely be a tree. It should support basic operations such as find and insert. More operations are pending a better understanding of a database’s internal representation.
+2. Implement a data structure that provides indexing for the database. Most likely be a tree. It should support basic operations such as find and insert. More operations are pending a better understanding of a database’s internal representation.
 
-The data structure is indeed implemented as a tree. The tree support functions 
+The data structure is implemented as a tree. The tree support functions 
 of to return the values associated with a key in the tree, calculating the size
 of the tree, inserting a new key value pair, deleting a node, return an inorder
 representation of the node, constructing an empty tree, and fold the tree.
 
 For example, suppose we generate a tree from the list
 [ (3, 4); (1, 2); (5, 6); (9, 10); (7, 8) ]
+The tree representation would be visually look like the following:
 
-If we construct a tree from the list and traverse the tree inorder, the result
-will be [ (1, 2); (3, 4); (5, 6); (7, 8); (9, 10)]. 
+<img src="sample_tree.jpg" width="200"/>
+
+If we traverse the tree inorder, the result will be [ (1, 2); (3, 4); (5, 6); (7, 8); (9, 10)]. 
 
 
 ### Excellent: 20/20
 There is one task for excellent scope.
 
-1) Implement a REPL command-line interface and connect it to the parser. The interface can be built in a similar way as the one in A2. It will ask for commands and then call parser methods. For the purpose of the demo, swiftly implement a printing method to visualize the parsed input i.e. the syntax tree.
+1. Implement a REPL command-line interface and connect it to the parser. The interface can be built in a similar way as the one in A2. It will ask for commands and then call parser methods. For the purpose of the demo, swiftly implement a printing method to visualize the parsed input i.e. the syntax tree.
 
 We did implement a REPL for the user to interact with the parser (see main.ml) The REPL
 first greets the user with hello world, and then it prompts the user to start using the database. The user can enter parsing commands for now.
