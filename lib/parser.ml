@@ -344,7 +344,7 @@ let rec print_function exprs =
       print_string "< ";
       print_function t
   | GE :: t ->
-      print_string "<= ";
+      print_string ">= ";
       print_function t
   | LE :: t ->
       print_string "<= ";
