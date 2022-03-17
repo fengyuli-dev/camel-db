@@ -327,7 +327,6 @@ let parse_where_helper
 let print_condition = true
 
 let rec print_function exprs =
-  print_endline "\n Conditions: ";
   match exprs with
   | AND :: t ->
       print_string "AND ";
