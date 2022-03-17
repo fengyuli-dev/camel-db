@@ -25,7 +25,7 @@
    list of other students with whom I collaborated, and a brief summary of that
    collaboration:
 
-   - Completed on my own
+   - Completed on our own
 
  ************************************************************)
 

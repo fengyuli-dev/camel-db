@@ -10,8 +10,11 @@ let main () =
     let rec recursive_parse () =
       try
         let line = read_line () in
+        print_endline ("The tokenizer tokenizes this string as: \n");
         print_endline (Helper.pp_tokens (Tokenizer.tokenize line));
-        Parser.parse line
+        Parser.parse line; 
+        print_string "\n> ";
+        recursive_parse ()
       with
       | Parser.Malformed m ->
           print_endline m;
