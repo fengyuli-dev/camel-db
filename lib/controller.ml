@@ -6,6 +6,8 @@ type data_type = None
 
 let create table_name cols col_types =
   print_endline ("Created " ^ table_name ^ "\n");
+  (* print_endline (String.concat " " cols);
+  print_endline (String.concat " " (List.map extract_name ); *)
   ()
 
 let select table_name cols filter_function =
