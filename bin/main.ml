@@ -3,7 +3,7 @@ open Camel_db
 (** [main] prompts for the game to play, then starts it. *)
 let main () =
   let _ =
-    ANSITerminal.print_string [ ANSITerminal.red ]
+    ANSITerminal.print_string [ ANSITerminal.green ]
       "\n\nStart using the database.\n";
     print_endline "Please enter commands below.\n";
     print_string "> ";
