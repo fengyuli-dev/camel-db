@@ -6,3 +6,11 @@ Yolanda - parse, parse_query, parse_drop, parse_select，parse_from, parse_creat
   Finish date - 13th
 Chuhan - parse_insert, parse_delete, parse_update
 
+
+
+MS2 work plan
+
+1. Tree - Lee, Yolanda, Chuhan
+mli by Friday
+2. Controller - Chuhan
+3. File system - Emerald
