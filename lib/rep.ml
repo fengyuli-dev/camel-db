@@ -12,5 +12,10 @@ type column = {
 
 type table = {
   name : string;
-  data : column tree;
+  columns : column tree;
+}
+
+let create_empty_table name = {
+  name = name;
+  columns = empty
 }
