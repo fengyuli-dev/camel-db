@@ -5,6 +5,20 @@ open Database
 exception Malformed of string
 exception Empty
 
+(* type for condition expression in parse_where *)
+type expr_type =
+  | AND
+  | OR
+  | EQ
+  | GT
+  | LT
+  | GE
+  | LE
+  | NE
+  | String of string
+  | Int of int
+  | Float of float
+
 (** General Helpers within Parser *)
 let rec terminal_to_string tokens =
   match tokens with
@@ -228,8 +242,6 @@ let rec vals_formatter (lst : Database.val_type list) :
 
 (* parse_where helpers *)
 
-open ETree
-
 let token_to_expr_type = function
   | BinaryOp EQ -> EQ
   | BinaryOp GT -> GT
@@ -239,9 +251,9 @@ let token_to_expr_type = function
   | BinaryOp NE -> NE
   | LogicOp AND -> AND
   | LogicOp OR -> OR
-  | Terminal (String s) -> ETree.String s
-  | Terminal (Int i) -> ETree.Int i
-  | Terminal (Float f) -> ETree.Float f
+  | Terminal (String s) -> String s
+  | Terminal (Int i) -> Int i
+  | Terminal (Float f) -> Float f
   | _ -> raise (Malformed "token not expr_type")
 
 let rec expression_or_helper
@@ -398,9 +410,9 @@ let rec parse_create tokens =
     let tail = List.tl this_command in
     let cols = tail |> get_even_elem |> List.map extract_name in
     let types = tail |> get_odd_elem |> List.map parse_datatype in
-    if List.length cols = List.length types then
-    (create name cols types;
-    parse_query other_commands)
+    if List.length cols = List.length types then (
+      create name cols types;
+      parse_query other_commands)
     else raise (Malformed "Not correct number of columns / types")
   with Failure _ -> raise (Malformed "Syntax in Create is malformed")
 
