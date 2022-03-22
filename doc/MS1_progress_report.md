@@ -90,9 +90,10 @@ The pretty printer that demonstrate the command is successfully parsed and the d
 ## Goals for the Next Sprint
 In MS2 we plan to accomplish the following:
 ### Satisfactory
-1. Implement internal representation of data base.
-2. Achieve storing data in a file on the hard drive so data will be kept after accidental or regular shut down like a real data base managing system.
+1. Implement internal representation of single data base.
+2. Implement database CRUD operations using the indexing data structure (tree) and the internal representation of tree (our tree). Right now we have parser and data base tree working on their own separately but not connected to work together yet. Manipulation and filtering of data base is needed to accomplish this.
+Controller: use controller to do operations on tree. can use controller to convert json to tree.
 ### Good
-1. Implement database CRUD operations using the indexing data structure and the internal representation of tree. Right now we have parser and data base tree working on their own separately but not connected to work together yet. Manipulation and filtering of data base is needed to accomplish this.
+1. Connect the command line interface and the parser to the database to demo database operations easier. We will have the command line to print out the actual representation of the data. This is also pretty print of our data to help users to visualize.
 ### Excellent
-1. Connect the command line interface and the parser to the database to demo database operations easier. We will have the command line to print out the actual representation of the data.
+1. Achieve storing data in a file on the hard drive so data will be kept after accidental or regular shut down like a real data base managing system.
