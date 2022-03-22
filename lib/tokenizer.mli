@@ -1,4 +1,3 @@
-(* first word*)
 type command_type =
   | Create
   | Select
