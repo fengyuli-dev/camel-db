@@ -70,4 +70,4 @@ let rec fold f init = function
       let r' = fold f init r in
       f l' v r'
 
-let empty () = EmptyLeaf
+let empty = EmptyLeaf

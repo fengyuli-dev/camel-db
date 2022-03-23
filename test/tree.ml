@@ -26,7 +26,7 @@ let tree_tests =
     ( "delete" >:: fun _ ->
       assert_raises NotFound (fun () -> get 1 (delete 1 sample_tree)) );
     ("size1" >:: fun _ -> assert_equal 5 (size sample_tree));
-    ("size2" >:: fun _ -> assert_equal 0 (size (empty ())));
+    ("size2" >:: fun _ -> assert_equal 0 (size empty));
     ( "fold" >:: fun _ ->
       assert_equal 60
         (fold (fun l x r -> l + r + (x * 2)) 0 sample_tree) );

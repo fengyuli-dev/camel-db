@@ -28,8 +28,8 @@ val delete : int -> 'a tree -> 'a tree
 (** Returns a list of the values in the tree, in order. *)
 val inorder : 'a tree -> (int * 'a) list
 
-(** Returns an empty tree. *)
-val empty : unit -> 'a tree
+(** An empty tree. *)
+val empty : 'a tree
 
 (** Bottom-up fold on tree *)
 val fold : ('a -> 'b -> 'a -> 'a) -> 'a -> 'b tree -> 'a
