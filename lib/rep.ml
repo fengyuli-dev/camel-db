@@ -1,6 +1,12 @@
 open Tree
 
-exception EmptyElement
+exception IllegalName
+
+let default_int = 0
+
+(* We're not using Stdlib.nan because Int doesn't have it. *)
+let default_float = 0.
+let default_string = "NaN"
 
 type column_data =
   | IntColumn of int tree
@@ -31,5 +37,5 @@ let get_table_name = function
   | { table_name; columns } -> table_name
 
 let create_empty_table table_name =
-  if table_name = "" then raise EmptyElement
+  if table_name = "" then raise IllegalName
   else { table_name; columns = empty }
