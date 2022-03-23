@@ -21,7 +21,10 @@ let rec get key = function
   | Node (k, v, l, r) ->
       if k = key then v else if k < key then get key r else get key l
 
-let rec insert key value = function
+let rec insert key_value_pair tree =
+  let key = fst key_value_pair in
+  let value = snd key_value_pair in
+  match tree with
   | EmptyLeaf -> Node (key, value, EmptyLeaf, EmptyLeaf)
   | Leaf (k, v) ->
       if k = key then raise Duplicate
@@ -35,9 +38,9 @@ let rec insert key value = function
         let new_leaf = Leaf (key, value) in
         if k < key then
           if is_empty r then Node (k, v, l, new_leaf)
-          else Node (k, v, l, insert key value r)
+          else Node (k, v, l, insert (key, value) r)
         else if is_empty l then Node (k, v, new_leaf, r)
-        else Node (k, v, insert key value l, r)
+        else Node (k, v, insert (key, value) l, r)
 
 let rec get_min = function
   | EmptyLeaf -> raise NotFound
@@ -70,4 +73,8 @@ let rec fold f init = function
       let r' = fold f init r in
       f l' v r'
 
+let rec generate_new_key = function
+  | EmptyLeaf -> 0
+  | Leaf (k, v) -> k + 1
+  | Node (k, v, l, r) -> generate_new_key r
 let empty = EmptyLeaf

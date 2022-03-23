@@ -19,7 +19,7 @@ val get : int -> 'a tree -> 'a
 val size : 'a tree -> int
 
 (** Inserts the given key-value pair into the tree. *)
-val insert : int -> 'a -> 'a tree -> 'a tree
+val insert : int * 'a -> 'a tree -> 'a tree
 
 (** Deletes the node with the given key from the tree. Returns the tree
     with the node with the given key removed. *)
@@ -33,3 +33,6 @@ val empty : 'a tree
 
 (** Bottom-up fold on tree *)
 val fold : ('a -> 'b -> 'a -> 'a) -> 'a -> 'b tree -> 'a
+
+(** Returns the next largest available key *)
+val generate_new_key : 'a tree -> int
