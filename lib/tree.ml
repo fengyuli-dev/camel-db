@@ -6,6 +6,8 @@ type 'a tree =
   | Leaf of (int * 'a)
   | Node of (int * 'a * 'a tree * 'a tree)
 
+let empty = EmptyLeaf
+
 let is_empty = function
   | EmptyLeaf -> true
   | _ -> false
@@ -73,8 +75,23 @@ let rec fold f init = function
       let r' = fold f init r in
       f l' v r'
 
+let filter f tree =
+  let all_key_value_pairs = inorder tree in
+  let rec filter_helper f key_value_pairs =
+    match key_value_pairs with
+    | [] -> []
+    | h :: t ->
+        if f (snd h) then h :: filter_helper f t else filter_helper f t
+  in
+  let filtered_pairs = filter_helper f all_key_value_pairs in
+  let rec generate_tree tree alist =
+    match alist with
+    | [] -> EmptyLeaf
+    | h :: t -> insert h (generate_tree tree t)
+  in
+  generate_tree empty filtered_pairs
+
 let rec generate_new_key = function
   | EmptyLeaf -> 0
   | Leaf (k, v) -> k + 1
   | Node (k, v, l, r) -> generate_new_key r
-let empty = EmptyLeaf
