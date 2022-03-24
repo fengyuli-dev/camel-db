@@ -60,3 +60,10 @@ let create_table table_name field_name_list =
   List.fold_left
     (fun x y -> insert_column x y)
     empty_table empty_columns
+
+let drop_column table field_name =
+  {
+    table_name = table.table_name;
+    columns =
+      delete (fun x -> x.field_name = field_name) table.columns;
+  }     
