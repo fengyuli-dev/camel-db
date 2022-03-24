@@ -81,3 +81,6 @@ let get_list_after_where (tokens : token list) : token list =
 let get_other_commands (tokens : token list) : token list =
   let eoq_index = find (EndOfQuery EOQ) tokens in
   sublist (eoq_index + 1) (List.length tokens - 1) tokens
+
+let duplicate_in_list f lst =
+  List.length lst = List.length (List.sort_uniq f lst)

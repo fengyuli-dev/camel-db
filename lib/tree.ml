@@ -89,7 +89,7 @@ let filter f tree =
     | [] -> EmptyLeaf
     | h :: t -> insert h (generate_tree tree t)
   in
-  generate_tree empty filtered_pairs
+  generate_tree empty filtered_pairs  
 
 let rec generate_new_key = function
   | EmptyLeaf -> 0

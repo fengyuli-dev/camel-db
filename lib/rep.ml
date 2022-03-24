@@ -1,4 +1,5 @@
 open Tree
+open Helper
 
 exception Internal of string
 exception WrongTableStructure
@@ -71,16 +72,20 @@ let create_empty_table table_name =
     }
 
 let check_table_integrity table =
-  if table.table_name = "" then false
+  if table.table_name = "" then raise IllegalName
+  else if duplicate_in_list compare (get_field_name_list table) then
+    raise IllegalName
   else
     let num_entries = size (get_index_column_data table) in
     let checker column = num_entries = size column.data in
 
     let original_length = size table.columns in
     let new_length = size (filter checker table.columns) in
-    original_length = new_length
+    if original_length <> new_length then raise WrongTableStructure
+    else ()
 
-let insert_column table column =
+(* Need to wrap this method for external use *)
+let insert_column_internal table column =
   let new_table =
     {
       table_name = table.table_name;
@@ -88,16 +93,26 @@ let insert_column table column =
         insert (generate_new_key table.columns, column) table.columns;
     }
   in
-  if check_table_integrity new_table then new_table
-  else raise WrongTableStructure
+  check_table_integrity new_table;
+  new_table
 
 let create_table table_name field_name_type_alist =
-  let empty_table = create_empty_table table_name in
-  let empty_columns =
-    List.map
-      (fun x -> create_empty_column (fst x) (snd x))
+  if
+    duplicate_in_list
+      (fun x y -> compare (fst x) (fst y))
       field_name_type_alist
-  in
-  List.fold_left
-    (fun x y -> insert_column x y)
-    empty_table empty_columns
+  then raise IllegalName
+  else
+    let empty_table = create_empty_table table_name in
+    let empty_columns =
+      List.map
+        (fun x -> create_empty_column (fst x) (snd x))
+        field_name_type_alist
+    in
+    List.fold_left
+      (fun x y -> insert_column_internal x y)
+      empty_table empty_columns
+
+(* let drop_column table column_name = let new_table = { table_name =
+   table.table_name; columns = delete } in if check_table_integrity
+   new_table then new_table else raise WrongTableStructure *)

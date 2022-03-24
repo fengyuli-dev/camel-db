@@ -23,3 +23,6 @@ val get_this_command : token list -> token list
 (** [get_other_commands tokens] return the sublist of everything after
     EOQ, to pass into parse_query*)
 val get_other_commands : token list -> token list
+
+(** Check if a list contains duplicates *)
+val duplicate_in_list : ('a -> 'a -> int) -> 'a list -> bool
