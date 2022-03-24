@@ -58,9 +58,9 @@ let get_index_column_data table =
 let get_column_data = function
   | { field_name; data } -> data
 
-let create_empty_column field_name =
-  if field_name = "" then raise IllegalName (* need fix *)
-  else { field_name; data_type = Int; data = empty }
+let create_empty_column field_name data_type =
+  if field_name = "" then raise IllegalName
+  else { field_name; data_type; data = empty }
 
 let create_empty_table table_name =
   if table_name = "" then raise IllegalName
@@ -91,10 +91,12 @@ let insert_column table column =
   if check_table_integrity new_table then new_table
   else raise WrongTableStructure
 
-let create_table table_name field_name_list =
+let create_table table_name field_name_type_alist =
   let empty_table = create_empty_table table_name in
   let empty_columns =
-    List.map (fun x -> create_empty_column x) field_name_list
+    List.map
+      (fun x -> create_empty_column (fst x) (snd x))
+      field_name_type_alist
   in
   List.fold_left
     (fun x y -> insert_column x y)
