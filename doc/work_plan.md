@@ -10,7 +10,6 @@ Chuhan - parse_insert, parse_delete, parse_update
 
 MS2 work plan
 
-1. Tree - Lee, Yolanda, Chuhan
-mli by Friday
-2. Controller - Chuhan
+1. Tree - Lee (tree) 
+2. Controller - Yolanda (create, select) Chuhan (insert, delete, update, drop)
 3. File system - Emerald
