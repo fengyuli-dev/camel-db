@@ -38,6 +38,7 @@ type table = {
 let get_field_name = function
   | { field_name; data } -> field_name
 
+(** [get_field_name_list table] is the list of field names. *)
 let get_field_name_list table =
   let rec extract_list = function
     | [] -> []
@@ -45,10 +46,11 @@ let get_field_name_list table =
   in
   extract_list (inorder table.columns)
 
+(** [get_table_name table] is the name of the table. *)
 let get_table_name = function
   | { table_name; columns } -> table_name
 
-(* Index column is always the first column *)
+(** [get_index_column_data table] is the list of row indexes in the index column *)
 let get_index_column_data table =
   match get 0 table.columns with
   | { field_name; data } ->
@@ -56,13 +58,16 @@ let get_index_column_data table =
         raise (Internal "Index column not at index 0 in column tree")
       else data
 
+(** [get_column_data column] is the list of data in provided column. *)
 let get_column_data = function
   | { field_name; data } -> data
 
+(** [create_empty_column f dt] is the constructor of a column.  *)  
 let create_empty_column field_name data_type =
   if field_name = "" then raise IllegalName
   else { field_name; data_type; data = empty }
 
+(** [create_empty_column f dt] is the constructor of a table.  *)  
 let create_empty_table table_name =
   if table_name = "" then raise IllegalName
   else
@@ -78,10 +83,9 @@ let check_table_integrity table =
   else
     let num_entries = size (get_index_column_data table) in
     let checker column = num_entries = size column.data in
-
-    let original_length = size table.columns in
-    let new_length = size (filter checker table.columns) in
-    if original_length <> new_length then raise WrongTableStructure
+    let original_col_length = size table.columns in
+    let new_col_length = size (filter checker table.columns) in
+    if original_col_length <> new_col_length then raise WrongTableStructure
     else ()
 
 (* Need to wrap this method for external use *)
