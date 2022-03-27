@@ -26,3 +26,6 @@ val get_other_commands : token list -> token list
 
 (** Check if a list contains duplicates *)
 val duplicate_in_list : ('a -> 'a -> int) -> 'a list -> bool
+
+(** [range n] generates a list of integer [0, 1, ... (n-)]*)
+val range : int -> int list

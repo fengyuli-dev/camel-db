@@ -84,3 +84,12 @@ let get_other_commands (tokens : token list) : token list =
 
 let duplicate_in_list f lst =
   List.length lst = List.length (List.sort_uniq f lst)
+
+let rec function_to_list f init =
+  match f init with
+  | None -> []
+  | Some (x, next) -> x :: function_to_list f next
+
+let range n =
+  let in_range x = if x >= n then None else Some (x, x + 1) in
+  function_to_list in_range 0
