@@ -143,11 +143,36 @@ let get_one_cell (column : column) (row_num : int) : string =
 
 (** [get_one_row table_name row_num] returns the data in this row as a
     list, organized in the same order as the order of columns*)
-
 let get_one_row (table : table) (row_num : int) : string list =
   let all_index_and_columns = inorder table.columns in
   let all_columns = List.map (fun x -> snd x) all_index_and_columns in
   List.map (fun col -> get_one_cell col row_num) all_columns
+
+(** return a list [0,1,2...(num_rows - 1)]. This would be helpful for
+    iterating through all the rows*)
+let get_list_of_row_numbers (column : column) : int list =
+  let num_rows = size (get_column_data column) in
+  range num_rows
+
+(** return a list of row numbers that needs to be kept in the new table*)
+let get_row_numbers_to_keep
+    (row_num_list : int list)
+    (filtering_function : string list * string list -> bool)
+    (table : table) : int list =
+  let col_names_list = get_field_name_list table in
+  List.filter
+    (fun row_num ->
+      filtering_function (col_names_list, get_one_row table row_num))
+    row_num_list
+
+(** plan: get a list of all row numbers, if passing this row number into
+    get_one_row and further calling filtering_function means it is
+    desired, then you keep this row number... helper function: for all
+    of these row number, you look up, and insert into new tree into a
+    new tree that is the new data. Let's standardize: filtering_function
+    return true means you WANT to keep this row. So, you need to negate
+    the filtering_function here*)
+let delete_row table_name filtering_function = failwith "TODO"
 
 let drop_table table_name = failwith "TODO"
 
@@ -155,7 +180,6 @@ let select_rows table_name field_list filtering_function =
   failwith "TODO"
 
 let insert_row table_name fieldname_type_value_list = failwith "TODO"
-let delete_row table_name filtering_function = failwith "TODO"
 
 let update_row table_name fieldname_type_value_list filtering_function =
   failwith "TODO"
