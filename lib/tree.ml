@@ -75,7 +75,7 @@ let rec fold f init = function
       let r' = fold f init r in
       f l' v r'
 
-let filter f tree =
+let filter_based_on_value f tree =
   let all_key_value_pairs = inorder tree in
   let rec filter_helper f key_value_pairs =
     match key_value_pairs with
@@ -89,7 +89,23 @@ let filter f tree =
     | [] -> EmptyLeaf
     | h :: t -> insert h (generate_tree tree t)
   in
-  generate_tree empty filtered_pairs  
+  generate_tree empty filtered_pairs
+
+let filter_based_on_key f tree =
+  let all_key_value_pairs = inorder tree in
+  let rec filter_helper f key_value_pairs =
+    match key_value_pairs with
+    | [] -> []
+    | h :: t ->
+        if f (fst h) then h :: filter_helper f t else filter_helper f t
+  in
+  let filtered_pairs = filter_helper f all_key_value_pairs in
+  let rec generate_tree tree alist =
+    match alist with
+    | [] -> EmptyLeaf
+    | h :: t -> insert h (generate_tree tree t)
+  in
+  generate_tree empty filtered_pairs
 
 let rec generate_new_key = function
   | EmptyLeaf -> 0
