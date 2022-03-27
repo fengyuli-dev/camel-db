@@ -97,7 +97,9 @@ let check_table_integrity table =
     let num_entries = size (get_index_column_data table) in
     let checker column = num_entries = size column.data in
     let original_col_length = size table.columns in
-    let new_col_length = size (filter checker table.columns) in
+    let new_col_length =
+      size (filter_based_on_value checker table.columns)
+    in
     if original_col_length <> new_col_length then
       raise WrongTableStructure
     else ()
@@ -164,6 +166,19 @@ let get_row_numbers_to_keep
     (fun row_num ->
       filtering_function (col_names_list, get_one_row table row_num))
     row_num_list
+
+(** return a new column that is the old column whose data tree only
+    contain the rows of data that we want to keep.*)
+let get_new_column (old_column : column) (rows_to_keep : int list) :
+    column =
+  let old_data_tree = get_column_data old_column in
+  let new_data_tree =
+    filter_based_on_key
+      (fun row_num ->
+        List.exists (fun elt -> elt = row_num) rows_to_keep)
+      old_data_tree
+  in
+  { old_column with data = new_data_tree }
 
 (** plan: get a list of all row numbers, if passing this row number into
     get_one_row and further calling filtering_function means it is

@@ -40,7 +40,7 @@ val filter_based_on_value : ('a -> bool) -> 'a tree -> 'a tree
 
 (* Filter on tree, where the filtering function takes into account of
    the key of the tree *)
-val filter_based_on_key : ('a -> bool) -> 'a tree -> 'a tree
+val filter_based_on_key : (int -> bool) -> 'a tree -> 'a tree
 
 (** Returns the next largest available key *)
 val generate_new_key : 'a tree -> int
