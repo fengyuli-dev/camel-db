@@ -131,14 +131,23 @@ let create_table table_name field_name_type_alist =
       (fun x y -> insert_column_internal x y)
       empty_table empty_columns
 
-(* let drop_column table column_name = let new_table = { table_name =
-   table.table_name; columns = delete } in if check_table_integrity
-   new_table then new_table else raise WrongTableStructure *)
+(** let drop_column table column_name = let new_table = { table_name =
+    table.table_name; columns = delete } in if check_table_integrity
+    new_table then new_table else raise WrongTableStructure *)
+
+(** [get_one_cell column row_num] gets the cell in this column whose
+    index matches the row_num*)
+let get_one_cell (column : column) (row_num : int) : string =
+  let data = get_column_data column in
+  get row_num data
 
 (** [get_one_row table_name row_num] returns the data in this row as a
     list, organized in the same order as the order of columns*)
-let get_one_row (table_name : string) (row_num : int) : string list =
-  failwith "TODO"
+
+let get_one_row (table : table) (row_num : int) : string list =
+  let all_index_and_columns = inorder table.columns in
+  let all_columns = List.map (fun x -> snd x) all_index_and_columns in
+  List.map (fun col -> get_one_cell col row_num) all_columns
 
 let drop_table table_name = failwith "TODO"
 
