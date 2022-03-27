@@ -135,6 +135,11 @@ let create_table table_name field_name_type_alist =
    table.table_name; columns = delete } in if check_table_integrity
    new_table then new_table else raise WrongTableStructure *)
 
+(** [get_one_row table_name row_num] returns the data in this row as a
+    list, organized in the same order as the order of columns*)
+let get_one_row (table_name : string) (row_num : int) : string list =
+  failwith "TODO"
+
 let drop_table table_name = failwith "TODO"
 
 let select_rows table_name field_list filtering_function =

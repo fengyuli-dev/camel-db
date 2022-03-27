@@ -5,6 +5,7 @@ open Database
 
 exception Malformed of string
 exception Empty
+
 (** [parse input] partition the line into commands and get rid of ";" *)
 val parse : string -> unit
 
@@ -26,8 +27,8 @@ val parse_insert : token list -> unit
 val parse_insert_test_version :
   token list -> string * string list * val_type list
 
-(**[parse_delete tokens] runs parse_delete but it is friendly for
-   testing because it has a concrete output type instead of unit*)
+(** [parse_delete_test_version input] parse an delete databse command to
+    send to controller_insert to insert a new row into an existing table*)
 val parse_delete : token list -> unit
 
 (** [parse_delete_test_version input] parse an delete databse command to
@@ -61,18 +62,13 @@ val parse_drop : token list -> unit
 val parse_where : token list -> token list * token list -> bool
 
 (* exposed helper to test, starting below, comment out when submit *)
-(* val expressions_or : ETree.expr_type list -> ETree.expr_type list list
+(* val expressions_or : ETree.expr_type list -> ETree.expr_type list
+   list
 
-val and_condition_evaluater :
-  ETree.expr_type ->
-  ETree.expr_type ->
-  ETree.expr_type ->
-  (ETree.expr_type * ETree.expr_type) list ->
-  bool
+   val and_condition_evaluater : ETree.expr_type -> ETree.expr_type ->
+   ETree.expr_type -> (ETree.expr_type * ETree.expr_type) list -> bool
 
-val evaluate_or :
-  ETree.expr_type list list ->
-  (ETree.expr_type * ETree.expr_type) list ->
-  bool *)
+   val evaluate_or : ETree.expr_type list list -> (ETree.expr_type *
+   ETree.expr_type) list -> bool *)
 
 (* end exposed helper *)
