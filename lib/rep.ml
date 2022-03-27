@@ -58,7 +58,9 @@ let get_table_name = function
 let get_database_name = function
   | { database_name; tables } -> database_name
 
-(** [get_index_column_data table] is the list of row indexes in the index column *)let get_index_column_data table =
+(** [get_index_column_data table] is the list of row indexes in the
+    index column *)
+let get_index_column_data table =
   match get 0 table.columns with
   | { field_name; data } ->
       if field_name <> "index" then
@@ -69,12 +71,12 @@ let get_database_name = function
 let get_column_data = function
   | { field_name; data } -> data
 
-(** [create_empty_column f dt] is the constructor of a column.  *)  
+(** [create_empty_column f dt] is the constructor of a column. *)
 let create_empty_column field_name data_type =
   if field_name = "" then raise IllegalName
   else { field_name; data_type; data = empty }
 
-(** [create_empty_column f dt] is the constructor of a table.  *)  
+(** [create_empty_column f dt] is the constructor of a table. *)
 let create_empty_table table_name =
   if table_name = "" then raise IllegalName
   else
@@ -96,7 +98,8 @@ let check_table_integrity table =
     let checker column = num_entries = size column.data in
     let original_col_length = size table.columns in
     let new_col_length = size (filter checker table.columns) in
-    if original_col_length <> new_col_length then raise WrongTableStructure
+    if original_col_length <> new_col_length then
+      raise WrongTableStructure
     else ()
 
 (* Need to wrap this method for external use *)
@@ -131,3 +134,14 @@ let create_table table_name field_name_type_alist =
 (* let drop_column table column_name = let new_table = { table_name =
    table.table_name; columns = delete } in if check_table_integrity
    new_table then new_table else raise WrongTableStructure *)
+
+let drop_table table_name = failwith "TODO"
+
+let select_rows table_name field_list filtering_function =
+  failwith "TODO"
+
+let insert_row table_name fieldname_type_value_list = failwith "TODO"
+let delete_row table_name filtering_function = failwith "TODO"
+
+let update_row table_name fieldname_type_value_list filtering_function =
+  failwith "TODO"
