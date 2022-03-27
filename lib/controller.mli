@@ -5,7 +5,7 @@ open Database
 val create : string -> string list -> col_type list -> unit
 (** [select table columns filter_function] *)
 val select : string -> string list -> ('a list * 'a list -> bool) -> unit
-(** [insert table columns val_types] *)
+(** [insert table columns values] *)
 val insert : string -> string list -> val_type list -> unit
 (** [delete table_name filtering_function] *)
 val delete : string -> ('a list * 'a list -> bool) -> unit

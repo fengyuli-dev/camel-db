@@ -1,5 +1,9 @@
 (** Internal Representation of the database. *)
 
+exception Internal of string
+exception WrongTableStructure
+exception WrongType
+exception IllegalName
 
 val default_int : int
 val default_float : float

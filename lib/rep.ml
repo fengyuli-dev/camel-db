@@ -35,6 +35,11 @@ type table = {
   columns : column tree;
 }
 
+type database = {
+  database_name : string;
+  tables : table tree;
+}
+
 let get_field_name = function
   | { field_name; data } -> field_name
 
@@ -50,8 +55,10 @@ let get_field_name_list table =
 let get_table_name = function
   | { table_name; columns } -> table_name
 
-(** [get_index_column_data table] is the list of row indexes in the index column *)
-let get_index_column_data table =
+let get_database_name = function
+  | { database_name; tables } -> database_name
+
+(** [get_index_column_data table] is the list of row indexes in the index column *)let get_index_column_data table =
   match get 0 table.columns with
   | { field_name; data } ->
       if field_name <> "index" then
@@ -75,6 +82,10 @@ let create_empty_table table_name =
       table_name;
       columns = insert (generate_new_key empty, index_column) empty;
     }
+
+let create_empty_database database_name =
+  if database_name = "" then raise IllegalName
+  else { database_name; tables = empty }
 
 let check_table_integrity table =
   if table.table_name = "" then raise IllegalName
