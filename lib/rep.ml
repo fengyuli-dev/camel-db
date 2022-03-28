@@ -152,15 +152,15 @@ let get_one_row (table : table) (row_num : int) : string list =
 
 (** return a list [0,1,2...(num_rows - 1)]. This would be helpful for
     iterating through all the rows*)
-let get_list_of_row_numbers (column : column) : int list =
-  let num_rows = size (get_column_data column) in
+let get_list_of_row_numbers (table : table) : int list =
+  let num_rows = size (get_index_column_data table) in
   range num_rows
 
 (** return a list of row numbers that needs to be kept in the new table*)
 let get_row_numbers_to_keep
-    (row_num_list : int list)
     (filtering_function : string list * string list -> bool)
     (table : table) : int list =
+  let row_num_list = get_list_of_row_numbers table in
   let col_names_list = get_field_name_list table in
   List.filter
     (fun row_num ->
@@ -180,15 +180,21 @@ let get_new_column (old_column : column) (rows_to_keep : int list) :
   in
   { old_column with data = new_data_tree }
 
-(** plan: get a list of all row numbers, if passing this row number into
-    get_one_row and further calling filtering_function means it is
-    desired, then you keep this row number... helper function: for all
-    of these row number, you look up, and insert into new tree into a
-    new tree that is the new data. Let's standardize: filtering_function
-    return true means you WANT to keep this row. So, you need to negate
-    the filtering_function here*)
-let delete_row table_name filtering_function = failwith "TODO"
+(** return a new table with the function f applied to each column *)
+let get_new_table (old_table : table) (f : column -> column) : table =
+  let old_column_tree = old_table.columns in
+  let new_column_tree = map f old_column_tree in
+  { old_table with columns = new_column_tree }
 
+(** delete_row_internal takes table type as input instead of taking
+    string as input for table_name*)
+let delete_row_internal
+    (table : table)
+    (filtering_function : string list * string list -> bool) : table =
+  let rows_to_keep = get_row_numbers_to_keep filtering_function table in
+  get_new_table table (fun column -> get_new_column column rows_to_keep)
+
+let delete_row table_name filtering_function = failwith "TODO"
 let drop_table table_name = failwith "TODO"
 
 let select_rows table_name field_list filtering_function =
