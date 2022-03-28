@@ -46,6 +46,14 @@ let rec insert key_value_pair tree =
         else if is_empty l then Node (k, v, new_leaf, r)
         else Node (k, v, insert (key, value) l, r)
 
+let rec update key new_value = function
+  | EmptyLeaf -> EmptyLeaf
+  | Leaf (k, v) -> if k = key then Leaf (k, new_value) else Leaf (k, v)
+  | Node (k, v, l, r) ->
+      if k = key then Node (k, new_value, l, r)
+      else if k < key then Node (k, v, update key new_value l, r)
+      else Node (k, v, l, update key new_value r)
+
 let rec get_min = function
   | EmptyLeaf -> raise NotFound
   | Leaf (k, v) -> (k, v)

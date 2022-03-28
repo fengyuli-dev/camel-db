@@ -25,6 +25,11 @@ val insert : int * 'a -> 'a tree -> 'a tree
     with the node with the given key removed. *)
 val delete : int -> 'a tree -> 'a tree
 
+(** Update the value of the node with the given key from the tree.
+    Returns the tree with the node with the given key updated. If the
+    key is not found in the tree, return the original tree*)
+val update : int -> 'a -> 'a tree -> 'a tree
+
 (** Returns a list of the values in the tree, in order. *)
 val inorder : 'a tree -> (int * 'a) list
 

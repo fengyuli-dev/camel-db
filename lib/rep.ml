@@ -200,6 +200,8 @@ let drop_table table_name = failwith "TODO"
 let select_rows table_name field_list filtering_function =
   failwith "TODO"
 
+(** plan: for each column in the list, insert in the default value,
+    then, *)
 let insert_row_internal
     (table : table)
     (fieldname_type_value_list : string * data_type * string list) :
