@@ -94,5 +94,4 @@ let range n =
   let in_range x = if x >= n then None else Some (x, x + 1) in
   function_to_list in_range 0
 
-(** [k = int, v = 'a] -> [v, k]*)
 let reverse_association_list lst = List.map (fun (a, b) -> (b, a)) lst

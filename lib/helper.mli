@@ -30,4 +30,6 @@ val duplicate_in_list : ('a -> 'a -> int) -> 'a list -> bool
 (** [range n] generates a list of integer [0, 1, ... (n-)]*)
 val range : int -> int list
 
+(** [reverse_association lst] reverse the (k, v) pair in association
+    list*)
 val reverse_association_list : (int * 'a) list -> ('a * int) list

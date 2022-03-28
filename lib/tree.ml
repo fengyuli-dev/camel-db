@@ -1,6 +1,8 @@
 exception Duplicate
 exception NotFound
 
+open Helper
+
 type 'a tree =
   | EmptyLeaf
   | Leaf of (int * 'a)
@@ -95,6 +97,14 @@ let filter_based_on_value f tree =
     | h :: t -> insert h (generate_tree tree t)
   in
   generate_tree empty filtered_pairs
+
+let get_key (f : 'a * int -> bool) tree =
+  let key_val_assoc_list = inorder tree in
+  let val_key_assoc_list =
+    reverse_association_list key_val_assoc_list
+  in
+  let val_key_pair = List.filter f val_key_assoc_list in
+  snd (List.nth val_key_pair 0)
 
 let filter_based_on_key f tree =
   let all_key_value_pairs = inorder tree in

@@ -26,7 +26,9 @@ val create_table : string -> (string * data_type) list -> table
 val select_rows :
   string -> string list -> (string list * string list -> bool) -> table
 
-(** [insert_row name fieldname_type_value_list] returns a table with *)
+(** [insert_row name fieldname_type_value_list] returns a table with one
+    row inserted, the columns that is specified in the function have
+    customized values. The rest of the columns get default values.*)
 val insert_row : string -> string * data_type * string list -> table
 
 (** [delete_row name filtering_function] returns a table without the

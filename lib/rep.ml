@@ -200,6 +200,12 @@ let drop_table table_name = failwith "TODO"
 let select_rows table_name field_list filtering_function =
   failwith "TODO"
 
+let insert_row_internal
+    (table : table)
+    (fieldname_type_value_list : string * data_type * string list) :
+    table =
+  failwith "TODO"
+
 let insert_row table_name fieldname_type_value_list = failwith "TODO"
 
 let update_row table_name fieldname_type_value_list filtering_function =
