@@ -34,6 +34,9 @@ val empty : 'a tree
 (** Bottom-up fold on tree *)
 val fold : ('a -> 'b -> 'a -> 'a) -> 'a -> 'b tree -> 'a
 
+(** Apply the map function on all values of the tree *)
+val map : ('a -> 'b) -> 'a tree -> 'b tree
+
 (* Filter on tree, where the filtering function takes into account of
    the value of the tree *)
 val filter_based_on_value : ('a -> bool) -> 'a tree -> 'a tree

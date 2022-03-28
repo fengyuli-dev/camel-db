@@ -75,6 +75,11 @@ let rec fold f init = function
       let r' = fold f init r in
       f l' v r'
 
+let rec map f = function
+  | EmptyLeaf -> EmptyLeaf
+  | Leaf (k, v) -> Leaf (k, f v)
+  | Node (k, v, l, r) -> Node (k, f v, map f l, map f r)
+
 let filter_based_on_value f tree =
   let all_key_value_pairs = inorder tree in
   let rec filter_helper f key_value_pairs =
