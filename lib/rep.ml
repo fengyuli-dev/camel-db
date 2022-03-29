@@ -250,3 +250,9 @@ let insert_row_internal
     fieldname_type_value_list new_row_index
 
 let insert_row table_name fieldname_type_value_list = failwith "TODO"
+
+
+let pretty_print table =
+  Printf.printf "Table %s has %d columns and %d valid entries\n"
+    (Rep.get_table_name table)
+    (Rep.get_col_num table) (Rep.get_row_num table)

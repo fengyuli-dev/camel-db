@@ -4,11 +4,6 @@ type table = None
 type record = None
 type data_type = None
 
-let pretty_print table =
-  Printf.printf "Table %s has %d columns and %d valid entries\n"
-    (Rep.get_table_name table)
-    (Rep.get_col_num table) (Rep.get_row_num table)
-
 let create table_name cols col_types =
   print_endline
     ("\nCalled the create function. \n\n Table: " ^ table_name
