@@ -118,10 +118,6 @@ let create_table table_name field_name_type_alist =
       (fun x y -> insert_column_internal x y)
       empty_table empty_columns
 
-(** let drop_column table column_name = let new_table = { table_name =
-    table.table_name; columns = delete } in if check_table_integrity
-    new_table then new_table else raise WrongTableStructure *)
-
 (** [get_one_cell column row_num] gets the cell in this column whose
     index matches the row_num*)
 let get_one_cell (column : column) (row_num : int) : string =
@@ -183,7 +179,11 @@ let delete_row_internal
 let delete_row table_name filtering_function = failwith "TODO"
 
 let drop_table database table_name =
-  List.filter (fun x -> x.table_name <> table_name) database
+  {
+    database with
+    tables =
+      List.filter (fun x -> x.table_name <> table_name) database.tables;
+  }
 
 let select_rows table_name field_list filtering_function =
   failwith "TODO"
