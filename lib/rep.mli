@@ -20,6 +20,8 @@ type database
 
 val get_row_num : table -> int
 
+val get_col_num : table -> int
+
 val get_table_name : table -> string
 
 (** [create_table name field_list] creates a table with table name of

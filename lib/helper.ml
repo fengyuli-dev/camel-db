@@ -95,6 +95,3 @@ let range n =
   function_to_list in_range 0
 
 let reverse_association_list lst = List.map (fun (a, b) -> (b, a)) lst
-
-let pretty_print table = Printf.printf "Table %s has %d columns and %d valid entries"
-"1" 2 2

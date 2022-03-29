@@ -73,6 +73,7 @@ let create_empty_database database_name =
   else { database_name; tables = [] }
 
 let get_row_num { table_name; columns; num_rows } = num_rows
+let get_col_num table = size table.columns
 
 let rep_ok table =
   if not debug then table
