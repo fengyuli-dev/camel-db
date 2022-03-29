@@ -1,4 +1,4 @@
-(** Internal Representation of the database. *)
+ (** Internal Representation of the database. *)
 
 exception Internal of string
 exception WrongTableStructure
@@ -23,7 +23,7 @@ val create_table : string -> (string * data_type) list -> table
 
 (** [select_rows name field_list filtering_function] returns a table
     only with rows that satisfy the condition *)
-val select_rows :
+val select_col :
   string -> string list -> (string list * string list -> bool) -> table
 
 (** [insert_row name fieldname_type_value_list] returns a table with one

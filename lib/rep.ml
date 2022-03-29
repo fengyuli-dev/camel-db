@@ -136,15 +136,15 @@ let get_one_cell (column : column) (row_num : int) : string =
   let data = get_column_data column in
   get row_num data
 
-(** [get_one_row table_name row_num] returns the data in this row as a
-    list, organized in the same order as the order of columns*)
+(** [get_one_row table_name row_num] is the data in this row as a list,
+    organized in the same order as the order of columns*)
 let get_one_row (table : table) (row_num : int) : string list =
   let all_index_and_columns = inorder table.columns in
   let all_columns = List.map (fun x -> snd x) all_index_and_columns in
   List.map (fun col -> get_one_cell col row_num) all_columns
 
-(** return a list [0,1,2...(num_rows - 1)]. This would be helpful for
-    iterating through all the rows*)
+(** [get_list_of_row_numbers table] is a list [0,1,2...(num_rows - 1)].
+    This would be helpful for iterating through all the rows*)
 let get_list_of_row_numbers (table : table) : int list =
   let num_rows = get_row_num table in
   range num_rows
@@ -162,7 +162,7 @@ let get_row_numbers_to_keep
 
 (** return a new column that is the old column whose data tree only
     contain the rows of data that we want to keep.*)
-let remove_some_row (old_column : column) (rows_to_keep : int list) :
+let filter_some_row (old_column : column) (rows_to_keep : int list) :
     column =
   let old_data_tree = get_column_data old_column in
   let new_data_tree =
@@ -179,19 +179,50 @@ let get_new_table (old_table : table) (f : column -> column) : table =
   let new_column_tree = map f old_column_tree in
   { old_table with columns = new_column_tree }
 
-(** delete_row_internal takes table type as input instead of taking
-    string as input for table_name*)
-let delete_row_internal
+(** [filter_table_rows] is the old function [delete_row_internal],
+    renamed for helper function clarity. It takes table type as input
+    instead of taking string as input for table_name*)
+let filter_table_rows
     (table : table)
     (filtering_function : string list * string list -> bool) : table =
   let rows_to_keep = get_row_numbers_to_keep filtering_function table in
   get_new_table table (fun column ->
-      remove_some_row column rows_to_keep)
+      filter_some_row column rows_to_keep)
 
 let delete_row table_name filtering_function = failwith "TODO"
 let drop_table table_name = failwith "TODO"
 
-let select_rows table_name field_list filtering_function =
+(** filters selected columns of the table according to a field name
+    list. *)
+let select_column (table : table) (field_list : string list) =
+  let new_table =
+    let new_cols =
+      filter_based_on_value
+        (fun col ->
+          List.exists (fun name -> name = col.field_name) field_list)
+        table.columns
+    in
+    {
+      table_name = "temp";
+      columns = new_cols;
+      num_rows = table.num_rows;
+    }
+  in
+  rep_ok new_table
+
+(** [select_row_internal table fields filter] returns a new table with
+    only selected columns and rows. Note: do not replace the original
+    table with this new table in controller.*)
+let select_internal
+    (table : table)
+    (field_list : string list)
+    (filtering_function : string list * string list -> bool) : table =
+  select_column (filter_table_rows table filtering_function) field_list
+
+let select
+    (table_name : string)
+    (field_list : string list)
+    (filtering_function : string list * string list -> bool) =
   failwith "TODO"
 
 (** return the default value of the data type*)
