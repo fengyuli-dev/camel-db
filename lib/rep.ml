@@ -39,6 +39,11 @@ type database = {
   tables : table list;
 }
 
+let db = {
+  database_name = "dummy";
+  tables = [];
+}
+
 let get_field_name { field_name; data } = field_name
 
 (** [get_field_name_list table] is the list of field names. *)
@@ -205,20 +210,18 @@ let select_column (table : table) (field_list : string list) =
   in
   rep_ok new_table
 
-(** [select_row_internal table fields filter] returns a new table with
+(** [select table fields filter] returns a new table with
     only selected columns and rows. Note: do not replace the original
     table with this new table in controller.*)
-let select_internal
-    (table : table)
-    (field_list : string list)
-    (filtering_function : string list * string list -> bool) : table =
-  select_column (filter_table_rows table filtering_function) field_list
-
 let select
     (table_name : string)
     (field_list : string list)
     (filtering_function : string list * string list -> bool) =
-  failwith "TODO"
+    let target_table = 
+  List.find (fun table -> table.table_name = table_name) db.tables in 
+  select_column (filter_table_rows target_table filtering_function) field_list
+      (* TODO: handle table name not found, column name invalid ....*)
+
 
 (** return the default value of the data type*)
 let default_of_data_type data_type =
