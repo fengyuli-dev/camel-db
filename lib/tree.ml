@@ -134,3 +134,15 @@ let rec generate_new_key = function
   | EmptyLeaf -> 0
   | Leaf (k, v) -> k + 1
   | Node (k, v, l, r) -> generate_new_key r
+
+let update_key tree =
+  let all_key_value_pairs = inorder tree in
+  let rec generate_tree tree alist =
+    match alist with
+    | [] -> EmptyLeaf
+    | h :: t ->
+        insert
+          (generate_new_key (generate_tree tree t), snd h)
+          (generate_tree tree t)
+  in
+  generate_tree empty all_key_value_pairs

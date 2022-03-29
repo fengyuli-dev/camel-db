@@ -161,7 +161,8 @@ let filter_some_row (old_column : column) (rows_to_keep : int list) :
         List.exists (fun elt -> elt = row_num) rows_to_keep)
       old_data_tree
   in
-  { old_column with data = new_data_tree }
+  let updated_data_tree = update_key new_data_tree in
+  { old_column with data = updated_data_tree }
 
 (** return a new table with the function f applied to each column *)
 let get_new_table (old_table : table) (f : column -> column) : table =

@@ -53,7 +53,11 @@ val filter_based_on_key : (int -> bool) -> 'a tree -> 'a tree
 (** Returns the next largest available key *)
 val generate_new_key : 'a tree -> int
 
-(** [get_key f tree] return the key in the tree whose node matches the
-    filtering_function f's condition. Precondition: no more than one
-    node in the tree would meet this condition.*)
+(** Return the key in the tree whose node matches the filtering_function
+    f's condition. Precondition: no more than one node in the tree would
+    meet this condition.*)
 val get_key : ('a * int -> bool) -> 'a tree -> int
+
+(** Update the key in a tree to make sure there are no skipped numbers
+    in the key sequence*)
+val update_key : 'a tree -> 'a tree
