@@ -27,12 +27,10 @@ type column = {
   data : string tree;
 }
 
-let index_column =
-  { field_name = "index"; data_type = Int; data = empty }
-
 type table = {
   table_name : string;
   columns : column tree;
+  num_rows : int;
 }
 
 type database = {
@@ -58,14 +56,11 @@ let get_table_name = function
 let get_database_name = function
   | { database_name; tables } -> database_name
 
-(** [get_index_column_data table] is the list of row indexes in the
-    index column *)
-let get_index_column_data table =
-  match get 0 table.columns with
-  | { field_name; data } ->
-      if field_name <> "index" then
-        raise (Internal "Index column not at index 0 in column tree")
-      else data
+(** Deprecated: [get_index_column_data table] is the list of row indexes
+    in the index column *)
+(* let get_index_column_data table = match get 0 table.columns with | {
+   field_name; data } -> if field_name <> "index" then raise (Internal
+   "Index column not at index 0 in column tree") else data *)
 
 (** [get_column_data column] is the list of data in provided column. *)
 let get_column_data = function
@@ -79,22 +74,20 @@ let create_empty_column field_name data_type =
 (** [create_empty_column f dt] is the constructor of a table. *)
 let create_empty_table table_name =
   if table_name = "" then raise IllegalName
-  else
-    {
-      table_name;
-      columns = insert (generate_new_key empty, index_column) empty;
-    }
+  else { table_name; columns = empty; num_rows = 0 }
 
 let create_empty_database database_name =
   if database_name = "" then raise IllegalName
   else { database_name; tables = empty }
 
-let check_table_integrity table =
+let get_row_num { table_name; columns; num_rows } = num_rows
+
+let rep_ok table =
   if table.table_name = "" then raise IllegalName
   else if duplicate_in_list compare (get_field_name_list table) then
     raise IllegalName
   else
-    let num_entries = size (get_index_column_data table) in
+    let num_entries = get_row_num table in
     let checker column = num_entries = size column.data in
     let original_col_length = size table.columns in
     let new_col_length =
@@ -102,7 +95,7 @@ let check_table_integrity table =
     in
     if original_col_length <> new_col_length then
       raise WrongTableStructure
-    else ()
+    else table
 
 (* Need to wrap this method for external use *)
 let insert_column_internal table column =
@@ -111,10 +104,10 @@ let insert_column_internal table column =
       table_name = table.table_name;
       columns =
         insert (generate_new_key table.columns, column) table.columns;
+      num_rows = 0;
     }
   in
-  check_table_integrity new_table;
-  new_table
+  rep_ok new_table
 
 let create_table table_name field_name_type_alist =
   if
@@ -149,9 +142,6 @@ let get_one_row (table : table) (row_num : int) : string list =
   let all_index_and_columns = inorder table.columns in
   let all_columns = List.map (fun x -> snd x) all_index_and_columns in
   List.map (fun col -> get_one_cell col row_num) all_columns
-
-let get_row_num (table : table) : int =
-  size (get_index_column_data table)
 
 (** return a list [0,1,2...(num_rows - 1)]. This would be helpful for
     iterating through all the rows*)
