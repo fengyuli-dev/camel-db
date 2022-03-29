@@ -39,11 +39,7 @@ type database = {
   tables : table list;
 }
 
-let db = {
-  database_name = "dummy";
-  tables = [];
-}
-
+let db = { database_name = "dummy"; tables = [] }
 let get_field_name { field_name; data } = field_name
 
 (** [get_field_name_list table] is the list of field names. *)
@@ -183,7 +179,19 @@ let filter_table_rows
   get_new_table table (fun column ->
       filter_some_row column rows_to_keep)
 
-let delete_row table_name filtering_function = failwith "TODO"
+let negate_filtering_function
+    (filtering_function : string list * string list -> bool)
+    (pair_list : string list * string list) =
+  filtering_function pair_list
+
+let delete_row
+    (table_name : string)
+    (filtering_function : string list * string list -> bool) : table =
+  let table =
+    List.find (fun table -> table.table_name = table_name) db.tables
+  in
+  let negated = negate_filtering_function filtering_function in
+  filter_table_rows table negated
 
 let drop_table database table_name =
   {
@@ -210,18 +218,20 @@ let select_column (table : table) (field_list : string list) =
   in
   rep_ok new_table
 
-(** [select table fields filter] returns a new table with
-    only selected columns and rows. Note: do not replace the original
-    table with this new table in controller.*)
+(** [select table fields filter] returns a new table with only selected
+    columns and rows. Note: do not replace the original table with this
+    new table in controller.*)
 let select
     (table_name : string)
     (field_list : string list)
     (filtering_function : string list * string list -> bool) =
-    let target_table = 
-  List.find (fun table -> table.table_name = table_name) db.tables in 
-  select_column (filter_table_rows target_table filtering_function) field_list
-      (* TODO: handle table name not found, column name invalid ....*)
-
+  let target_table =
+    List.find (fun table -> table.table_name = table_name) db.tables
+  in
+  select_column
+    (filter_table_rows target_table filtering_function)
+    field_list
+(* TODO: handle table name not found, column name invalid ....*)
 
 (** return the default value of the data type*)
 let default_of_data_type data_type =
