@@ -6,6 +6,7 @@ exception WrongTableStructure
 exception WrongType
 exception IllegalName
 
+let debug = true
 let default_int = 0
 
 (* We're not using Stdlib.nan because Int doesn't have it. *)
@@ -38,8 +39,7 @@ type database = {
   tables : table list;
 }
 
-let get_field_name = function
-  | { field_name; data } -> field_name
+let get_field_name { field_name; data } = field_name
 
 (** [get_field_name_list table] is the list of field names. *)
 let get_field_name_list table =
@@ -75,12 +75,12 @@ let create_empty_database database_name =
 let get_row_num { table_name; columns; num_rows } = num_rows
 
 let rep_ok table =
-  if table.table_name = "" then raise IllegalName
+  if not debug then table
+  else if table.table_name = "" then raise IllegalName
   else if duplicate_in_list compare (get_field_name_list table) then
     raise IllegalName
   else
-    let num_entries = get_row_num table in
-    let checker column = num_entries = size column.data in
+    let checker column = get_row_num table = size column.data in
     let original_col_length = size table.columns in
     let new_col_length =
       size (filter_based_on_value checker table.columns)
