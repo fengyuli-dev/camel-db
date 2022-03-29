@@ -35,7 +35,7 @@ type table = {
 
 type database = {
   database_name : string;
-  tables : table tree;
+  tables : table list;
 }
 
 let get_field_name = function
@@ -50,17 +50,9 @@ let get_field_name_list table =
   extract_list (inorder table.columns)
 
 (** [get_table_name table] is the name of the table. *)
-let get_table_name = function
-  | { table_name; columns } -> table_name
+let get_table_name { table_name; columns } = table_name
 
-let get_database_name = function
-  | { database_name; tables } -> database_name
-
-(** Deprecated: [get_index_column_data table] is the list of row indexes
-    in the index column *)
-(* let get_index_column_data table = match get 0 table.columns with | {
-   field_name; data } -> if field_name <> "index" then raise (Internal
-   "Index column not at index 0 in column tree") else data *)
+let get_database_name { database_name; tables } = database_name
 
 (** [get_column_data column] is the list of data in provided column. *)
 let get_column_data = function
@@ -78,7 +70,7 @@ let create_empty_table table_name =
 
 let create_empty_database database_name =
   if database_name = "" then raise IllegalName
-  else { database_name; tables = empty }
+  else { database_name; tables = [] }
 
 let get_row_num { table_name; columns; num_rows } = num_rows
 
@@ -189,7 +181,9 @@ let delete_row_internal
       remove_some_row column rows_to_keep)
 
 let delete_row table_name filtering_function = failwith "TODO"
-let drop_table table_name = failwith "TODO"
+
+let drop_table database table_name =
+  List.filter (fun x -> x.table_name <> table_name) database
 
 let select_rows table_name field_list filtering_function =
   failwith "TODO"
