@@ -28,9 +28,9 @@ val get_table_name : table -> string
     [name] and fields from [field_list]. *)
 val create_table : string -> (string * data_type) list -> table
 
-(** [select_rows name field_list filtering_function] returns a table
+(** [select name field_list filtering_function] returns a table
     only with rows that satisfy the condition *)
-val select_col :
+val select :
   string -> string list -> (string list * string list -> bool) -> table
 
 (** [insert_row name fieldname_type_value_list] returns a table with one
