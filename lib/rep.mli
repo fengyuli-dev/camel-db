@@ -16,6 +16,13 @@ type data_type =
 
 type column
 type table
+type database 
+
+val get_row_num : table -> int
+
+val get_col_num : table -> int
+
+val get_table_name : table -> string
 
 (** [create_table name field_list] creates a table with table name of
     [name] and fields from [field_list]. *)
@@ -45,4 +52,4 @@ val update_row :
   table
 
 (** [drop_table name] drops the given table *)
-val drop_table : string -> table
+val drop_table : database -> string -> database

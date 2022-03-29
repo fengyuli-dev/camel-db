@@ -7,35 +7,44 @@
 4. Emerald Liu (sl2322)
 
 ## Vision
+The vision for our project is still what we had described in MS0, to create a database management system (DBS) that stores data and supports basic SQL queries. Our system supports users to create and drop tables, insert, and update an entry in the table, read input and create an output. To be specific, it supports CRUD (Create, Read, Update, Delete) operations such as SELECT…FROM…WHERE, CREATE, DROP, INSERT, UPDATE, DELETE. Detailed description of these operations can be found in "doc/grammar.md". We use REPL (Read-eval-print loop) to allow clients to interact with the DBS. We followed the plan for MS1 strictly that was written in MS0 besides one minor change that our data base will support one data table right now.
 
+During our development, we found it beneficial to implement our own data structure (a binary search tree) and our own parser so that our implementation can be more customizable to our needs. We refrained from using a out-of-the-box data structure or a parser generator to demonstrate the novelty of our work.
 
 ## Summary of Progress
+During this short sprint, we have been primarily working on the internal representation of the database as well as connecting it to the controller, a central piece of program that carries out all operations and communicate with the REPL.
 
+We figured out a way to implement the internal representation using a binary search tree, which we have developed during MS1. We add multiple functionalities to the tree including all high-order functional operations. We then constructed a database that supports multiple tables. We stored every piece of data in the binary search tree, which boosts our database's efficiency compared to a list implementation. We provide numerous ways to manipulate the "data tree" in the `rep` compilation unit, which is called in the controller and serves as the key of the database. 
+
+ADD CONTROLLER AND I/O
 
 ## Activity Breakdown
-- Lee: Approximate hours spend:
+- Lee: Added some functionalities to the binary search tree. Designed the internal structure of the database and outlined the `rep` compilation unit. Implemented some functions in `rep` that operate on the data tree. Fixed many bugs. Approximate hours spend: 8
 - Emerald: Approximate hours spend:
 - Yolanda: Approximate hours spent:
 - Chuhan: Approximate hours spent:
 
 ## Productivity Analysis
+Although the amount of work we assigned to ourselves is comparable to MS1, this sprint is somehow much shorter. Therefore, we got extra productive in order to build a running internal structure of the database. 
+As a team, we were productive. During team meetings, we mainly focused on discussing the big ideas for project, specifically the interfaces for `rep`. Then, we worked individually to implement the functions that we are assigned to complete.
 
 ## Scope Grade
 ### Satisfactory : 45/45
-1. Implement internal representation of data base.
-2. Achieve storing data in a file on the hard drive so data will be kept after accidental or regular shut down like a real data base managing system.
+The satisfactory scope has two task: constructing an internal representation of the database and implementing database operations inside it. We achieved that in the `rep` compilation unit. It has a well-designed tree-based structure as well as numerous methods that manipulate these trees to realize CRUD operations.
 
-
-### Good : 40/40
-1. Implement database CRUD operations using the indexing data structure and the internal representation of tree. Right now we have parser and data base tree working on their own separately but not connected to work together yet. Manipulation and filtering of data base is needed to accomplish this.
-
-### Excellent: 15/15
-1. Connect the command line interface and the parser to the database to demo database operations easier. We will have the command line to print out the actual representation of the data.
+### Good : 记得写这个
+1. Connect the command line interface and the parser to the database to demo database operations easier. We will have the command line to print out the actual representation of the data. This is also pretty print of our data to help users to visualize.
+   
+### Excellent ： 记得写这个
+1. Achieve storing data in a file on the hard drive so data will be kept after accidental or regular shut down like a real data base managing system.
 
 ## Goals for the Next Sprint
-In MS3 we plan to accomplish the following:
+The database is almost done. This is much faster than our expectation largely because of the insanely short duration of MS2. Little things are left for MS3. In MS3 we plan to accomplish the following:
 ### Satisfactory
-
+Be able to output the content of the database to a file on hard drive.
 ### Good
-
+Import a file to the database. Correctly destructure its content and store
+them in an appropriate format.
 ### Excellent
+Connect database file I/O with the REPL interface and test the whole
+project by letting real people use it.

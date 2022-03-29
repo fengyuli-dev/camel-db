@@ -6,6 +6,7 @@ exception WrongTableStructure
 exception WrongType
 exception IllegalName
 
+let debug = true
 let default_int = 0
 
 (* We're not using Stdlib.nan because Int doesn't have it. *)
@@ -35,11 +36,10 @@ type table = {
 
 type database = {
   database_name : string;
-  tables : table tree;
+  tables : table list;
 }
 
-let get_field_name = function
-  | { field_name; data } -> field_name
+let get_field_name { field_name; data } = field_name
 
 (** [get_field_name_list table] is the list of field names. *)
 let get_field_name_list table =
@@ -50,17 +50,9 @@ let get_field_name_list table =
   extract_list (inorder table.columns)
 
 (** [get_table_name table] is the name of the table. *)
-let get_table_name = function
-  | { table_name; columns } -> table_name
+let get_table_name { table_name; columns } = table_name
 
-let get_database_name = function
-  | { database_name; tables } -> database_name
-
-(** Deprecated: [get_index_column_data table] is the list of row indexes
-    in the index column *)
-(* let get_index_column_data table = match get 0 table.columns with | {
-   field_name; data } -> if field_name <> "index" then raise (Internal
-   "Index column not at index 0 in column tree") else data *)
+let get_database_name { database_name; tables } = database_name
 
 (** [get_column_data column] is the list of data in provided column. *)
 let get_column_data = function
@@ -78,17 +70,18 @@ let create_empty_table table_name =
 
 let create_empty_database database_name =
   if database_name = "" then raise IllegalName
-  else { database_name; tables = empty }
+  else { database_name; tables = [] }
 
 let get_row_num { table_name; columns; num_rows } = num_rows
+let get_col_num table = size table.columns
 
 let rep_ok table =
-  if table.table_name = "" then raise IllegalName
+  if not debug then table
+  else if table.table_name = "" then raise IllegalName
   else if duplicate_in_list compare (get_field_name_list table) then
     raise IllegalName
   else
-    let num_entries = get_row_num table in
-    let checker column = num_entries = size column.data in
+    let checker column = get_row_num table = size column.data in
     let original_col_length = size table.columns in
     let new_col_length =
       size (filter_based_on_value checker table.columns)
@@ -125,10 +118,6 @@ let create_table table_name field_name_type_alist =
     List.fold_left
       (fun x y -> insert_column_internal x y)
       empty_table empty_columns
-
-(** let drop_column table column_name = let new_table = { table_name =
-    table.table_name; columns = delete } in if check_table_integrity
-    new_table then new_table else raise WrongTableStructure *)
 
 (** [get_one_cell column row_num] gets the cell in this column whose
     index matches the row_num*)
@@ -190,7 +179,13 @@ let filter_table_rows
       filter_some_row column rows_to_keep)
 
 let delete_row table_name filtering_function = failwith "TODO"
-let drop_table table_name = failwith "TODO"
+
+let drop_table database table_name =
+  {
+    database with
+    tables =
+      List.filter (fun x -> x.table_name <> table_name) database.tables;
+  }
 
 (** filters selected columns of the table according to a field name
     list. *)
@@ -286,3 +281,7 @@ let insert_row_internal
     fieldname_type_value_list new_row_index
 
 let insert_row table_name fieldname_type_value_list = failwith "TODO"
+
+let pretty_print table =
+  Printf.printf "Table %s has %d columns and %d valid entries\n"
+    (get_table_name table) (get_col_num table) (get_row_num table)
