@@ -1,3 +1,4 @@
+open Type
 open Tokenizer
 open Controller
 open Database
@@ -5,27 +6,14 @@ open Database
 exception Malformed of string
 exception Empty
 
-(* type for condition expression in parse_where *)
-type expr_type =
-  | AND
-  | OR
-  | EQ
-  | GT
-  | LT
-  | GE
-  | LE
-  | NE
-  | String of string
-  | Int of int
-  | Float of float
 
 (** General Helpers within Parser *)
 let rec terminal_to_string tokens =
   match tokens with
   | [] -> ""
-  | Tokenizer.String s :: t -> s ^ " " ^ terminal_to_string t
-  | Tokenizer.Int i :: t -> string_of_int i ^ " " ^ terminal_to_string t
-  | Tokenizer.Float f :: t ->
+  | String s :: t -> s ^ " " ^ terminal_to_string t
+  | Int i :: t -> string_of_int i ^ " " ^ terminal_to_string t
+  | Float f :: t ->
       string_of_float f ^ " " ^ terminal_to_string t
 
 let tokens_to_terminals tokens =
@@ -79,10 +67,10 @@ let trim_string (s : string) =
 let rec terminal_to_string_list (tokens : terminal list) : string list =
   match tokens with
   | [] -> []
-  | Tokenizer.String s :: t ->
+  | String s :: t ->
       trim_string s :: terminal_to_string_list t
-  | Tokenizer.Int i :: t -> string_of_int i :: terminal_to_string_list t
-  | Tokenizer.Float f :: t ->
+  | Int i :: t -> string_of_int i :: terminal_to_string_list t
+  | Float f :: t ->
       string_of_float f :: terminal_to_string_list t
 
 let rec sublist i j l =
@@ -158,9 +146,9 @@ let token_to_terminal (t : token) : terminal =
     string/int/float*)
 let terminal_to_val_type (t : terminal) : Database.val_type =
   match t with
-  | Tokenizer.String s -> Database.String s
-  | Tokenizer.Int i -> Database.Int i
-  | Tokenizer.Float f -> Database.Float f
+  | String s -> Database.String s
+  | Int i -> Database.Int i
+  | Float f -> Database.Float f
 
 (**[get_vals_list tokens] only return the list of temrinals associated
    with values*)

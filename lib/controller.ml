@@ -1,16 +1,16 @@
 (** Representation of dynamic adventure state. *)
 open Format
 
-(*Useful functions:
+(* Useful functions:
 
-  val print_as : int -> string -> unit
+   val print_as : int -> string -> unit
 
-  pp_print_as ppf len s prints s in the current pretty-printing box. The
-  pretty-printer formats s as if it were of length len.
+   pp_print_as ppf len s prints s in the current pretty-printing box. The
+   pretty-printer formats s as if it were of length len.
 
-  val open_tbox : unit -> unit
+   val open_tbox : unit -> unit
 
-  This box prints lines separated into cells of fixed width. *)
+   This box prints lines separated into cells of fixed width. *)
 
 let get_parent_db = "sadness"
 

@@ -1,4 +1,4 @@
-open Tokenizer
+open Type
 
 (** Prints a list of elements, separated by spaces. *)
 val print_list : ('a -> string) -> 'a list -> unit

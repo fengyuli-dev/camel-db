@@ -1,10 +1,6 @@
-open Tokenizer
 open Database
-
+open Type
 (** Representation of dynamic adventure state. *)
-
-exception Malformed of string
-exception Empty
 
 (** [parse input] partition the line into commands and get rid of ";" *)
 val parse : string -> unit
@@ -64,19 +60,6 @@ val parse_where : token list -> token list * token list -> bool
 val parse_save : token list -> unit
 
 (* exposed helper to test, starting below, comment out when deploy *)
-
-type expr_type =
-  | AND
-  | OR
-  | EQ
-  | GT
-  | LT
-  | GE
-  | LE
-  | NE
-  | String of string
-  | Int of int
-  | Float of float
 
 val expressions_or : expr_type list -> expr_type list list
 
