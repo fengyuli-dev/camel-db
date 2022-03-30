@@ -52,13 +52,17 @@ let parent_db =
   { database_name = "parent"; tables = empty; num_tables = 0 }
 
 (* Helper functions. *)
-let get_field_name { field_name; data } = field_name
+let get_field_name { field_name } = field_name
+let get_data_type { data_type } = data_type
 
-(** [get_field_name_list_internal table] is the list of field names. *)
+(** [get_field_name_list_internal table] is the assoc list of field
+    names and datatypes. *)
 let get_field_name_list_internal table =
   let rec extract_list = function
     | [] -> []
-    | h :: t -> get_field_name (snd h) :: extract_list t
+    | h :: t ->
+        (get_field_name (snd h), get_data_type (snd h))
+        :: extract_list t
   in
   extract_list (inorder table.columns)
 
@@ -190,7 +194,9 @@ let get_row_numbers_to_keep
     tree_find (fun table -> table.table_name = table_name) db.tables
   in
   let row_num_list = get_list_of_row_numbers table in
-  let col_names_list = get_field_name_list_internal table in
+  let col_names_list =
+    fst (List.split (get_field_name_list_internal table))
+  in
   List.filter
     (fun row_num ->
       filtering_function
