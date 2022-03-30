@@ -19,7 +19,8 @@ let rec print_list_newline to_string = function
 let key_value_pair_to_string to_string (k, v) =
   Printf.sprintf "key: %s, value: %s" (string_of_int k) (to_string v)
 
-let terminal_to_string = function
+let terminal_to_string (t : terminal) =
+  match t with
   | Int x -> string_of_int x
   | Float x -> string_of_float x
   | String x -> x
