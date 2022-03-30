@@ -7,7 +7,6 @@
  ************************************************************)
 
 open OUnit2
-open Camel_db.ETree
 open Camel_db.Parser
 
 (** (A = 1) or (D = 4) *)
