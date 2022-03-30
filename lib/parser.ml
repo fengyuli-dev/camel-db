@@ -544,6 +544,7 @@ and parse_query tokens =
   | Command Insert :: t -> parse_insert t
   | Command Delete :: t -> parse_delete t
   | Command Update :: t -> parse_update t
+  | Command Save :: t -> parse_save t
   | _ -> raise (Malformed "Not a valid Command")
 
 let parse (input : string) =
