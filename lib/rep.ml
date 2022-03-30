@@ -470,9 +470,10 @@ let insert_row
 
 open Format
 
-let pretty_print table =
-  Format.printf "@[Table: %s@] \n %d columns * %d entries\n"
+let pretty_print table cell_length =
+  Format.sprintf "@[Table: %s@] \n %d columns * %d entries\n"
     (get_table_name_internal table)
     (get_col_num table) (get_row_num table)
+
 
 (* TODO: fix type of fieldname_type_value_list *)

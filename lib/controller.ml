@@ -29,13 +29,6 @@ let rec pp_list ?(sep="") pp_element fmt = function
 let pp_hbox sep fmt lst = Format.fprintf fmt "@[<h>%a@]@." (pp_list ~sep:sep pp_cell) lst
 
 let create table_name cols col_types =
-  (* print_endline
-    ("\nCalled the create function. \n\n Table: " ^ table_name
-   ^ "\n Columns: " ^ String.concat " " cols);
-  print_endline
-    ("Types: "
-    ^ String.concat " " (List.map Database.col_type_to_string col_types)
-    ); *)
   print_endline "";
   ()
 
@@ -75,3 +68,5 @@ let update table_name cols values filtering_function =
 let drop table_name =
   print_endline ("Called the drop function. \n\n Table: " ^ table_name);
   ()
+
+let save table_name = failwith "not implemented."  
