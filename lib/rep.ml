@@ -3,6 +3,7 @@ open Helper
 
 exception Internal of string
 exception WrongTableStructure
+exception WrongDBStructure
 exception WrongType
 exception IllegalName
 exception ColumnDNE
@@ -42,11 +43,10 @@ type database = {
   num_tables : int;
 }
 
-let parent_db = {
-  database_name = "parent";
-  tables = empty;
-  num_tables = 0;
-}
+let parent_db =
+  { database_name = "parent"; tables = empty; num_tables = 0 }
+
+(* Helper functions. *)
 let get_field_name { field_name; data } = field_name
 
 (** [get_field_name_list table] is the list of field names. *)
@@ -76,13 +76,12 @@ let create_empty_table table_name =
   if table_name = "" then raise IllegalName
   else { table_name; columns = empty; num_rows = 0 }
 
-(* let create_empty_database database_name =
-  if database_name = "" then raise IllegalName
-  else { database_name; tables = empty; num_tables = 0 } *)
+(* let create_empty_database database_name = if database_name = "" then
+   raise IllegalName else { database_name; tables = empty; num_tables =
+   0 } *)
 
 let get_row_num { table_name; columns; num_rows } = num_rows
 let get_col_num table = size table.columns
-
 let get_table_num = parent_db.num_tables
 
 let rep_ok table =
@@ -102,12 +101,13 @@ let rep_ok table =
 
 (* Need to wrap this method for external use *)
 let insert_column_internal table column =
-    {
-      table_name = table.table_name;
-      columns =
-        insert (generate_new_key table.columns, column) table.columns;
-      num_rows = 0;
-    } |> rep_ok
+  {
+    table_name = table.table_name;
+    columns =
+      insert (generate_new_key table.columns, column) table.columns;
+    num_rows = 0;
+  }
+  |> rep_ok
 
 let create_table table_name field_name_type_alist =
   if
@@ -130,7 +130,9 @@ let create_table table_name field_name_type_alist =
     {
       parent_db with
       tables =
-  insert ((generate_new_key parent_db.tables), (rep_ok new_table)) parent_db.tables;
+        insert
+          (generate_new_key parent_db.tables, rep_ok new_table)
+          parent_db.tables;
       num_tables = parent_db.num_tables + 1;
     }
 
@@ -152,6 +154,12 @@ let get_one_row (table : table) (row_num : int) : string list =
 let get_list_of_row_numbers (table : table) : int list =
   let num_rows = get_row_num table in
   range num_rows
+
+let tree_find (filter : 'a -> bool) (tree : 'a tree) =
+  let filtered_tree = filter_based_on_value filter tree in
+  if size filtered_tree = 1 then get 0 tree else raise Not_found
+
+(* Core functions and specific helpers. *)
 
 (** return a list of row numbers that needs to be kept in the new table*)
 let get_row_numbers_to_keep
@@ -200,26 +208,40 @@ let negate_filtering_function
     (pair_list : string list * string list) =
   not (filtering_function pair_list)
 
-let delete_row (db: database)
+let delete_row
+    (db : database)
     (table_name : string)
-    (filtering_function : string list * string list -> bool) : table =
-  (* let table_list = filter_based_on_value (fun table -> table.table_name = table_name) db.tables (* in if size table_list = 1 then get 0
-    List.find (fun table -> table.table_name = table_name) db.tables *)
-  in
-  let negated = negate_filtering_function filtering_function in
-  rep_ok (filter_table_rows table negated) *) failwith "Not Implemented"
+    (filtering_function : string list * string list -> bool) =
+  try
+    let old_table =
+      tree_find (fun table -> table.table_name = table_name) db.tables
+    in
+    let negated = negate_filtering_function filtering_function in
+    let new_table = filter_table_rows old_table negated in
+    {
+      db with
+      tables =
+        (let key =
+           get_key
+             (fun (table, index) -> table.table_name = table_name)
+             db.tables
+         in
+         update key (rep_ok new_table) db.tables);
+    }
+  with Not_found -> raise TableDNE
 
-let drop_table database table_name =
+let drop_table db table_name =
   let new_database =
     {
-      database with
-      tables = filter_based_on_value
+      db with
+      tables =
+        filter_based_on_value
           (fun x -> x.table_name <> table_name)
-          database.tables
+          db.tables;
+      num_tables = db.num_tables - 1;
     }
   in
-  if size new_database.tables = size database.tables - 1
-  then new_database
+  if size new_database.tables = size db.tables - 1 then new_database
   else raise TableDNE
 
 (** filters selected columns of the table according to a field name
@@ -246,12 +268,13 @@ let select_column (table : table) (field_list : string list) : table =
 (** [select table fields filter] returns a new table with only selected
     columns and rows. Note: do not replace the original table with this
     new table in controller.*)
-let select (db : database)
+let select
+    (db : database)
     (table_name : string)
     (field_list : string list)
     (filtering_function : string list * string list -> bool) =
   let target_table =
-    try List.find (fun table -> table.table_name = table_name) db.tables
+    try tree_find (fun table -> table.table_name = table_name) db.tables
     with Not_found -> raise TableDNE
   in
   let new_table =
@@ -318,28 +341,45 @@ let update_column_in_table
 (** get the row numbers to update, for each column, these row numbers
     need to to be filled with the new value*)
 let rec update_row
+    (db : database)
     table_name
     fieldname_type_value_list
     filtering_function =
-  (let table =
-     List.find (fun table -> table.table_name = table_name) db.tables
-   in
-   let col_tree = table.columns in
-   let rows_to_keep =
-     get_row_numbers_to_keep filtering_function table
-   in
-   match fieldname_type_value_list with
-   | [] -> table
-   | (column_name, col_type, data) :: t ->
-       let col_key =
-         get_key
-           (fun (col, index) -> col.field_name = column_name)
-           col_tree
+  try
+    let new_table =
+      (let table =
+         tree_find
+           (fun table -> table.table_name = table_name)
+           db.tables
        in
-       let column = get col_key col_tree in
-       let new_column = update_all_rows column data rows_to_keep in
-       update_column_in_table col_key new_column table)
-  |> rep_ok
+       let col_tree = table.columns in
+       let rows_to_keep =
+         get_row_numbers_to_keep filtering_function table
+       in
+       match fieldname_type_value_list with
+       | [] -> table
+       | (column_name, col_type, data) :: t ->
+           let col_key =
+             get_key
+               (fun (col, index) -> col.field_name = column_name)
+               col_tree
+           in
+           let column = get col_key col_tree in
+           let new_column = update_all_rows column data rows_to_keep in
+           update_column_in_table col_key new_column table)
+      |> rep_ok
+    in
+    {
+      db with
+      tables =
+        (let key =
+           get_key
+             (fun (table, index) -> table.table_name = table_name)
+             db.tables
+         in
+         update key (rep_ok new_table) db.tables);
+    }
+  with NotFound -> raise ColumnDNE
 
 let rec update_one_row_only
     table
@@ -360,20 +400,39 @@ let rec update_one_row_only
       update_column_in_table col_key new_column table
 
 let insert_row
+    (db : database)
     (table_name : string)
-    (fieldname_type_value_list : (string * data_type * string) list) :
-    table =
-  (let table =
-     List.find (fun table -> table.table_name = table_name) db.tables
-   in
-   let new_row_index = get_row_num table + 1 in
-   let table_with_default_inserted =
-     insert_default_in_evey_column table
-   in
-   update_one_row_only table_with_default_inserted
-     fieldname_type_value_list new_row_index)
-  |> rep_ok
+    (fieldname_type_value_list : (string * data_type * string) list) =
+  try
+    let new_table =
+      (let key =
+         get_key
+           (fun (table, index) -> table.table_name = table_name)
+           db.tables
+       in
+       let table = get key db.tables in
+       let new_row_index = get_row_num table + 1 in
+       let table_with_default_inserted =
+         insert_default_in_evey_column table
+       in
+       update_one_row_only table_with_default_inserted
+         fieldname_type_value_list new_row_index)
+      |> rep_ok
+    in
+    {
+      db with
+      tables =
+        (let key =
+           get_key
+             (fun (table, index) -> table.table_name = table_name)
+             db.tables
+         in
+         update key (rep_ok new_table) db.tables);
+    }
+  with NotFound -> raise ColumnDNE
 
 let pretty_print table =
   Printf.printf "Table %s has %d columns and %d valid entries\n"
     (get_table_name table) (get_col_num table) (get_row_num table)
+
+(* TODO: fix type of fieldname_type_value_list *)

@@ -112,7 +112,11 @@ let get_key (f : 'a * int -> bool) tree =
     reverse_association_list key_val_assoc_list
   in
   let val_key_pair = List.filter f val_key_assoc_list in
+  try
   snd (List.nth val_key_pair 0)
+  with
+  | Failure _ -> raise NotFound
+  | Invalid_argument _ -> raise NotFound
 
 let filter_based_on_key f tree =
   let all_key_value_pairs = inorder tree in
