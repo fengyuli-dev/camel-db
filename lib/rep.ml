@@ -58,7 +58,7 @@ let get_field_name_list_internal table =
   in
   extract_list (inorder table.columns)
 
-(** [get_table_name_internal table] is the name of the table. *)
+(** [get_table_name_internal 1table] is the name of the table. *)
 let get_table_name_internal { table_name } = table_name
 
 let get_database_name_internal { database_name } = database_name
