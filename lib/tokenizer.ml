@@ -5,6 +5,7 @@ type command_type =
   | Insert
   | Delete
   | Update
+  | Save
 
 type sub_command_type =
   | From
@@ -90,6 +91,7 @@ let match_token = function
   | "AND" -> LogicOp AND
   | "OR" -> LogicOp OR
   | ";" -> EndOfQuery EOQ
+  | "SAVE" -> Command Save
   | s -> match_terminal s
 
 let tokenize s = List.map (fun e -> match_token e) (to_string_list s)

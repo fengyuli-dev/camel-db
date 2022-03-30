@@ -5,6 +5,7 @@ type command_type =
   | Insert
   | Delete
   | Update
+  | Save
 
 type sub_command_type =
   | From
