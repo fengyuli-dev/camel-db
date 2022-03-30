@@ -1,10 +1,6 @@
 (** Representation of dynamic adventure state. *)
 open Format
 
-type table = None
-type record = None
-type data_type = None
-
 (*Useful functions:
 
   val print_as : int -> string -> unit
@@ -16,23 +12,13 @@ type data_type = None
 
   This box prints lines separated into cells of fixed width. *)
 
-let formatter = Format.std_formatter
-let pp_cell fmt cell = Format.fprintf fmt "%s" cell
-
-let rec pp_list ?(sep = "") pp_element fmt = function
-  | [ h ] -> Format.fprintf fmt "%a" pp_element h
-  | h :: t ->
-      Format.fprintf fmt "%a%s@,%a" pp_element h sep
-        (pp_list ~sep pp_element)
-        t
-  | [] -> ()
-
-let pp_hbox sep fmt lst =
-  Format.fprintf fmt "@[<h>%a@]@." (pp_list ~sep pp_cell) lst
+let get_parent_db = "sadness"
 
 let create table_name cols col_types =
-  print_endline "";
-  ()
+  (* let updated_db = 
+  let field_type_list = List.combine cols col_types in 
+  create_table parent_db table_name field_type_list in *)
+  print_endline ""
 
 let select table_name cols filter_function =
   print_endline

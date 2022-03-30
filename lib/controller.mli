@@ -16,5 +16,5 @@ val update : string -> string list -> val_type list ->
 val drop : string -> unit
 (** [save table_name] saves the proposed table to a csv file. *)
 val save : string -> unit
-
-
+(** [get_parent_db] gives the output function the current db. *)
+val get_parent_db : string

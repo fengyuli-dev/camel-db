@@ -102,9 +102,9 @@ let create_empty_table table_name =
   if table_name = "" then raise IllegalName
   else { table_name; columns = empty; num_rows = 0 }
 
-(* let create_empty_database database_name = if database_name = "" then
+let create_empty_database database_name = if database_name = "" then
    raise IllegalName else { database_name; tables = empty; num_tables =
-   0 } *)
+   0 }
 
 let get_row_num { table_name; columns; num_rows } = num_rows
 let get_col_num table = size table.columns
