@@ -20,7 +20,11 @@ type database
 
 val get_row_num : table -> int
 val get_col_num : table -> int
-val get_table_name : table -> string
+
+(* [get_field_name_list table] returns list of column names.*)
+val get_field_name_list : string -> string list
+(* [get_column_data table column] returns list of data in this column as string list. *)
+val get_column_data : string -> string -> string list
 
 (** [create_table name field_list] creates a table with table name of
     [name] and fields from [field_list]. *)

@@ -63,8 +63,10 @@ let get_table_name { table_name } = table_name
 
 let get_database_name { database_name } = database_name
 
-(** [get_column_data column] is the list of data in provided column. *)
-let get_column_data = function
+let get_column_data table column = failwith "Unimplemented."
+
+(** [get_column_data_internal column] is the list of data in provided column. *)
+let get_column_data_internal = function
   | { field_name; data } -> data
 
 (** [create_empty_column f dt] is the constructor of a column. *)
@@ -140,7 +142,7 @@ let create_table db table_name field_name_type_alist =
 (** [get_one_cell column row_num] gets the cell in this column whose
     index matches the row_num*)
 let get_one_cell (column : column) (row_num : int) : string =
-  let data = get_column_data column in
+  let data = get_column_data_internal column in
   get row_num data
 
 (** [get_one_row table_name row_num] is the data in this row as a list,
@@ -177,7 +179,7 @@ let get_row_numbers_to_keep
     contain the rows of data that we want to keep.*)
 let filter_some_row (old_column : column) (rows_to_keep : int list) :
     column =
-  let old_data_tree = get_column_data old_column in
+  let old_data_tree = get_column_data_internal old_column in
   let new_data_tree =
     filter_based_on_key
       (fun row_num ->
