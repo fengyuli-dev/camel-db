@@ -50,20 +50,18 @@ let parent_db =
 (* Helper functions. *)
 let get_field_name { field_name; data } = field_name
 
-(** [get_field_name_list table] is the list of field names. *)
-let get_field_name_list table =
+(** [get_field_name_list_internal table] is the list of field names. *)
+let get_field_name_list_internal table =
   let rec extract_list = function
     | [] -> []
     | h :: t -> get_field_name (snd h) :: extract_list t
   in
   extract_list (inorder table.columns)
 
-(** [get_table_name table] is the name of the table. *)
-let get_table_name { table_name } = table_name
+(** [get_table_name_internal table] is the name of the table. *)
+let get_table_name_internal { table_name } = table_name
 
-let get_database_name { database_name } = database_name
-
-let get_column_data table column = failwith "Unimplemented."
+let get_database_name_internal { database_name } = database_name
 
 (** [get_column_data_internal column] is the list of data in provided column. *)
 let get_column_data_internal = function
@@ -90,7 +88,7 @@ let get_table_num db = db.num_tables
 let rep_ok table =
   if not debug then table
   else if table.table_name = "" then raise IllegalName
-  else if duplicate_in_list compare (get_field_name_list table) then
+  else if duplicate_in_list compare (get_field_name_list_internal table) then
     raise IllegalName
   else
     let checker column = get_row_num table = size column.data in
@@ -175,7 +173,7 @@ let get_row_numbers_to_keep
     tree_find (fun table -> table.table_name = table_name) db.tables
   in
   let row_num_list = get_list_of_row_numbers table in
-  let col_names_list = get_field_name_list table in
+  let col_names_list = get_field_name_list_internal table in
   List.filter
     (fun row_num ->
       filtering_function
@@ -457,6 +455,6 @@ open Format
 
 let pretty_print table =
   Format.printf "@[Table: %s@] \n %d columns * %d entries\n"
-    (get_table_name table) (get_col_num table) (get_row_num table)
+    (get_table_name_internal table) (get_col_num table) (get_row_num table)
 
 (* TODO: fix type of fieldname_type_value_list *)
