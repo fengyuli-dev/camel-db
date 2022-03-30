@@ -41,8 +41,9 @@ type database = {
   database_name : string;
   tables : table tree;
   num_tables : int;
-}
+} 
 
+(** Dummy placeholder for single database implementation. *)
 let parent_db =
   { database_name = "parent"; tables = empty; num_tables = 0 }
 
@@ -82,7 +83,7 @@ let create_empty_table table_name =
 
 let get_row_num { table_name; columns; num_rows } = num_rows
 let get_col_num table = size table.columns
-let get_table_num = parent_db.num_tables
+let get_table_num db = db.num_tables
 
 let rep_ok table =
   if not debug then table
@@ -109,7 +110,7 @@ let insert_column_internal table column =
   }
   |> rep_ok
 
-let create_table table_name field_name_type_alist =
+let create_table db table_name field_name_type_alist =
   if
     duplicate_in_list
       (fun x y -> compare (fst x) (fst y))
@@ -128,12 +129,12 @@ let create_table table_name field_name_type_alist =
         empty_table empty_columns
     in
     {
-      parent_db with
+      db with
       tables =
         insert
-          (generate_new_key parent_db.tables, rep_ok new_table)
-          parent_db.tables;
-      num_tables = parent_db.num_tables + 1;
+          (generate_new_key db.tables, rep_ok new_table)
+          db.tables;
+      num_tables = db.num_tables + 1;
     }
 
 (** [get_one_cell column row_num] gets the cell in this column whose
@@ -432,8 +433,10 @@ let insert_row
     }
   with NotFound -> raise ColumnDNE
 
-let pretty_print table =
-  Printf.printf "Table %s has %d columns and %d valid entries\n"
+open Format
+  let pretty_print table =
+  Format.printf "@[Table: %s@] \n %d columns * %d entries\n"
     (get_table_name table) (get_col_num table) (get_row_num table)
+
 
 (* TODO: fix type of fieldname_type_value_list *)
