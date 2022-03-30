@@ -14,5 +14,7 @@ val update : string -> string list -> val_type list ->
   ('b list * 'b list -> bool) -> unit
 (** [drop table_name] *)
 val drop : string -> unit
+(** [save table_name] saves the proposed table to a csv file. *)
+val save : string -> unit
 
 

@@ -522,6 +522,15 @@ and parse_update tokens =
     (parse_where (this_command |> get_list_after_where));
   get_other_commands tokens |> parse_query
 
+and parse_save tokens =
+  let this_command = get_this_command tokens in
+  let table =
+    terminal_to_string [ List.nth this_command 0 |> token_to_terminal ]
+    |> trim_string
+  in
+  Controller.save table;
+  get_other_commands tokens |> parse_query
+
 and parse_update_test_version tokens :
     string * string list * val_type list =
   let this_command = get_this_command tokens in
@@ -544,6 +553,7 @@ and parse_query tokens =
   | Command Insert :: t -> parse_insert t
   | Command Delete :: t -> parse_delete t
   | Command Update :: t -> parse_update t
+  | Command Save :: t -> parse_save t
   | _ -> raise (Malformed "Not a valid Command")
 
 let parse (input : string) =

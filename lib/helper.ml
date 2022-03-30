@@ -32,6 +32,7 @@ let token_to_string = function
   | Command Insert -> "Command Insert"
   | Command Delete -> "Command Delete"
   | Command Update -> "Command Update"
+  | Command Save -> "Command Save"
   | Target Database -> "Target Database"
   | Target Table -> "Target Table"
   | SubCommand Set -> "SubCommand Set"
@@ -52,6 +53,7 @@ let token_to_string = function
   | Datatype Float -> "Datatype Float"
   | Datatype String -> "Datatype String"
   | Terminal t -> terminal_to_string t
+  
 
 let pp_tokens tokens =
   " { \n"
