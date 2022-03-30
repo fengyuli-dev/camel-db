@@ -1,4 +1,4 @@
-See also 'test.ml' for examples, and 'csv.mli' for documentation.
+(* See also 'test.ml' for examples, and 'csv.mli' for documentation. *)
 
 open Printf
 
