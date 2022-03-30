@@ -28,7 +28,8 @@ val get_column_data : database -> string -> string -> string list
 val create_table :
   database -> string -> (string * data_type) list -> database
 
-(** [create_empty_database base_name] creates a database with given name, used in controller to create parent_db.*)
+(** [create_empty_database base_name] creates a database with given
+    name, used in controller to create parent_db.*)
 val create_empty_database : string -> database
 
 (** [select name field_list filtering_function] returns a table only
