@@ -1,4 +1,4 @@
-open Database
+
 open Type
 (** Representation of dynamic adventure state. *)
 

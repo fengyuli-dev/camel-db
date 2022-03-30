@@ -1,4 +1,5 @@
 (** Internal Representation of the database. *)
+open Type
 
 exception Internal of string
 exception WrongTableStructure
@@ -9,14 +10,6 @@ val default_int : int
 val default_float : float
 val default_string : string
 
-type data_type =
-  | Int
-  | Float
-  | String
-
-type column
-type table
-type database
 
 val get_row_num : table -> int
 val get_col_num : table -> int
@@ -34,7 +27,7 @@ val get_column_data : database -> string -> string -> string list
     [name] and fields from [field_list]. *)
 val create_table :
   database -> string -> (string * data_type) list -> database
-  
+
 (** [create_empty_database base_name] creates a database with given name, used in controller to create parent_db.*)
 val create_empty_database : string -> database
 

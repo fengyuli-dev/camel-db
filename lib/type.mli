@@ -1,8 +1,7 @@
 (** Representation of all types in the database. *)
 
 (* General types*)
-type datatype =
-  (*TODO: refactor Database.col_type*)
+type data_type =
   | Int
   | Float
   | String
@@ -58,7 +57,7 @@ type token =
   | Target of target_type
   | BinaryOp of binary_op
   | LogicOp of logic_op
-  | Datatype of datatype
+  | Datatype of data_type
   | Terminal of terminal
   | EndOfQuery of end_of_query
 
@@ -75,3 +74,29 @@ type expr_type =
   | String of string
   | Int of int
   | Float of float
+
+(* Tree types.*)
+
+  type 'a tree =
+  | EmptyLeaf
+  | Leaf of (int * 'a)
+  | Node of (int * 'a * 'a tree * 'a tree)
+
+(* Rep types. *)
+type column = {
+  field_name : string;
+  data_type : data_type;
+  data : string tree;
+}
+
+type table = {
+  table_name : string;
+  columns : column tree;
+  num_rows : int;
+}
+
+type database = {
+  database_name : string;
+  tables : table tree;
+  num_tables : int;
+}

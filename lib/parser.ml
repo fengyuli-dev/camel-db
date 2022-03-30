@@ -1,8 +1,6 @@
 open Type
 open Tokenizer
 open Controller
-open Database
-
 exception Malformed of string
 exception Empty
 
@@ -144,11 +142,11 @@ let token_to_terminal (t : token) : terminal =
 
 (** converts a terminal string/int/float to the val_type
     string/int/float*)
-let terminal_to_val_type (t : terminal) : Database.val_type =
+let terminal_to_val_type (t : terminal) : val_type =
   match t with
-  | String s -> Database.String s
-  | Int i -> Database.Int i
-  | Float f -> Database.Float f
+  | String s -> String s
+  | Int i -> Int i
+  | Float f -> Float f
 
 (**[get_vals_list tokens] only return the list of temrinals associated
    with values*)
@@ -217,8 +215,8 @@ let get_other_commands (tokens : token list) : token list =
 let rec string_formatter (lst : string list) : string list =
   List.map (fun elt -> elt |> trim_string) lst
 
-let rec vals_formatter (lst : Database.val_type list) :
-    Database.val_type list =
+let rec vals_formatter (lst : val_type list) :
+    val_type list =
   match lst with
   | [] -> []
   | h :: t -> (
@@ -380,14 +378,13 @@ let parse_where (tokens : token list) =
 
 let parse_datatype token =
   match extract_name token with
-  | "INTEGER" -> Database.Int
-  | "INT" -> Database.Int
-  | "FLOAT" -> Database.Float
-  | "DOUBLE" -> Database.Float
-  | "CHAR" -> Database.String
-  | "TEXT" -> Database.String
-  | "VARCHAR" -> Database.String
-  | "BOOL" -> Database.Boolean
+  | "INTEGER" -> Int
+  | "INT" -> Int
+  | "FLOAT" -> Float
+  | "DOUBLE" -> Float
+  | "CHAR" -> String
+  | "TEXT" -> String
+  | "VARCHAR" -> String
   | _ -> raise (Malformed "Not a valid datatype of column")
 
 let rec parse_create tokens =

@@ -1,4 +1,5 @@
 open Tree
+open Type
 open Helper
 
 exception Internal of string
@@ -20,28 +21,6 @@ let int_of_string s = if s = "NaN" then 0 else Stdlib.int_of_string s
 let float_of_string s =
   if s = "NaN" then 0. else Stdlib.float_of_string s
 
-type data_type =
-  | Int
-  | Float
-  | String
-
-type column = {
-  field_name : string;
-  data_type : data_type;
-  data : string tree;
-}
-
-type table = {
-  table_name : string;
-  columns : column tree;
-  num_rows : int;
-}
-
-type database = {
-  database_name : string;
-  tables : table tree;
-  num_tables : int;
-}
 
 let tree_find (filter : 'a -> bool) (tree : 'a tree) =
   let filtered_tree = filter_based_on_value filter tree in
@@ -399,7 +378,7 @@ let rec update_row
        in
        match fieldname_type_value_list with
        | [] -> table
-       | (column_name, col_type, data) :: t ->
+       | (column_name, data_type, data) :: t ->
            let col_key =
              get_key
                (fun (col, index) -> col.field_name = column_name)
@@ -424,13 +403,13 @@ let rec update_row
 
 let rec update_one_row_only
     table
-    (fieldname_type_value_list : (string * data_type * string) list)
+    (fieldname_type_value_list : (string * string) list)
     new_row_index =
   let col_tree = table.columns in
   let rows_to_keep = [ new_row_index ] in
   match fieldname_type_value_list with
   | [] -> table
-  | (column_name, col_type, data) :: t ->
+  | (column_name, data_type, data) :: t ->
       let col_key =
         get_key
           (fun (col, index) -> col.field_name = column_name)
@@ -443,7 +422,7 @@ let rec update_one_row_only
 let insert_row
     (db : database)
     (table_name : string)
-    (fieldname_type_value_list : (string * data_type * string) list) =
+    (fieldname_type_value_list : (string * string) list) =
   try
     let new_table =
       let key =

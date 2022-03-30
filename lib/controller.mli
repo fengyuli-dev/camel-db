@@ -1,8 +1,8 @@
 open Tokenizer
-open Database
+open Type
 
 (** [create table_name cols val_types] *)
-val create : string -> string list -> col_type list -> unit
+val create : string -> string list -> data_type list -> unit
 (** [select table columns filter_function] *)
 val select : string -> string list -> ('a list * 'a list -> bool) -> unit
 (** [insert table columns values] *)
