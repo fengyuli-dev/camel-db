@@ -43,6 +43,10 @@ type database = {
   num_tables : int;
 }
 
+let tree_find (filter : 'a -> bool) (tree : 'a tree) =
+  let filtered_tree = filter_based_on_value filter tree in
+  if size filtered_tree = 1 then get 0 tree else raise Not_found
+
 (** Dummy placeholder for single database implementation. *)
 let parent_db =
   { database_name = "parent"; tables = empty; num_tables = 0 }
@@ -58,12 +62,19 @@ let get_field_name_list_internal table =
   in
   extract_list (inorder table.columns)
 
+let get_field_name_list database table_name =
+  let table =
+    tree_find (fun x -> x.table_name = table_name) database.tables
+  in
+  get_field_name_list_internal table
+
 (** [get_table_name_internal table] is the name of the table. *)
 let get_table_name_internal { table_name } = table_name
 
 let get_database_name_internal { database_name } = database_name
 
-(** [get_column_data_internal column] is the list of data in provided column. *)
+(** [get_column_data_internal column] is the list of data in provided
+    column. *)
 let get_column_data_internal = function
   | { field_name; data } -> data
 
@@ -88,8 +99,8 @@ let get_table_num db = db.num_tables
 let rep_ok table =
   if not debug then table
   else if table.table_name = "" then raise IllegalName
-  else if duplicate_in_list compare (get_field_name_list_internal table) then
-    raise IllegalName
+  else if duplicate_in_list compare (get_field_name_list_internal table)
+  then raise IllegalName
   else
     let checker column = get_row_num table = size column.data in
     let original_col_length = size table.columns in
@@ -134,10 +145,6 @@ let create_table db table_name field_name_type_alist =
         insert (generate_new_key db.tables, rep_ok new_table) db.tables;
       num_tables = db.num_tables + 1;
     }
-
-let tree_find (filter : 'a -> bool) (tree : 'a tree) =
-  let filtered_tree = filter_based_on_value filter tree in
-  if size filtered_tree = 1 then get 0 tree else raise Not_found
 
 (** [get_one_cell column row_num] gets the cell in this column whose
     index matches the row_num*)
@@ -455,6 +462,7 @@ open Format
 
 let pretty_print table =
   Format.printf "@[Table: %s@] \n %d columns * %d entries\n"
-    (get_table_name_internal table) (get_col_num table) (get_row_num table)
+    (get_table_name_internal table)
+    (get_col_num table) (get_row_num table)
 
 (* TODO: fix type of fieldname_type_value_list *)
