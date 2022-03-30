@@ -243,9 +243,8 @@ let select
     (field_list : string list)
     (filtering_function : string list * string list -> bool) =
   let target_table =
-    try 
-    List.find (fun table -> table.table_name = table_name) db.tables
-  with Not_found -> raise TableDNE
+    try List.find (fun table -> table.table_name = table_name) db.tables
+    with Not_found -> raise TableDNE
   in
   let new_table =
     select_column
@@ -314,22 +313,25 @@ let rec update_row
     table_name
     fieldname_type_value_list
     filtering_function =
-  let table =
-    List.find (fun table -> table.table_name = table_name) db.tables
-  in
-  let col_tree = table.columns in
-  let rows_to_keep = get_row_numbers_to_keep filtering_function table in
-  match fieldname_type_value_list with
-  | [] -> table
-  | (column_name, col_type, data) :: t ->
-      let col_key =
-        get_key
-          (fun (col, index) -> col.field_name = column_name)
-          col_tree
-      in
-      let column = get col_key col_tree in
-      let new_column = update_all_rows column data rows_to_keep in
-      update_column_in_table col_key new_column table
+  (let table =
+     List.find (fun table -> table.table_name = table_name) db.tables
+   in
+   let col_tree = table.columns in
+   let rows_to_keep =
+     get_row_numbers_to_keep filtering_function table
+   in
+   match fieldname_type_value_list with
+   | [] -> table
+   | (column_name, col_type, data) :: t ->
+       let col_key =
+         get_key
+           (fun (col, index) -> col.field_name = column_name)
+           col_tree
+       in
+       let column = get col_key col_tree in
+       let new_column = update_all_rows column data rows_to_keep in
+       update_column_in_table col_key new_column table)
+  |> rep_ok
 
 let rec update_one_row_only
     table
@@ -353,15 +355,16 @@ let insert_row
     (table_name : string)
     (fieldname_type_value_list : (string * data_type * string) list) :
     table =
-  let table =
-    List.find (fun table -> table.table_name = table_name) db.tables
-  in
-  let new_row_index = get_row_num table + 1 in
-  let table_with_default_inserted =
-    insert_default_in_evey_column table
-  in
-  update_one_row_only table_with_default_inserted
-    fieldname_type_value_list new_row_index
+  (let table =
+     List.find (fun table -> table.table_name = table_name) db.tables
+   in
+   let new_row_index = get_row_num table + 1 in
+   let table_with_default_inserted =
+     insert_default_in_evey_column table
+   in
+   update_one_row_only table_with_default_inserted
+     fieldname_type_value_list new_row_index)
+  |> rep_ok
 
 let pretty_print table =
   Printf.printf "Table %s has %d columns and %d valid entries\n"
