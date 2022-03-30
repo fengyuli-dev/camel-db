@@ -5,6 +5,8 @@ exception Internal of string
 exception WrongTableStructure
 exception WrongType
 exception IllegalName
+exception ColumnDNE
+exception TableDNE
 
 let debug = true
 let default_int = 0
@@ -116,9 +118,12 @@ let create_table table_name field_name_type_alist =
         (fun x -> create_empty_column (fst x) (snd x))
         field_name_type_alist
     in
-    List.fold_left
-      (fun x y -> insert_column_internal x y)
-      empty_table empty_columns
+    let new_table =
+      List.fold_left
+        (fun x y -> insert_column_internal x y)
+        empty_table empty_columns
+    in
+    rep_ok new_table
 
 (** [get_one_cell column row_num] gets the cell in this column whose
     index matches the row_num*)
@@ -168,7 +173,7 @@ let filter_some_row (old_column : column) (rows_to_keep : int list) :
 let get_new_table (old_table : table) (f : column -> column) : table =
   let old_column_tree = old_table.columns in
   let new_column_tree = map f old_column_tree in
-  { old_table with columns = new_column_tree }
+  rep_ok { old_table with columns = new_column_tree }
 
 (** [filter_table_rows] is the old function [delete_row_internal],
     renamed for helper function clarity. It takes table type as input
@@ -177,8 +182,9 @@ let filter_table_rows
     (table : table)
     (filtering_function : string list * string list -> bool) : table =
   let rows_to_keep = get_row_numbers_to_keep filtering_function table in
-  get_new_table table (fun column ->
-      filter_some_row column rows_to_keep)
+  rep_ok
+    (get_new_table table (fun column ->
+         filter_some_row column rows_to_keep))
 
 let negate_filtering_function
     (filtering_function : string list * string list -> bool)
@@ -192,30 +198,40 @@ let delete_row
     List.find (fun table -> table.table_name = table_name) db.tables
   in
   let negated = negate_filtering_function filtering_function in
-  filter_table_rows table negated
+  rep_ok (filter_table_rows table negated)
 
 let drop_table database table_name =
-  {
-    database with
-    tables =
-      List.filter (fun x -> x.table_name <> table_name) database.tables;
-  }
+  let new_database =
+    {
+      database with
+      tables =
+        List.filter
+          (fun x -> x.table_name <> table_name)
+          database.tables;
+    }
+  in
+  if List.length new_database.tables = List.length database.tables - 1
+  then new_database
+  else raise TableDNE
 
 (** filters selected columns of the table according to a field name
     list. *)
-let select_column (table : table) (field_list : string list) =
+let select_column (table : table) (field_list : string list) : table =
   let new_table =
     let new_cols =
       filter_based_on_value
         (fun col ->
           List.exists (fun name -> name = col.field_name) field_list)
         table.columns
+      (*go through columns and check if they are included*)
     in
-    {
-      table_name = "temp";
-      columns = new_cols;
-      num_rows = table.num_rows;
-    }
+    if List.length field_list == size new_cols then
+      {
+        table_name = "temp";
+        columns = new_cols;
+        num_rows = table.num_rows;
+      }
+    else raise ColumnDNE
   in
   rep_ok new_table
 
@@ -227,12 +243,16 @@ let select
     (field_list : string list)
     (filtering_function : string list * string list -> bool) =
   let target_table =
+    try 
     List.find (fun table -> table.table_name = table_name) db.tables
+  with Not_found -> raise TableDNE
   in
-  select_column
-    (filter_table_rows target_table filtering_function)
-    field_list
-(* TODO: handle table name not found, column name invalid ....*)
+  let new_table =
+    select_column
+      (filter_table_rows target_table filtering_function)
+      field_list
+  in
+  rep_ok new_table
 
 (** return the default value of the data type*)
 let default_of_data_type data_type =
