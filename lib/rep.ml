@@ -38,10 +38,15 @@ type table = {
 
 type database = {
   database_name : string;
-  tables : table list;
+  tables : table tree;
+  num_tables : int;
 }
 
-let db = { database_name = "dummy"; tables = [] }
+let parent_db = {
+  database_name = "parent";
+  tables = empty;
+  num_tables = 0;
+}
 let get_field_name { field_name; data } = field_name
 
 (** [get_field_name_list table] is the list of field names. *)
@@ -53,9 +58,9 @@ let get_field_name_list table =
   extract_list (inorder table.columns)
 
 (** [get_table_name table] is the name of the table. *)
-let get_table_name { table_name; columns } = table_name
+let get_table_name { table_name } = table_name
 
-let get_database_name { database_name; tables } = database_name
+let get_database_name { database_name } = database_name
 
 (** [get_column_data column] is the list of data in provided column. *)
 let get_column_data = function
@@ -71,12 +76,14 @@ let create_empty_table table_name =
   if table_name = "" then raise IllegalName
   else { table_name; columns = empty; num_rows = 0 }
 
-let create_empty_database database_name =
+(* let create_empty_database database_name =
   if database_name = "" then raise IllegalName
-  else { database_name; tables = [] }
+  else { database_name; tables = empty; num_tables = 0 } *)
 
 let get_row_num { table_name; columns; num_rows } = num_rows
 let get_col_num table = size table.columns
+
+let get_table_num = parent_db.num_tables
 
 let rep_ok table =
   if not debug then table
@@ -95,15 +102,12 @@ let rep_ok table =
 
 (* Need to wrap this method for external use *)
 let insert_column_internal table column =
-  let new_table =
     {
       table_name = table.table_name;
       columns =
         insert (generate_new_key table.columns, column) table.columns;
       num_rows = 0;
-    }
-  in
-  rep_ok new_table
+    } |> rep_ok
 
 let create_table table_name field_name_type_alist =
   if
@@ -123,7 +127,12 @@ let create_table table_name field_name_type_alist =
         (fun x y -> insert_column_internal x y)
         empty_table empty_columns
     in
-    rep_ok new_table
+    {
+      parent_db with
+      tables =
+  insert ((generate_new_key parent_db.tables), (rep_ok new_table)) parent_db.tables;
+      num_tables = parent_db.num_tables + 1;
+    }
 
 (** [get_one_cell column row_num] gets the cell in this column whose
     index matches the row_num*)
@@ -191,26 +200,25 @@ let negate_filtering_function
     (pair_list : string list * string list) =
   filtering_function pair_list
 
-let delete_row
+let delete_row (db: database)
     (table_name : string)
     (filtering_function : string list * string list -> bool) : table =
-  let table =
-    List.find (fun table -> table.table_name = table_name) db.tables
+  (* let table_list = filter_based_on_value (fun table -> table.table_name = table_name) db.tables (* in if size table_list = 1 then get 0
+    List.find (fun table -> table.table_name = table_name) db.tables *)
   in
   let negated = negate_filtering_function filtering_function in
-  rep_ok (filter_table_rows table negated)
+  rep_ok (filter_table_rows table negated) *) failwith "Not Implemented"
 
 let drop_table database table_name =
   let new_database =
     {
       database with
-      tables =
-        List.filter
+      tables = filter_based_on_value
           (fun x -> x.table_name <> table_name)
-          database.tables;
+          database.tables
     }
   in
-  if List.length new_database.tables = List.length database.tables - 1
+  if size new_database.tables = size database.tables - 1
   then new_database
   else raise TableDNE
 
@@ -238,7 +246,7 @@ let select_column (table : table) (field_list : string list) : table =
 (** [select table fields filter] returns a new table with only selected
     columns and rows. Note: do not replace the original table with this
     new table in controller.*)
-let select
+let select (db : database)
     (table_name : string)
     (field_list : string list)
     (filtering_function : string list * string list -> bool) =
