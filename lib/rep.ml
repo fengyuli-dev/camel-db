@@ -198,7 +198,7 @@ let filter_table_rows
 let negate_filtering_function
     (filtering_function : string list * string list -> bool)
     (pair_list : string list * string list) =
-  filtering_function pair_list
+  not (filtering_function pair_list)
 
 let delete_row (db: database)
     (table_name : string)
@@ -251,9 +251,8 @@ let select (db : database)
     (field_list : string list)
     (filtering_function : string list * string list -> bool) =
   let target_table =
-    try 
-    List.find (fun table -> table.table_name = table_name) db.tables
-  with Not_found -> raise TableDNE
+    try List.find (fun table -> table.table_name = table_name) db.tables
+    with Not_found -> raise TableDNE
   in
   let new_table =
     select_column
@@ -294,35 +293,86 @@ let update_data_in_column
   let new_data_tree = update row_num new_data data in
   { column with data = new_data_tree }
 
-(** only update the rows in the table that meet the filtering function
-    condition*)
-let update_relevant_rows
-    (table : table)
-    (fieldname_type_value_list : string * data_type * string list)
-    (rows_to_update : int) : table =
-  failwith "TODO"
+(** given a column, update all the rows needed to be updated*)
+let rec update_all_rows
+    (column : column)
+    (new_data : string)
+    (row_num : int list) : column =
+  match row_num with
+  | [] -> column
+  | h :: t ->
+      update_data_in_column
+        (update_all_rows column new_data t)
+        new_data h
 
-let update_row_internal
+(** update the column at the index in the table to a new column and
+    return the new table*)
+let update_column_in_table
+    (col_key : int)
+    (new_column : column)
+    (table : table) =
+  let old_column_tree = table.columns in
+  let new_column_tree = update col_key new_column old_column_tree in
+  { table with columns = new_column_tree }
+
+(** get the row numbers to update, for each column, these row numbers
+    need to to be filled with the new value*)
+let rec update_row
     table_name
     fieldname_type_value_list
     filtering_function =
-  failwith "TODO"
+  (let table =
+     List.find (fun table -> table.table_name = table_name) db.tables
+   in
+   let col_tree = table.columns in
+   let rows_to_keep =
+     get_row_numbers_to_keep filtering_function table
+   in
+   match fieldname_type_value_list with
+   | [] -> table
+   | (column_name, col_type, data) :: t ->
+       let col_key =
+         get_key
+           (fun (col, index) -> col.field_name = column_name)
+           col_tree
+       in
+       let column = get col_key col_tree in
+       let new_column = update_all_rows column data rows_to_keep in
+       update_column_in_table col_key new_column table)
+  |> rep_ok
 
-let update_row table_name fieldname_type_value_list filtering_function =
-  failwith "TODO"
+let rec update_one_row_only
+    table
+    (fieldname_type_value_list : (string * data_type * string) list)
+    new_row_index =
+  let col_tree = table.columns in
+  let rows_to_keep = [ new_row_index ] in
+  match fieldname_type_value_list with
+  | [] -> table
+  | (column_name, col_type, data) :: t ->
+      let col_key =
+        get_key
+          (fun (col, index) -> col.field_name = column_name)
+          col_tree
+      in
+      let column = get col_key col_tree in
+      let new_column = update_all_rows column data rows_to_keep in
+      update_column_in_table col_key new_column table
 
-let insert_row_internal
-    (table : table)
-    (fieldname_type_value_list : string * data_type * string list) :
+let insert_row
+    (table_name : string)
+    (fieldname_type_value_list : (string * data_type * string) list) :
     table =
-  let new_row_index = get_row_num table + 1 in
-  let table_with_default_inserted =
-    insert_default_in_evey_column table
-  in
-  update_relevant_rows table_with_default_inserted
-    fieldname_type_value_list new_row_index
-
-let insert_row table_name fieldname_type_value_list = failwith "TODO"
+  (let table =
+     List.find (fun table -> table.table_name = table_name) db.tables
+   in
+   let new_row_index = get_row_num table + 1 in
+   let table_with_default_inserted =
+     insert_default_in_evey_column table
+   in
+   update_one_row_only table_with_default_inserted
+     fieldname_type_value_list new_row_index)
+  |> rep_ok
 
 let pretty_print table =
   Printf.printf "Table %s has %d columns and %d valid entries\n"
