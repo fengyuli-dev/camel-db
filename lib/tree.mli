@@ -61,3 +61,6 @@ val get_key : ('a * int -> bool) -> 'a tree -> int
 (** Update the key in a tree to make sure there are no skipped numbers
     in the key sequence*)
 val update_key : 'a tree -> 'a tree
+
+(** Createa a list containing values, sorted in ascending order *)
+val to_value_list : 'a tree -> 'a list

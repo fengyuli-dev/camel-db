@@ -112,9 +112,7 @@ let get_key (f : 'a * int -> bool) tree =
     reverse_association_list key_val_assoc_list
   in
   let val_key_pair = List.filter f val_key_assoc_list in
-  try
-  snd (List.nth val_key_pair 0)
-  with
+  try snd (List.nth val_key_pair 0) with
   | Failure _ -> raise NotFound
   | Invalid_argument _ -> raise NotFound
 
@@ -150,3 +148,8 @@ let update_key tree =
           (generate_tree tree t)
   in
   generate_tree empty all_key_value_pairs
+
+let rec to_value_list = function
+  | EmptyLeaf -> []
+  | Leaf (k, v) -> [ v ]
+  | Node (k, v, l, r) -> to_value_list l @ [ v ] @ to_value_list r

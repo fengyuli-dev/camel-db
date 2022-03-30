@@ -78,6 +78,16 @@ let get_database_name_internal { database_name } = database_name
 let get_column_data_internal = function
   | { field_name; data } -> data
 
+let get_column_data database table_name field_name =
+  let table =
+    tree_find (fun x -> x.table_name = table_name) database.tables
+  in
+  let column =
+    tree_find (fun x -> x.field_name = field_name) table.columns
+  in
+  let data = get_column_data_internal column in
+  to_value_list data
+
 (** [create_empty_column f dt] is the constructor of a column. *)
 let create_empty_column field_name data_type =
   if field_name = "" then raise IllegalName
