@@ -28,7 +28,4 @@ zip:
 
 clean:
 	dune clean
-	rm -f camel_db.zip
-
-doc:
-	dune build @doc
+	rm -f camel_

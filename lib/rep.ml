@@ -23,7 +23,10 @@ let float_of_string s =
 
 let tree_find (filter : 'a -> bool) (tree : 'a tree) =
   let filtered_tree = filter_based_on_value filter tree in
-  if size filtered_tree = 1 then get 0 tree else raise Not_found
+  if size filtered_tree = 1 then get 0 tree
+  else if size filtered_tree = 0 then raise Not_found
+  else (print_endline "more than one element found.";
+  raise Duplicate)
 
 (** Dummy placeholder for single database implementation. *)
 let parent_db =
@@ -507,16 +510,18 @@ open Format
 
 let get_all_rows (db : database) (table_name : string) =
   try
-  let table =
-    tree_find (fun table -> table.table_name = table_name) db.tables
-  in
-  let num_rows = table.num_rows in
-  let row_list = range num_rows in
-  List.map
-    (fun row ->
-      "| " ^ String.concat " | " (get_one_row db table_name row) ^ " |")
-    row_list
-    with Not_found -> raise TableDNE
+    let table =
+      tree_find (fun table -> table.table_name = table_name) db.tables
+    in
+    let num_rows = table.num_rows in
+    let row_list = range num_rows in
+    List.map
+      (fun row ->
+        "| "
+        ^ String.concat " | " (get_one_row db table_name row)
+        ^ " |")
+      row_list
+  with Not_found -> raise TableDNE
 
 let string_of_data_type (dt : data_type) =
   match dt with String -> "String" | Int -> "Int" | Float -> "Float"

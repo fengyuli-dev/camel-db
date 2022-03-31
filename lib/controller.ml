@@ -16,7 +16,7 @@ open Rep
    This box prints lines separated into cells of fixed width. *)
 
 (*Button for print test. *)
-let debug = true
+let debug = false
 let parent_db = create_empty_database "parent"
 let get_parent_db = parent_db
 
@@ -64,10 +64,10 @@ let select (db : database) table_name cols filter_function =
     let table = select db table_name cols filter_function in
     print_endline (pretty_print db table)
   with
-  | TableDNE ->
+  (* | TableDNE ->
       print_endline
         (table_name
-       ^ " in the select attempt is not in the current database.")
+       ^ " is not in the current database.") *)
   | ColumnDNE ->
       print_endline
         "Some columns of the insertion attempt is not in the table."
