@@ -12,13 +12,16 @@ The vision for our project is still what we had described in MS0, to create a da
 During our development, we found it beneficial to implement our own data structure (a binary search tree) and our own parser so that our implementation can be more customizable to our needs. We refrained from using a out-of-the-box data structure or a parser generator to demonstrate the novelty of our work.
 
 ## Summary of Progress
-During this short sprint, we have been primarily working on the internal representation of the database as well as connecting it to the controller, a central piece of program that carries out all operations and communicate with the REPL.
+During this short sprint, we have been primarily working on the internal representation of the database as well as connecting it to the controller, a central piece of program that carries out all operations and communicate with the REPL. 
 
 We figured out a way to implement the internal representation using a binary search tree, which we have developed during MS1. We add multiple functionalities to the tree including all high-order functional operations. We then constructed a database that supports multiple tables. We stored every piece of data in the binary search tree, which boosts our database's efficiency compared to a list implementation. We provide numerous ways to manipulate the "data tree" in the `rep` compilation unit, which is called in the controller and serves as the key of the database. 
 
+We made a major change by adding a "Database" type and using it as the parent 
+
+In the controller, we used the parameters from the parsed commands (passed in by Parser) to call functions inside "rep" that actually manipulate the tree based on the commands. This class handles the conversion of parameters and printing for the select function. 
+
 We also implemented the feature to save current data to a csv file. The functions are written in "save.ml", which used a csv library. After parsing the command, controller can call function in save to save the specified table. (We don't have write from file feature yet, that will be in MS3.)
 
-ADD CONTROLLER
 
 ## Activity Breakdown
 - Lee: Added some functionalities to the binary search tree. Designed the internal structure of the database and outlined the `rep` compilation unit. Implemented some functions in `rep` that operate on the data tree. Fixed many bugs. Approximate hours spend: 8
