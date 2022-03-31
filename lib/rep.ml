@@ -57,8 +57,7 @@ let get_database_name_internal { database_name } = database_name
 
 (** [get_column_data_internal column] is the list of data in provided
     column. *)
-let get_column_data_internal = function
-  | { field_name; data } -> data
+let get_column_data_internal = function { field_name; data } -> data
 
 let get_column_data database table_name field_name =
   let table =
@@ -466,10 +465,7 @@ let get_all_rows (db : database) (table_name : string) =
     row_list
 
 let string_of_data_type (dt : data_type) =
-  match dt with
-  | String -> "String"
-  | Int -> "Int"
-  | Float -> "Float"
+  match dt with String -> "String" | Int -> "Int" | Float -> "Float"
 
 let pretty_print_fields table =
   let pair_list = List.split (get_field_name_list_internal table) in
@@ -484,7 +480,7 @@ let pretty_print db table =
   Format.sprintf "@[Table: %s@] \n %d columns * %d entries\n"
     (get_table_name_internal table)
     (get_col_num table) (get_row_num table)
-  ^ "\n" ^ 
-  pretty_print_fields table 
-  ^ "\n" ^
-  String.concat "\n" (get_all_rows db table.table_name)
+  ^ "\n"
+  ^ pretty_print_fields table
+  ^ "\n"
+  ^ String.concat "\n" (get_all_rows db table.table_name)
