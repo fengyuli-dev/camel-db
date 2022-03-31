@@ -47,4 +47,4 @@ let update (db : database) table_name cols values filtering_function =
   db
 
 let drop (db : database) table_name = db
-let save table_name = print_endline ""
+let save (db : database) table_name = Save.save_file table_name
