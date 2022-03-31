@@ -15,7 +15,7 @@ open Format
 
 let get_parent_db = "sadness"
 
-let create table_name cols data_types =
+let create (table_name : string) (cols : string list) (data_types : data_type list) =
   (* let updated_db = 
   let field_type_list = List.combine cols data_types in 
   create_table parent_db table_name field_type_list in *)

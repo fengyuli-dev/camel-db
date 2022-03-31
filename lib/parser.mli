@@ -21,7 +21,7 @@ val parse_insert : token list -> unit
    friendly for testing because it has a concrete output type instead of
    unit*)
 val parse_insert_test_version :
-  token list -> string * string list * val_type list
+  token list -> string * string list * terminal list
 
 (** [parse_delete_test_version input] parse an delete databse command to
     send to controller_insert to insert a new row into an existing table*)
@@ -39,7 +39,7 @@ val parse_update : token list -> unit
    friendly for testing because it has a concrete output type instead of
    unit*)
 val parse_update_test_version :
-  token list -> string * string list * val_type list
+  token list -> string * string list * terminal list
 
 (** [parse_select input] parses a select command which calls parse_from
     and parse_where. *)

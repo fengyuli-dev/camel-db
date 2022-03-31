@@ -45,7 +45,7 @@ val select :
     row inserted, the columns that is specified in the function have
     customized values. The rest of the columns get default values.*)
 val insert_row :
-  database -> string -> (string * data_type * string) list -> database
+  database -> string -> (string * string) list -> database
 
 (** [delete_row name filtering_function] returns a table without the
     selected rows *)
@@ -58,7 +58,7 @@ val delete_row :
 val update_row :
   database ->
   string ->
-  (string * data_type * string) list ->
+  (string * string) list ->
   (string list * string list -> bool) ->
   database
 

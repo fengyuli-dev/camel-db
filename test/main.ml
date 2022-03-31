@@ -164,20 +164,20 @@ let parse_where_tests =
       (parse_where condition6 pair_list_Mexico);
   ]
 
-type t = string * string list * val_type list
+type t = string * string list * terminal list
 
-(** let string_of_t (my_type : string * string list * val_type list) =
-    match my_type with | string, string_list, val_type_list -> string ^
-    " " ^ string_list ^ " " ^ val_type_list *)
+(** let string_of_t (my_type : string * string list * terminal list) =
+    match my_type with | string, string_list, terminal_list -> string ^
+    " " ^ string_list ^ " " ^ terminal_list *)
 
 let parse_insert_test
     (name : string)
     (tokens : token list)
-    (expected_output : string * string list * val_type list) : test =
+    (expected_output : string * string list * terminal list) : test =
   name >:: fun _ ->
   assert_equal expected_output (parse_insert_test_version tokens)
 
-(** helper: return the list with the head removed*)
+(** helper: return the list with the head removed *)
 let remove_hd lst =
   match lst with
   | [] -> []
@@ -287,7 +287,7 @@ let parse_delete_tests =
 let parse_update_test
     (name : string)
     (tokens : token list)
-    (expected_output : string * string list * val_type list) : test =
+    (expected_output : string * string list * terminal list) : test =
   name >:: fun _ ->
   assert_equal expected_output (parse_update_test_version tokens)
 

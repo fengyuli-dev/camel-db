@@ -1,4 +1,4 @@
-
+(** Representation of all types in the database. *)
 
 (* General types*)
 type data_type =
@@ -6,10 +6,10 @@ type data_type =
   | Float
   | String
 
-type val_type =
-  | String of string
+type terminal =
   | Int of int
   | Float of float
+  | String of string
 
 (* Parser types*)
 type command_type =
@@ -44,11 +44,6 @@ type logic_op =
   | AND
   | OR
 
-type terminal =
-  | Int of int
-  | Float of float
-  | String of string
-
 type end_of_query = EOQ
 
 type token =
@@ -77,7 +72,7 @@ type expr_type =
 
 (* Tree types.*)
 
-  type 'a tree =
+type 'a tree =
   | EmptyLeaf
   | Leaf of (int * 'a)
   | Node of (int * 'a * 'a tree * 'a tree)

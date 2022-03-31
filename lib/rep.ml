@@ -303,7 +303,7 @@ let select
   rep_ok new_table
 
 (** return the default value of the data type*)
-let default_of_data_type data_type =
+let default_of_data_type (data_type : data_type) =
   match data_type with
   | Int -> string_of_int default_int
   | Float -> string_of_float default_float
@@ -363,7 +363,7 @@ let update_column_in_table
 let rec update_row
     (db : database)
     table_name
-    fieldname_type_value_list
+    (fieldname_type_value_list : (string * string) list)
     filtering_function =
   try
     let new_table =
@@ -378,7 +378,7 @@ let rec update_row
        in
        match fieldname_type_value_list with
        | [] -> table
-       | (column_name, data_type, data) :: t ->
+       | (column_name, data) :: t ->
            let col_key =
              get_key
                (fun (col, index) -> col.field_name = column_name)
@@ -409,7 +409,7 @@ let rec update_one_row_only
   let rows_to_keep = [ new_row_index ] in
   match fieldname_type_value_list with
   | [] -> table
-  | (column_name, data_type, data) :: t ->
+  | (column_name, data) :: t ->
       let col_key =
         get_key
           (fun (col, index) -> col.field_name = column_name)
@@ -459,6 +459,3 @@ let pretty_print table cell_length =
   Format.sprintf "@[Table: %s@] \n %d columns * %d entries\n"
     (get_table_name_internal table)
     (get_col_num table) (get_row_num table)
-
-
-(* TODO: fix type of fieldname_type_value_list *)
