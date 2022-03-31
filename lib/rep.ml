@@ -401,11 +401,11 @@ let rec update_row
 
 (** would return default if can't cast*)
 let int_of_string_default str default =
-  try int_of_string str with Failure "int_of_string" -> default
+  try int_of_string str with Failure _ -> default
 
 (** would return default if can't cast*)
 let float_of_string_default str default =
-  try int_of_string str with Failure "float_of_string" -> default
+  try int_of_string str with Failure _ -> default
 
 (*8 return true if data does not belong to this type*)
 let wrong_type data (col_type : data_type) =
