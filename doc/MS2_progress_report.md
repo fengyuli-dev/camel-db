@@ -24,7 +24,7 @@ We also implemented the feature to save current data to a csv file. The function
 
 
 ## Activity Breakdown
-- Lee: Added some functionalities to the binary search tree. Designed the internal structure of the database and outlined the `rep` compilation unit. Implemented some functions in `rep` that operate on the data tree. Fixed many bugs. Approximate hours spend: 8
+- Lee: Added some functionalities to the binary search tree. Designed the internal structure of the database and outlined the `rep` compilation unit. Implemented some functions in `rep` that operate on the data tree. Fixed many bugs. Approximate hours spend: 9
 - Emerald: Implement file saving feature with csv that convert any table to csv files. Also implemented the naive reading feature from a file to convert it to a table (see "csv_files/csv1.ml"). Fix some parameter dependency to specify one data base. Approximate hours spend: 8
 - Yolanda: Implement select function for internal Rep, implement pretty print, refactor out types and clean up code for the project, adjust parser and controller to fit the new functionality of multiple tables, fixed many bugs. Approximate hours spent: 9
 - Chuhan: Implemented the internal representation's functions of inserting a new
@@ -50,10 +50,9 @@ We successfully
 The database is almost done. This is much faster than our expectation largely because of the insanely short duration of MS2. Little things are left for MS3. In MS3 we plan to accomplish the following:
 ### Satisfactory
 1. Be able to not only save specified table to csv file but also read csv file to create table. The additional feature of converting valid csv file to create table.
-2. Implement * (the same * in SQl that meaning all/everything) to our table commands.
+2. Implement wildcard * (the same * in SQl that meaning all/everything) to our table commands.
 ### Good
-
-
+Write tests for the full database that uses example csv files. Complete the testing for the untested parts in trees and other relevant compilation units.
 ### Excellent
 Connect database file I/O with the REPL interface and test the whole
 project by letting real people use it.
