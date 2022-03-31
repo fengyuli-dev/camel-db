@@ -1,6 +1,7 @@
 open Rep
 open Controller
 open Printf
+open Type
 
 let db : database = Controller.get_parent_db
 let conc_comma = String.concat ","
