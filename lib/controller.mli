@@ -7,14 +7,14 @@ val create :
 
 (** [select table columns filter_function] *)
 val select :
-  database -> string -> string list -> (string * string -> bool) -> unit
+  database -> string -> string list -> (string list * string list -> bool) -> unit
 
 (** [insert table columns values] *)
 val insert :
   database -> string -> string list -> terminal list -> database
 
 (** [delete table_name filtering_function] *)
-val delete : database -> string -> (string * string -> bool) -> database
+val delete : database -> string -> (string list * string list -> bool) -> database
 
 (** [update table columns values filtering_function] *)
 val update :
@@ -22,7 +22,7 @@ val update :
   string ->
   string list ->
   terminal list ->
-  (string * string -> bool) ->
+  (string list * string list -> bool) ->
   database
 
 (** [drop table_name] *)

@@ -38,19 +38,19 @@ As a team, we were productive. During team meetings, we mainly focused on discus
 ### Satisfactory : 45/45
 The satisfactory scope has two task: constructing an internal representation of the database and implementing database operations inside it. We achieved that in the `rep` compilation unit. It has a well-designed tree-based structure as well as numerous methods that manipulate these trees to realize CRUD operations.
 
-### Good : 记得写这个
+### Good : 40/40
 1. Connect the command line interface and the parser to the database to demo database operations easier. We will have the command line to print out the actual representation of the data. This is also pretty print of our data to help users to visualize.
    
-### Excellent ： 记得写这个
+### Excellent ： 15/15
 1. Achieve storing data in a file on the hard drive so data will be kept after accidental or regular shut down like a real data base managing system.
 
 ## Goals for the Next Sprint
 The database is almost done. This is much faster than our expectation largely because of the insanely short duration of MS2. Little things are left for MS3. In MS3 we plan to accomplish the following:
 ### Satisfactory
-Be able to output the content of the database to a file on hard drive.
+Be able to not only save specified table to csv file but also read csv file to create table. The additional feature of converting valid csv file to create table.
 ### Good
-Import a file to the database. Correctly destructure its content and store
-them in an appropriate format.
+
+
 ### Excellent
 Connect database file I/O with the REPL interface and test the whole
 project by letting real people use it.
