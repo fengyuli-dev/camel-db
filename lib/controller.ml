@@ -31,4 +31,4 @@ let insert table_name cols value_list = print_endline ""
 let delete table_name filtering_function = print_endline ""
 let update table_name cols values filtering_function = print_endline ""
 let drop table_name = print_endline ""
-let save table_name = print_endline ""
+let save table_name = Save.save_file table_name
