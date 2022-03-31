@@ -379,7 +379,7 @@ let parse_datatype token : data_type =
   | "VARCHAR" -> String
   | _ -> raise (Malformed "Not a valid datatype of column")
 
-let rec parse_create tokens =
+let rec parse_create db tokens =
   let this_command = get_this_command tokens in
   let other_commands = get_other_commands tokens in
   try
@@ -388,8 +388,8 @@ let rec parse_create tokens =
     let cols = tail |> get_even_elem |> List.map extract_name in
     let types = tail |> get_odd_elem |> List.map parse_datatype in
     if List.length cols = List.length types then (
-      create name cols types;
-      parse_query other_commands)
+      let updated_db = create db name cols types in 
+      parse_query updated_db other_commands)
     else raise (Malformed "Not correct number of columns / types")
   with Failure _ -> raise (Malformed "Syntax in Create is malformed")
 
@@ -398,43 +398,43 @@ let rec parse_create tokens =
 (** acc is accumulator, cols is token list of columns, from_lst is token
     list for parse_from, lst is the list containing parse_where and so
     on. *)
-and get_where acc cols from_lst lst =
+and get_where db acc cols from_lst lst =
   match lst with
   | [] -> raise (Malformed "No condition after WHERE")
   | EndOfQuery EOQ :: t ->
-      select
+      select db
         (terminal_to_string from_lst)
         (parse_select_columns cols)
         (parse_where acc);
-      parse_query t
-  | h :: t -> get_where (h :: acc) cols from_lst t
+      parse_query db t
+  | h :: t -> get_where db (h :: acc) cols from_lst t
 
-and get_from acc cols lst =
+and get_from db acc cols lst =
   match lst with
   | [] -> raise (Malformed "No restrictions after FROM")
-  | SubCommand Where :: t -> get_where [] cols acc t
+  | SubCommand Where :: t -> get_where db [] cols acc t
   | EndOfQuery EOQ :: t ->
-      select (terminal_to_string acc) (parse_select_columns cols)
+       select db (terminal_to_string acc) (parse_select_columns cols)
         (fun _ -> true);
-      parse_query t
-  | Terminal h :: t -> get_from (h :: acc) cols t
+      parse_query db t
+  | Terminal h :: t -> get_from db (h :: acc) cols t
   | _ -> raise (Malformed "Wrong Syntax in FROM")
 
-and get_cols acc lst =
+and get_cols db acc lst =
   match lst with
   | [] -> raise (Malformed "No FROM statement after SELECT")
-  | SubCommand From :: t -> get_from [] acc t
-  | Terminal h :: t -> get_cols (h :: acc) t
+  | SubCommand From :: t -> get_from db [] acc t
+  | Terminal h :: t -> get_cols db (h :: acc) t
   | _ -> raise (Malformed "Wrong Syntax in SELECT")
 
-and parse_select tokens =
+and parse_select db tokens =
   match tokens with
   | [] -> raise (Malformed "No column list after SELECT")
-  | Terminal s :: t -> get_cols [] (Terminal s :: t)
+  | Terminal s :: t -> get_cols db [] (Terminal s :: t)
   | _ -> raise (Malformed "Wrong Syntax in SELECT")
 
 (** Parse Drop: *)
-and parse_drop tokens =
+and parse_drop db tokens =
   match tokens with
   | [] -> raise (Malformed "No table name after DROP")
   | Terminal s :: t ->
@@ -442,28 +442,30 @@ and parse_drop tokens =
         match lst with
         | [] -> raise (Malformed "Wrong Syntax in DROP")
         | EndOfQuery EOQ :: t ->
-            drop (terminal_to_string acc);
-            parse_query t
+          let updated_db = 
+            drop db (terminal_to_string acc) in 
+            parse_query updated_db t
         | Terminal h :: t -> grouping (h :: acc) t
         | _ -> raise (Malformed "Wrong Syntax in DROP")
       in
       grouping [] (Terminal s :: t)
   | _ -> raise (Malformed "Wrong Syntax in DROP")
 
-and parse_insert (tokens : token list) =
+and parse_insert db (tokens : token list) =
   let this_command = get_this_command tokens in
   let table =
     parse_table this_command (SubCommand Into) |> trim_string
   in
   let cols = this_command |> get_cols_list |> string_formatter in
   let vals = this_command |> get_vals_list |> vals_formatter in
-  insert table cols vals;
-  get_other_commands tokens |> parse_query
+  let updated_db = 
+  insert db table cols vals in
+  get_other_commands tokens |> parse_query updated_db
 
 (**[parse_insert_test_version tokens] runs parse_insert but it is
    friendly for testing because it has a concrete output type instead of
    unit*)
-and parse_insert_test_version (tokens : token list) :
+and parse_insert_test_version db (tokens : token list) :
     string * string list * terminal list =
   let this_command = get_this_command tokens in
   let table =
@@ -473,42 +475,44 @@ and parse_insert_test_version (tokens : token list) :
   let vals = this_command |> get_vals_list |> vals_formatter in
   (table, cols, vals)
 
-and parse_delete tokens =
+and parse_delete db tokens =
   let this_command = get_this_command tokens in
   let table = parse_table this_command (SubCommand From) in
-  Controller.delete table
-    (parse_where (this_command |> get_list_after_where));
-  get_other_commands tokens |> parse_query
+  let updated_db = 
+  Controller.delete db table
+    (parse_where (this_command |> get_list_after_where))in 
+  get_other_commands tokens |> parse_query updated_db
 
-and parse_delete_test_version (tokens : token list) : string =
+and parse_delete_test_version db (tokens : token list) : string =
   let this_command = get_this_command tokens in
   let table = parse_table this_command (SubCommand From) in
   table
 
-and parse_update tokens =
+and parse_update db tokens =
   let this_command = get_this_command tokens in
   let table =
     terminal_to_string [ List.nth this_command 0 |> token_to_terminal ]
     |> trim_string
   in
-  Controller.update table
+  let updated_db = 
+  Controller.update db table
     (this_command |> get_update_list |> get_update_cols
    |> string_formatter)
     (this_command |> get_update_list |> get_update_vals
    |> vals_formatter)
-    (parse_where (this_command |> get_list_after_where));
-  get_other_commands tokens |> parse_query
+    (parse_where (this_command |> get_list_after_where)) in 
+  get_other_commands tokens |> parse_query updated_db
 
-and parse_save tokens =
+and parse_save db tokens =
   let this_command = get_this_command tokens in
   let table =
     terminal_to_string [ List.nth this_command 0 |> token_to_terminal ]
     |> trim_string
   in
   Controller.save table;
-  get_other_commands tokens |> parse_query
+  get_other_commands tokens |> parse_query db
 
-and parse_update_test_version tokens :
+and parse_update_test_version (db : database) tokens :
     string * string list * terminal list =
   let this_command = get_this_command tokens in
   let table =
@@ -521,19 +525,19 @@ and parse_update_test_version tokens :
     this_command |> get_update_list |> get_update_vals |> vals_formatter
   )
 
-and parse_query tokens =
+and parse_query (db : database) tokens =
   match tokens with
   | [] -> ()
-  | Command Create :: t -> parse_create t
-  | Command Select :: t -> parse_select t
-  | Command Drop :: t -> parse_drop t
-  | Command Insert :: t -> parse_insert t
-  | Command Delete :: t -> parse_delete t
-  | Command Update :: t -> parse_update t
-  | Command Save :: t -> parse_save t
+  | Command Create :: t -> parse_create db t
+  | Command Select :: t -> parse_select db t
+  | Command Drop :: t -> parse_drop db t
+  | Command Insert :: t -> parse_insert db t
+  | Command Delete :: t -> parse_delete db t
+  | Command Update :: t -> parse_update db t
+  | Command Save :: t -> parse_save db t
   | _ -> raise (Malformed "Not a valid Command")
 
-let parse (input : string) =
+let parse (db : database) (input : string) =
   let tokens = tokenize input in
   if List.length tokens = 0 then raise Empty
   else if List.hd (List.rev tokens) <> EndOfQuery EOQ then
@@ -541,4 +545,4 @@ let parse (input : string) =
       (Malformed
          "No ';' after query, or no appropriate spacing between every \
           symbol")
-  else parse_query tokens
+  else parse_query db tokens

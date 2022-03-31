@@ -455,7 +455,23 @@ let insert_row
 
 open Format
 
-let pretty_print table cell_length =
+let pretty_print table =
   Format.sprintf "@[Table: %s@] \n %d columns * %d entries\n"
     (get_table_name_internal table)
     (get_col_num table) (get_row_num table)
+    (*
+    ^ 
+    column
+    ^
+    string list (entry - 1 row)
+    iterate through columns, concat value to each element of the string list
+
+    Col 1 Col 2 Col 3
+    '1' ^ "dog" ^
+    '2' ^ "dog" ^ 
+    '3' ^ "dog" ^
+    '4' ^ "dog" ^ 
+    '5' ^ "dog" ^
+
+    [string list of rows]
+    List.concat "\n" these lines *)
