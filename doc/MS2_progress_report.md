@@ -33,18 +33,17 @@ Worked on pretty printing with Yolanda. Raised exceptions for illegal insertion,
 
 ## Productivity Analysis
 Although the amount of work we assigned to ourselves is comparable to MS1, this sprint is somehow much shorter. Therefore, we got extra productive in order to build a running internal structure of the database. 
-As a team, we were productive. During team meetings, we mainly focused on discussing the big ideas for project, specifically the interfaces for `rep`. Then, we worked individually to implement the functions that we are assigned to complete. We had a better idea of what helper functions can be extracted and implemented separately, thus avoiding code dupication. 
+As a team, we were productive. During team meetings, we mainly focused on discussing the big ideas for project, specifically the interfaces for `rep`. Then, we worked individually to implement the functions that we are assigned to complete. We had a better idea of what helper functions can be extracted and implemented separately, thus avoiding code duplication. 
 
 ## Scope Grade
 ### Satisfactory : 45/45
-The satisfactory scope has two task: constructing an internal representation of the database and implementing database operations inside it. We achieved that in the `rep` compilation unit. It has a well-designed tree-based structure as well as numerous methods that manipulate these trees to realize CRUD operations.
+The satisfactory scope has two tasks and we successfully implemented the two tasks: constructing an internal representation of the database and implementing database operations inside it. We achieved that in the `rep` compilation unit. It has a well-designed tree-based structure as well as numerous methods that manipulate these trees to realize CRUD operations.  
 
 ### Good : 40/40
-1. Connect the command line interface and the parser to the database to demo database operations easier. We will have the command line to print out the actual representation of the data. This is also pretty print of our data to help users to visualize.
-   
+The good scope involves connecting the command line interface and the parser to the database to demo database operations easier. We will have the command line to print out the actual representation of the data. This is also pretty print of our data to help users to visualize.
+
 ### Excellent ： 15/15
-1. Achieve storing data in a file on the hard drive so data will be kept after accidental or regular shut down like a real data base managing system.
-We successfully 
+The excellent scope is to achieve storing data in a file on the hard drive so data will be kept after accidental or regular shut down like a real data base managing system. We successfully implemented storing data into a csv file. See "save.mli" for code. A file with name of the table being saved will be saved into the csv_files folder. ("Csv_files/csv1.ml" provided some simple example of how to use the csv library)
 
 ## Goals for the Next Sprint
 The database is almost done. This is much faster than our expectation largely because of the insanely short duration of MS2. Little things are left for MS3. In MS3 we plan to accomplish the following:
@@ -52,8 +51,7 @@ The database is almost done. This is much faster than our expectation largely be
 1. Be able to not only save specified table to csv file but also read csv file to create table. The additional feature of converting valid csv file to create table.
 2. Implement wildcard * (the same * in SQl that meaning all/everything) to our table commands.
 ### Good
-Write tests for the full database that uses example csv files. Complete the testing for the untested parts in trees and other relevant compilation units.
+1. Write tests for the full database that uses example csv files. Complete the testing for the untested parts in trees and other relevant compilation units.
 ### Excellent
-Connect database file I/O with the REPL interface and test the whole
-project by letting real people use it.
-Implement extra commands as needed. 
+1. Connect database file I/O with the REPL interface and test the whole project by letting real people use it.
+2. Implement extra commands as needed. 
