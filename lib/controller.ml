@@ -18,27 +18,21 @@ open Rep
 let parent_db = create_empty_database "parent"
 let get_parent_db = parent_db
 
-let create (db : database) (table_name : string) (cols : string list) (data_types : data_type list) =
-  db
-
+let create
+    (db : database)
+    (table_name : string)
+    (cols : string list)
+    (data_types : data_type list) =
+  create_table db table_name (List.combine cols data_types)
 
 let select (db : database) table_name cols filter_function =
   print_string ""
 
-let insert (db : database) table_name cols value_list =
-  db
-
-let delete (db : database) table_name filtering_function =
-  db
+let insert (db : database) table_name cols value_list = db
+let delete (db : database) table_name filtering_function = db
 
 let update (db : database) table_name cols values filtering_function =
   db
 
 let drop (db : database) table_name = db
-
-let select table_name cols filter_function = print_endline ""
-let insert table_name cols value_list = print_endline ""
-let delete table_name filtering_function = print_endline ""
-let update table_name cols values filtering_function = print_endline ""
-let drop table_name = print_endline ""
 let save table_name = print_endline ""
