@@ -1,12 +1,14 @@
+open Type
+
 exception Duplicate
 exception NotFound
 
 open Helper
 
-type 'a tree =
+(* type 'a tree =
   | EmptyLeaf
   | Leaf of (int * 'a)
-  | Node of (int * 'a * 'a tree * 'a tree)
+  | Node of (int * 'a * 'a tree * 'a tree) *)
 
 let empty = EmptyLeaf
 

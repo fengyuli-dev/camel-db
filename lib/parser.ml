@@ -1,31 +1,18 @@
+open Type
 open Tokenizer
 open Controller
-open Database
 
 exception Malformed of string
 exception Empty
 
-(* type for condition expression in parse_where *)
-type expr_type =
-  | AND
-  | OR
-  | EQ
-  | GT
-  | LT
-  | GE
-  | LE
-  | NE
-  | String of string
-  | Int of int
-  | Float of float
 
 (** General Helpers within Parser *)
-let rec terminal_to_string tokens =
+let rec terminal_to_string (tokens : terminal list) =
   match tokens with
   | [] -> ""
-  | Tokenizer.String s :: t -> s ^ " " ^ terminal_to_string t
-  | Tokenizer.Int i :: t -> string_of_int i ^ " " ^ terminal_to_string t
-  | Tokenizer.Float f :: t ->
+  | String s :: t -> s ^ " " ^ terminal_to_string t
+  | Int i :: t -> string_of_int i ^ " " ^ terminal_to_string t
+  | Float f :: t ->
       string_of_float f ^ " " ^ terminal_to_string t
 
 let tokens_to_terminals tokens =
@@ -79,10 +66,10 @@ let trim_string (s : string) =
 let rec terminal_to_string_list (tokens : terminal list) : string list =
   match tokens with
   | [] -> []
-  | Tokenizer.String s :: t ->
+  | String s :: t ->
       trim_string s :: terminal_to_string_list t
-  | Tokenizer.Int i :: t -> string_of_int i :: terminal_to_string_list t
-  | Tokenizer.Float f :: t ->
+  | Int i :: t -> string_of_int i :: terminal_to_string_list t
+  | Float f :: t ->
       string_of_float f :: terminal_to_string_list t
 
 let rec sublist i j l =
@@ -101,7 +88,7 @@ let rec get_val_index (tokens : token list) : int =
     table name based on a sub_command keyword*)
 let parse_table (tokens : token list) (sub_command : token) =
   match tokens with
-  | [] -> failwith "no table"
+  | [] -> raise (Malformed "wrong command format")
   | h :: t ->
       if h = sub_command then
         terminal_to_string [ List.nth t 0 |> token_to_terminal ]
@@ -154,23 +141,15 @@ let token_to_terminal (t : token) : terminal =
   | Terminal t -> t
   | _ -> raise (Malformed "not a terminal")
 
-(** converts a terminal string/int/float to the val_type
-    string/int/float*)
-let terminal_to_val_type (t : terminal) : Database.val_type =
-  match t with
-  | Tokenizer.String s -> Database.String s
-  | Tokenizer.Int i -> Database.Int i
-  | Tokenizer.Float f -> Database.Float f
-
 (**[get_vals_list tokens] only return the list of temrinals associated
    with values*)
-let get_vals_list (tokens : token list) : val_type list =
+let get_vals_list (tokens : token list) : terminal list =
   let sublist =
     let val_index = get_val_index tokens in
     sublist (val_index + 1) (List.length tokens - 1) tokens
   in
   List.map
-    (fun elt -> elt |> token_to_terminal |> terminal_to_val_type)
+    (fun elt -> elt |> token_to_terminal)
     sublist
 
 (** [get_update_list tokens] return the sublist that contain columns and
@@ -210,12 +189,12 @@ let get_update_cols (update_list : token list) : string list =
 (** [get_update_vals update_list] return the list of values to update
     for the correponding columns. Precondition: the update_list is
     correctly formatted*)
-let get_update_vals (update_list : token list) : val_type list =
+let get_update_vals (update_list : token list) : terminal list =
   if not (check_update_list update_list) then raise (Malformed "TODO")
   else
     let token_list = update_list |> remove_eq |> get_odd_elem in
     List.map
-      (fun elt -> elt |> token_to_terminal |> terminal_to_val_type)
+      (fun elt -> elt |> token_to_terminal)
       token_list
 
 let get_this_command (tokens : token list) : token list =
@@ -229,16 +208,15 @@ let get_other_commands (tokens : token list) : token list =
 let rec string_formatter (lst : string list) : string list =
   List.map (fun elt -> elt |> trim_string) lst
 
-let rec vals_formatter (lst : Database.val_type list) :
-    Database.val_type list =
+let rec vals_formatter (lst : terminal list) :
+    terminal list =
   match lst with
   | [] -> []
-  | h :: t -> (
+  | h :: t -> 
       match h with
       | String s -> String (trim_string s) :: vals_formatter t
       | Int i -> Int i :: vals_formatter t
       | Float f -> Float f :: vals_formatter t
-      | _ -> t)
 
 (* parse_where helpers *)
 
@@ -390,16 +368,15 @@ let parse_where (tokens : token list) =
 
 (* end of parse_where *)
 
-let parse_datatype token =
+let parse_datatype token : data_type =
   match extract_name token with
-  | "INTEGER" -> Database.Int
-  | "INT" -> Database.Int
-  | "FLOAT" -> Database.Float
-  | "DOUBLE" -> Database.Float
-  | "CHAR" -> Database.String
-  | "TEXT" -> Database.String
-  | "VARCHAR" -> Database.String
-  | "BOOL" -> Database.Boolean
+  | "INTEGER" -> Int
+  | "INT" -> Int 
+  | "FLOAT" -> Float 
+  | "DOUBLE" -> Float
+  | "CHAR" -> String
+  | "TEXT" -> String
+  | "VARCHAR" -> String
   | _ -> raise (Malformed "Not a valid datatype of column")
 
 let rec parse_create tokens =
@@ -480,14 +457,14 @@ and parse_insert (tokens : token list) =
   in
   let cols = this_command |> get_cols_list |> string_formatter in
   let vals = this_command |> get_vals_list |> vals_formatter in
-  Controller.insert table cols vals;
+  insert table cols vals;
   get_other_commands tokens |> parse_query
 
 (**[parse_insert_test_version tokens] runs parse_insert but it is
    friendly for testing because it has a concrete output type instead of
    unit*)
 and parse_insert_test_version (tokens : token list) :
-    string * string list * val_type list =
+    string * string list * terminal list =
   let this_command = get_this_command tokens in
   let table =
     parse_table this_command (SubCommand Into) |> trim_string
@@ -532,7 +509,7 @@ and parse_save tokens =
   get_other_commands tokens |> parse_query
 
 and parse_update_test_version tokens :
-    string * string list * val_type list =
+    string * string list * terminal list =
   let this_command = get_this_command tokens in
   let table =
     terminal_to_string [ List.nth this_command 0 |> token_to_terminal ]

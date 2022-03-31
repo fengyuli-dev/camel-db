@@ -1,3 +1,4 @@
+open Type
 (** Exception raised when trying to insert a node of the same key into
     the tree. *)
 exception Duplicate
@@ -6,11 +7,11 @@ exception Duplicate
     the tree. *)
 exception NotFound
 
-(** An implementation of a binary search tree data structure. *)
+(* An implementation of a binary search tree data structure.
 type 'a tree =
   | EmptyLeaf
   | Leaf of (int * 'a)
-  | Node of (int * 'a * 'a tree * 'a tree)
+  | Node of (int * 'a * 'a tree * 'a tree *)
 
 (** Returns the value associated with the given key. *)
 val get : int -> 'a tree -> 'a

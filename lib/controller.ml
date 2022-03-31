@@ -1,61 +1,39 @@
 (** Representation of dynamic adventure state. *)
+open Type
 open Format
 
-(*Useful functions:
+(* Useful functions:
 
-  val print_as : int -> string -> unit
+   val print_as : int -> string -> unit
 
-  pp_print_as ppf len s prints s in the current pretty-printing box. The
-  pretty-printer formats s as if it were of length len.
+   pp_print_as ppf len s prints s in the current pretty-printing box. The
+   pretty-printer formats s as if it were of length len.
 
-  val open_tbox : unit -> unit
+   val open_tbox : unit -> unit
 
-  This box prints lines separated into cells of fixed width. *)
+   This box prints lines separated into cells of fixed width. *)
 
 let get_parent_db = "sadness"
 
-let create table_name cols col_types =
+let create (table_name : string) (cols : string list) (data_types : data_type list) =
   (* let updated_db = 
-  let field_type_list = List.combine cols col_types in 
+  let field_type_list = List.combine cols data_types in 
   create_table parent_db table_name field_type_list in *)
   print_endline ""
 
 let select table_name cols filter_function =
-  print_endline
-    ("\nCalled the select function. \n\n Table: " ^ table_name
-   ^ "\n Columns: " ^ String.concat " " cols);
-
-  set_margin 10;
-  printf "@[123456@[7@]89A@]@.";
-
-  ()
+  print_endline ""
 
 let insert table_name cols value_list =
-  print_endline
-    ("\nCalled the insert function. \n\n Table: " ^ table_name
-   ^ "\n Columns: " ^ String.concat " " cols);
-  print_endline "Values: ";
-  print_endline
-    (String.concat " "
-       (List.map Database.val_type_to_string value_list));
-  ()
+  print_endline ""
 
 let delete table_name filtering_function =
-  print_endline
-    ("\nCalled the delete function. \n\n Table: " ^ table_name);
-  ()
+  print_endline ""
 
 let update table_name cols values filtering_function =
-  print_endline
-    ("\nCalled the update function. \n\n Table: " ^ table_name
-   ^ "\n Columns: " ^ String.concat " " cols);
-  print_endline "Values: ";
-  print_endline
-    (String.concat " " (List.map Database.val_type_to_string values));
-  ()
+  print_endline ""
 
 let drop table_name =
-  print_endline ("Called the drop function. \n\n Table: " ^ table_name);
-  ()
+  print_endline ""
 
-let save table_name = failwith "not implemented."
+let save table_name = print_endline ""

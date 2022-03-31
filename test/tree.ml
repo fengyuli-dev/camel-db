@@ -1,5 +1,6 @@
 open OUnit2
 open Camel_db.Tree
+open Camel_db.Type
 
 (* Test of the Binray Search Tree *)
 

@@ -1,5 +1,4 @@
-open Tokenizer
-open Parser
+open Type
 
 exception Malformed of string
 

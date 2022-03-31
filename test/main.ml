@@ -1,7 +1,7 @@
 open OUnit2
 open Camel_db.Tokenizer
 open Camel_db.Parser
-open Camel_db.Database
+open Camel_db.Type
 open Camel_db.Helper
 
 (* (Country = Mexico) or (LandSize >= 1000 and Population >= 1000) *)
@@ -164,20 +164,20 @@ let parse_where_tests =
       (parse_where condition6 pair_list_Mexico);
   ]
 
-type t = string * string list * val_type list
+type t = string * string list * terminal list
 
-(** let string_of_t (my_type : string * string list * val_type list) =
-    match my_type with | string, string_list, val_type_list -> string ^
-    " " ^ string_list ^ " " ^ val_type_list *)
+(** let string_of_t (my_type : string * string list * terminal list) =
+    match my_type with | string, string_list, terminal_list -> string ^
+    " " ^ string_list ^ " " ^ terminal_list *)
 
 let parse_insert_test
     (name : string)
     (tokens : token list)
-    (expected_output : string * string list * val_type list) : test =
+    (expected_output : string * string list * terminal list) : test =
   name >:: fun _ ->
   assert_equal expected_output (parse_insert_test_version tokens)
 
-(** helper: return the list with the head removed*)
+(** helper: return the list with the head removed *)
 let remove_hd lst =
   match lst with
   | [] -> []
@@ -190,40 +190,40 @@ let insert_token_1 =
 let insert_token_2 =
   [
     SubCommand Into;
-    Terminal (Camel_db.Tokenizer.String "Customers");
-    Terminal (Camel_db.Tokenizer.String "(CustomerName,");
-    Terminal (Camel_db.Tokenizer.String "ContactName,");
-    Terminal (Camel_db.Tokenizer.String "Address,");
-    Terminal (Camel_db.Tokenizer.String "City,");
-    Terminal (Camel_db.Tokenizer.String "PostalCode,");
-    Terminal (Camel_db.Tokenizer.String "Country)");
+    Terminal (String "Customers");
+    Terminal (String "(CustomerName,");
+    Terminal (String "ContactName,");
+    Terminal (String "Address,");
+    Terminal (String "City,");
+    Terminal (String "PostalCode,");
+    Terminal (String "Country)");
     SubCommand Values;
-    Terminal (Camel_db.Tokenizer.String "('Cardinal',");
-    Terminal (Camel_db.Tokenizer.String "'TomErichsen',");
-    Terminal (Camel_db.Tokenizer.String "'Skagen21',");
-    Terminal (Camel_db.Tokenizer.String "'Stavanger',");
-    Terminal (Camel_db.Tokenizer.Int 4006);
-    Terminal (Camel_db.Tokenizer.String "'Norway')");
+    Terminal (String "('Cardinal',");
+    Terminal (String "'TomErichsen',");
+    Terminal (String "'Skagen21',");
+    Terminal (String "'Stavanger',");
+    Terminal (Int 4006);
+    Terminal (String "'Norway')");
     EndOfQuery EOQ;
   ]
 
 let insert_token_3 =
   [
     SubCommand Into;
-    Terminal (Camel_db.Tokenizer.String "Customers");
-    Terminal (Camel_db.Tokenizer.String "(CustomerName,");
-    Terminal (Camel_db.Tokenizer.String "ContactName,");
-    Terminal (Camel_db.Tokenizer.String "Address,");
-    Terminal (Camel_db.Tokenizer.String "City,");
-    Terminal (Camel_db.Tokenizer.String "PostalCode,");
-    Terminal (Camel_db.Tokenizer.String "Country)");
+    Terminal (String "Customers");
+    Terminal (String "(CustomerName,");
+    Terminal (String "ContactName,");
+    Terminal (String "Address,");
+    Terminal (String "City,");
+    Terminal (String "PostalCode,");
+    Terminal (String "Country)");
     SubCommand Values;
-    Terminal (Camel_db.Tokenizer.String "('Cardinal',");
-    Terminal (Camel_db.Tokenizer.String "'TomErichsen',");
-    Terminal (Camel_db.Tokenizer.String "'Skagen21',");
-    Terminal (Camel_db.Tokenizer.String "'Stavanger',");
-    Terminal (Camel_db.Tokenizer.Float 400.6);
-    Terminal (Camel_db.Tokenizer.String "'Norway')");
+    Terminal (String "('Cardinal',");
+    Terminal (String "'TomErichsen',");
+    Terminal (String "'Skagen21',");
+    Terminal (String "'Stavanger',");
+    Terminal (Float 400.6);
+    Terminal (String "'Norway')");
     EndOfQuery EOQ;
   ]
 
@@ -232,7 +232,7 @@ let parse_insert_tests =
     parse_insert_test "all strings" insert_token_1
       ( "Cusomters",
         [ "CustomerName" ],
-        [ Camel_db.Database.String "Cardinal" ] );
+        [ Camel_db.Type.String "Cardinal" ] );
     parse_insert_test "has ints" insert_token_2
       ( "Cusomters",
         [
@@ -244,12 +244,12 @@ let parse_insert_tests =
           "Country";
         ],
         [
-          Camel_db.Database.String "Caridnal";
-          Camel_db.Database.String "TomErichsen";
-          Camel_db.Database.String "Skagen21";
-          Camel_db.Database.String "Stavanger";
-          Camel_db.Database.Int 4006;
-          Camel_db.Database.String "Norway";
+          Camel_db.Type.String "Caridnal";
+          Camel_db.Type.String "TomErichsen";
+          Camel_db.Type.String "Skagen21";
+          Camel_db.Type.String "Stavanger";
+          Camel_db.Type.Int 4006;
+          Camel_db.Type.String "Norway";
         ] );
     parse_insert_test "has floats" insert_token_3
       ( "Cusomters",
@@ -262,12 +262,12 @@ let parse_insert_tests =
           "Country";
         ],
         [
-          Camel_db.Database.String "Caridnal";
-          Camel_db.Database.String "TomErichsen";
-          Camel_db.Database.String "Skagen21";
-          Camel_db.Database.String "Stavanger";
-          Camel_db.Database.Float 400.6;
-          Camel_db.Database.String "Norway";
+          Camel_db.Type.String "Caridnal";
+          Camel_db.Type.String "TomErichsen";
+          Camel_db.Type.String "Skagen21";
+          Camel_db.Type.String "Stavanger";
+          Camel_db.Type.Float 400.6;
+          Camel_db.Type.String "Norway";
         ] );
   ]
 
@@ -287,7 +287,7 @@ let parse_delete_tests =
 let parse_update_test
     (name : string)
     (tokens : token list)
-    (expected_output : string * string list * val_type list) : test =
+    (expected_output : string * string list * terminal list) : test =
   name >:: fun _ ->
   assert_equal expected_output (parse_update_test_version tokens)
 
@@ -299,21 +299,21 @@ let update_token_1 =
 
 let update_token_2 =
   [
-    Terminal (Camel_db.Tokenizer.String "Customers");
+    Terminal (String "Customers");
     SubCommand Set;
-    Terminal (Camel_db.Tokenizer.String "ContactName");
-    BinaryOp Camel_db.Tokenizer.EQ;
-    Terminal (Camel_db.Tokenizer.Float 6.2);
-    Terminal (Camel_db.Tokenizer.String "City");
-    BinaryOp Camel_db.Tokenizer.EQ;
-    Terminal (Camel_db.Tokenizer.String "'Frankfurt',");
-    Terminal (Camel_db.Tokenizer.String "Address");
-    BinaryOp Camel_db.Tokenizer.EQ;
-    Terminal (Camel_db.Tokenizer.Int 9);
+    Terminal (String "ContactName");
+    BinaryOp EQ;
+    Terminal (Float 6.2);
+    Terminal (String "City");
+    BinaryOp EQ;
+    Terminal (String "'Frankfurt',");
+    Terminal (String "Address");
+    BinaryOp EQ;
+    Terminal (Int 9);
     SubCommand Where;
-    Terminal (Camel_db.Tokenizer.String "CustomerID");
-    BinaryOp Camel_db.Tokenizer.EQ;
-    Terminal (Camel_db.Tokenizer.Int 1);
+    Terminal (String "CustomerID");
+    BinaryOp EQ;
+    Terminal (Int 1);
     EndOfQuery EOQ;
   ]
 
@@ -323,16 +323,16 @@ let parse_update_tests =
       ( "Customers",
         [ "ContactName"; "City" ],
         [
-          Camel_db.Database.String "AlfredSchmidt";
-          Camel_db.Database.String "Frankfurt";
+          Camel_db.Type.String "AlfredSchmidt";
+          Camel_db.Type.String "Frankfurt";
         ] );
     parse_update_test "update command with mixed types" update_token_2
       ( "Customers",
         [ "ContactName"; "City"; "Address" ],
         [
-          Camel_db.Database.Float 6.2;
-          Camel_db.Database.String "Frankfurt";
-          Camel_db.Database.Int 9;
+          Camel_db.Type.Float 6.2;
+          Camel_db.Type.String "Frankfurt";
+          Camel_db.Type.Int 9;
         ] );
   ]
 
@@ -350,9 +350,9 @@ let get_list_after_where_tests =
       [ Terminal (String "CustomerID"); BinaryOp EQ; Terminal (Int 1) ];
     get_list_after_where_test "command2" update_token_2
       [
-        Terminal (Camel_db.Tokenizer.String "CustomerID");
-        BinaryOp Camel_db.Tokenizer.EQ;
-        Terminal (Camel_db.Tokenizer.Int 1);
+        Terminal (String "CustomerID");
+        BinaryOp EQ;
+        Terminal (Int 1);
       ];
   ]
 
