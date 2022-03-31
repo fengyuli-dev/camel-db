@@ -52,12 +52,10 @@ let save_file table_name =
 
 (** MS3 below this line *)
 
-(* let read_file table_name = let file_data = List.map (fun name ->
-   (name, Csv.load name)) [ "csv_files/" ^ table_name ] in file_data
-
-   let () = let ecsv = Csv.input_all (Csv.of_string embedded_csv) in (*
-   printf "---Embedded CSV-----------------\n"; *) Csv.print_readable
-   ecsv; List.iter (fun (name, csv) -> (* printf "---%s--------------\n"
-   name; *) Csv.print_readable csv) csvs; printf "Compare (Embedded
-   CSV)\n example1.csv = %i\n" (Csv.compare ecsv (snd (List.hd
-   csvs))) *)
+let read_file table_name =
+  let file_data =
+    List.map
+      (fun name -> (name, Csv.load name))
+      [ "csv_files/" ^ table_name ]
+  in
+  file_data
