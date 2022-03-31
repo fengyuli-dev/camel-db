@@ -37,14 +37,16 @@ As a team, we were productive. During team meetings, we mainly focused on discus
 
 ## Scope Grade
 ### Satisfactory : 45/45
-The satisfactory scope has two task: constructing an internal representation of the database and implementing database operations inside it. We achieved that in the `rep` compilation unit. It has a well-designed tree-based structure as well as numerous methods that manipulate these trees to realize CRUD operations.
+1. The satisfactory scope has two task: constructing an internal representation of the database and implementing database operations inside it. We achieved that in the `rep` compilation unit. It has a well-designed tree-based structure as well as numerous methods that manipulate these trees to realize CRUD operations.  
+
 
 ### Good : 40/40
-1. Connect the command line interface and the parser to the database to demo database operations easier. We will have the command line to print out the actual representation of the data. This is also pretty print of our data to help users to visualize.
-   
+1. Connect the command line interface and the parser to the database to demo database operations easier. We will have the command line to print out the actual representation of the data. This is also pretty print of our data to help users to visualize.  
+
+
 ### Excellent ： 15/15
-1. Achieve storing data in a file on the hard drive so data will be kept after accidental or regular shut down like a real data base managing system.
-We successfully 
+1. Achieve storing data in a file on the hard drive so data will be kept after accidental or regular shut down like a real data base managing system.  
+We successfully implemented storing data into a csv file. See "save.mli" for code. A file with name of the table being saved will be saved into the csv_files folder. ("Csv_files/csv1.ml" provided some simple example of how to use the csv library)
 
 ## Goals for the Next Sprint
 The database is almost done. This is much faster than our expectation largely because of the insanely short duration of MS2. Little things are left for MS3. In MS3 we plan to accomplish the following:
