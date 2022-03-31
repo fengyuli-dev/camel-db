@@ -65,4 +65,4 @@ val update_row :
 (** [drop_table name] drops the given table *)
 val drop_table : database -> string -> database
 
-val pretty_print : table -> string
+val pretty_print : database -> table -> string
