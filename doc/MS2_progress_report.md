@@ -26,14 +26,14 @@ We also implemented the feature to save current data to a csv file. The function
 ## Activity Breakdown
 - Lee: Added some functionalities to the binary search tree. Designed the internal structure of the database and outlined the `rep` compilation unit. Implemented some functions in `rep` that operate on the data tree. Fixed many bugs. Approximate hours spend: 8
 - Emerald: Implement file saving feature with csv that convert any table to csv files. Also implemented the naive reading feature from a file to convert it to a table (see "csv_files/csv1.ml"). Fix some parameter dependency to specify one data base. Approximate hours spend: 8
-- Yolanda: Approximate hours spent:
+- Yolanda: Implement select function for internal Rep, implement pretty print, refactor out types and clean up code for the project, adjust parser and controller to fit the new functionality of multiple tables, fixed many bugs. Approximate hours spent: 9
 - Chuhan: Implemented the internal representation's functions of inserting a new
 row, updating a new row, deleting a new row. Extensively used the tree's functions.
 Worked on pretty printing with Yolanda. Raised exceptions for illegal insertion, deletion, and updates of the database. Approximate hour spent: 9.  
 
 ## Productivity Analysis
 Although the amount of work we assigned to ourselves is comparable to MS1, this sprint is somehow much shorter. Therefore, we got extra productive in order to build a running internal structure of the database. 
-As a team, we were productive. During team meetings, we mainly focused on discussing the big ideas for project, specifically the interfaces for `rep`. Then, we worked individually to implement the functions that we are assigned to complete.
+As a team, we were productive. During team meetings, we mainly focused on discussing the big ideas for project, specifically the interfaces for `rep`. Then, we worked individually to implement the functions that we are assigned to complete. We had a better idea of what helper functions can be extracted and implemented separately, thus avoiding code dupication. 
 
 ## Scope Grade
 ### Satisfactory : 45/45
@@ -57,3 +57,4 @@ The database is almost done. This is much faster than our expectation largely be
 ### Excellent
 Connect database file I/O with the REPL interface and test the whole
 project by letting real people use it.
+Implement extra commands as needed. 
