@@ -36,7 +36,9 @@ let () =
   let ecsv = Csv.input_all (Csv.of_string embedded_csv) in
   let fname =
     (* Filename.concat (Filename.get_temp_dir_name ()) "example.csv" *)
-    Filename.concat Filename.current_dir_name "csv_example/example.csv"
+    Filename.concat Filename.current_dir_name "csv_files/example.csv"
   in
   Csv.save fname ecsv;
   printf "Saved CSV to file %S.\n" fname
+
+let convert = Csv.to_array (Csv.input_all (Csv.of_string embedded_csv))
