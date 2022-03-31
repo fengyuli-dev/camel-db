@@ -60,6 +60,7 @@ val parse_drop : token list -> unit
     value must be in the corrisponidng String or Int or Float. *)
 val parse_where : token list -> token list * token list -> bool
 
+(** [parse_save tokens] saves proposed table as csv files in csv_example. *)
 val parse_save : token list -> unit
 
 (* exposed helper to test, starting below, comment out when deploy *)
