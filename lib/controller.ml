@@ -40,7 +40,7 @@ let create
     in
     if debug then
       print_endline
-        (pretty_print db
+        (pretty_print new_db
            (select new_db table_name cols (fun (_, _) -> true)))
     else ();
     new_db
