@@ -2,6 +2,8 @@
 	
 build:
 	dune build
+utop:
+	OCAMLRUNPARAM=b dune utop lib
 
 test:
 	OCAMLRUNPARAM=b dune exec test/main.exe
@@ -26,7 +28,4 @@ zip:
 
 clean:
 	dune clean
-	rm -f camel_db.zip
-
-doc:
-	dune build @doc
+	rm -f camel_

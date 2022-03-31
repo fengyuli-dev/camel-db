@@ -415,11 +415,14 @@ and get_from db acc cols lst =
   | [] -> raise (Malformed "No restrictions after FROM")
   | SubCommand Where :: t -> get_where db [] cols acc t
   | EndOfQuery EOQ :: t ->
+      print_endline ("table num: " ^ string_of_int db.num_tables);
       select db (terminal_to_string acc) (parse_select_columns cols)
         (fun _ -> true);
       parse_query db t
   | Terminal h :: t -> get_from db (h :: acc) cols t
   | _ -> raise (Malformed "Wrong Syntax in FROM")
+
+  (*TODO: print test what columns are passed in, and there is something wrong with db passage. print num_tables. *)
 
 and get_cols db acc lst =
   match lst with
@@ -526,7 +529,7 @@ and parse_update_test_version (db : database) tokens :
     this_command |> get_update_list |> get_update_vals |> vals_formatter
   )
 
-and parse_query (db : database) tokens =
+and parse_query db tokens =
   match tokens with
   | [] -> ()
   | Command Create :: t -> parse_create db t

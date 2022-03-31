@@ -5,16 +5,11 @@ exception NotFound
 
 open Helper
 
-(* type 'a tree =
-  | EmptyLeaf
-  | Leaf of (int * 'a)
-  | Node of (int * 'a * 'a tree * 'a tree) *)
+(* type 'a tree = | EmptyLeaf | Leaf of (int * 'a) | Node of (int * 'a *
+   'a tree * 'a tree) *)
 
 let empty = EmptyLeaf
-
-let is_empty = function
-  | EmptyLeaf -> true
-  | _ -> false
+let is_empty = function EmptyLeaf -> true | _ -> false
 
 let rec size = function
   | EmptyLeaf -> 0
@@ -31,15 +26,19 @@ let rec insert key_value_pair tree =
   let key = fst key_value_pair in
   let value = snd key_value_pair in
   match tree with
-  | EmptyLeaf -> Node (key, value, EmptyLeaf, EmptyLeaf)
+  | EmptyLeaf -> Leaf (key, value)
   | Leaf (k, v) ->
-      if k = key then raise Duplicate
+      if k = key then (
+        print_string "thrown from leaf \n";
+        raise Duplicate)
       else
         let new_leaf = Leaf (key, value) in
         if k < key then Node (k, v, EmptyLeaf, new_leaf)
         else Node (k, v, new_leaf, EmptyLeaf)
   | Node (k, v, l, r) ->
-      if k = key then raise Duplicate
+      if k = key then (
+        print_string "thrown from node \n";
+        raise Duplicate)
       else
         let new_leaf = Leaf (key, value) in
         if k < key then
@@ -101,12 +100,12 @@ let filter_based_on_value f tree =
         if f (snd h) then h :: filter_helper f t else filter_helper f t
   in
   let filtered_pairs = filter_helper f all_key_value_pairs in
-  let rec generate_tree tree alist =
+  let rec generate_tree alist =
     match alist with
     | [] -> EmptyLeaf
-    | h :: t -> insert h (generate_tree tree t)
+    | h :: t -> insert h (generate_tree t)
   in
-  generate_tree empty filtered_pairs
+  generate_tree filtered_pairs
 
 let get_key (f : 'a * int -> bool) tree =
   let key_val_assoc_list = inorder tree in
@@ -127,17 +126,20 @@ let filter_based_on_key f tree =
         if f (fst h) then h :: filter_helper f t else filter_helper f t
   in
   let filtered_pairs = filter_helper f all_key_value_pairs in
-  let rec generate_tree tree alist =
+  let rec generate_tree alist =
     match alist with
     | [] -> EmptyLeaf
-    | h :: t -> insert h (generate_tree tree t)
+    | h :: t -> insert h (generate_tree t)
   in
-  generate_tree empty filtered_pairs
+  generate_tree filtered_pairs
 
 let rec generate_new_key = function
   | EmptyLeaf -> 0
-  | Leaf (k, v) -> k + 1
-  | Node (k, v, l, r) -> generate_new_key r
+  | Leaf (k, v) ->
+      print_endline ("the new key is: " ^ string_of_int (k + 1));
+      k + 1
+  | Node (k, _, _, r) -> (
+      match r with EmptyLeaf -> k + 1 | _ -> generate_new_key r)
 
 let update_key tree =
   let all_key_value_pairs = inorder tree in
