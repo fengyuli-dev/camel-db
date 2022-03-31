@@ -7,11 +7,12 @@ exception Empty
 
 (** General Helpers within Parser *)
 let rec terminal_to_string (tokens : terminal list) =
-  match tokens with
+  (match tokens with
   | [] -> ""
   | String s :: t -> s ^ " " ^ terminal_to_string t
   | Int i :: t -> string_of_int i ^ " " ^ terminal_to_string t
-  | Float f :: t -> string_of_float f ^ " " ^ terminal_to_string t
+  | Float f :: t -> string_of_float f ^ " " ^ terminal_to_string t)
+  |> String.trim
 
 let tokens_to_terminals tokens =
   List.map

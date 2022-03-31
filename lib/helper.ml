@@ -85,7 +85,7 @@ let get_other_commands (tokens : token list) : token list =
   sublist (eoq_index + 1) (List.length tokens - 1) tokens
 
 let duplicate_in_list f lst =
-  List.length lst = List.length (List.sort_uniq f lst)
+  List.length lst <> List.length (List.sort_uniq f lst)
 
 let rec function_to_list f init =
   match f init with

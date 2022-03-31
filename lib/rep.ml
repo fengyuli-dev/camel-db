@@ -44,14 +44,22 @@ let get_field_name_list_internal table =
   in
   extract_list (inorder table.columns)
 
+(** [get_tablename_list_internal db] is the string list of table names
+    of a given [database]. *)
+let get_tablename_list_internal database =
+  let rec extract_list = function
+    | [] -> []
+    | (_, { table_name }) :: t -> table_name :: extract_list t
+  in
+  extract_list (inorder database.tables)
+
 let get_field_name_list database table_name =
   try
-  let table =
-    tree_find (fun x -> x.table_name = table_name) database.tables
-  in
-  
-  get_field_name_list_internal table
-with Not_found -> raise TableDNE
+    let table =
+      tree_find (fun x -> x.table_name = table_name) database.tables
+    in
+    get_field_name_list_internal table
+  with Not_found -> raise TableDNE
 
 (** [get_table_name_internal table] is the name of the table. *)
 let get_table_name_internal { table_name } = table_name
@@ -90,7 +98,9 @@ let get_row_num { table_name; columns; num_rows } = num_rows
 let get_col_num table = size table.columns
 let get_table_num db = db.num_tables
 
-let rep_ok table =
+(* verifies if table is in valid structure, used in every action that
+   creates a table. *)
+let rep_ok_tb table =
   if not debug then table
   else if table.table_name = "" then raise IllegalName
   else if duplicate_in_list compare (get_field_name_list_internal table)
@@ -105,7 +115,14 @@ let rep_ok table =
       raise WrongTableStructure
     else table
 
-(* Need to wrap this method for external use *)
+let rep_ok_db database =
+  if not debug then database
+  else if database.database_name = "" then raise IllegalName
+  else if
+    duplicate_in_list compare (get_tablename_list_internal database)
+  then raise IllegalName
+  else database
+
 let insert_column_internal table column =
   {
     table_name = table.table_name;
@@ -113,7 +130,7 @@ let insert_column_internal table column =
       insert (generate_new_key table.columns, column) table.columns;
     num_rows = 0;
   }
-  |> rep_ok
+  |> rep_ok_tb
 
 let create_table db table_name field_name_type_alist =
   if
@@ -133,12 +150,17 @@ let create_table db table_name field_name_type_alist =
         (fun x y -> insert_column_internal x y)
         empty_table empty_columns
     in
-    {
-      db with
-      tables =
-        insert (generate_new_key db.tables, rep_ok new_table) db.tables;
-      num_tables = db.num_tables + 1;
-    }
+    let new_db =
+      {
+        db with
+        tables =
+          insert
+            (generate_new_key db.tables, rep_ok_tb new_table)
+            db.tables;
+        num_tables = db.num_tables + 1;
+      }
+    in
+    rep_ok_db new_db
 
 (** [get_one_cell column row_num] gets the cell in this column whose
     index matches the row_num*)
@@ -202,7 +224,7 @@ let get_new_table (old_table : table) (f : column -> column) (nr : int)
     : table =
   let old_column_tree = old_table.columns in
   let new_column_tree = map f old_column_tree in
-  rep_ok { old_table with columns = new_column_tree; num_rows = nr }
+  rep_ok_tb { old_table with columns = new_column_tree; num_rows = nr }
 
 (** [filter_table_rows] is the old function [delete_row_internal],
     renamed for helper function clarity. It takes table type as input
@@ -217,7 +239,7 @@ let filter_table_rows
   let rows_to_keep =
     get_row_numbers_to_keep db filtering_function table_name
   in
-  rep_ok
+  rep_ok_tb
     (get_new_table table
        (fun column -> filter_some_row column rows_to_keep)
        (List.length rows_to_keep))
@@ -237,16 +259,19 @@ let delete_row
     in
     let negated = negate_filtering_function filtering_function in
     let new_table = filter_table_rows db old_table.table_name negated in
-    {
-      db with
-      tables =
-        (let key =
-           get_key
-             (fun (table, index) -> table.table_name = table_name)
-             db.tables
-         in
-         update key (rep_ok new_table) db.tables);
-    }
+    let new_db =
+      {
+        db with
+        tables =
+          (let key =
+             get_key
+               (fun (table, index) -> table.table_name = table_name)
+               db.tables
+           in
+           update key (rep_ok_tb new_table) db.tables);
+      }
+    in
+    rep_ok_db new_db
   with Not_found -> raise TableDNE
 
 let drop_table db table_name =
@@ -260,7 +285,8 @@ let drop_table db table_name =
       num_tables = db.num_tables - 1;
     }
   in
-  if size new_database.tables = size db.tables - 1 then new_database
+  if size new_database.tables = size db.tables - 1 then
+    rep_ok_db new_database
   else raise TableDNE
 
 (** filters selected columns of the table according to a field name
@@ -282,7 +308,7 @@ let select_column (table : table) (field_list : string list) : table =
       }
     else raise ColumnDNE
   in
-  rep_ok new_table
+  rep_ok_tb new_table
 
 (** [select table fields filter] returns a new table with only selected
     columns and rows. Note: do not replace the original table with this
@@ -301,7 +327,7 @@ let select
       (filter_table_rows db target_table.table_name filtering_function)
       field_list
   in
-  rep_ok new_table
+  rep_ok_tb new_table
 
 (** return the default value of the data type*)
 let default_of_data_type (data_type : data_type) =
@@ -326,6 +352,7 @@ let insert_default_in_every_column (old_table : table) =
   get_new_table
     (old_table : table)
     insert_default_into_column old_table.num_rows
+  |> rep_ok_tb
 
 (** update the data in the specified column and row number with
     [new_data]*)
@@ -388,37 +415,34 @@ let rec update_row
            let column = get col_key col_tree in
            let new_column = update_all_rows column data rows_to_keep in
            update_column_in_table col_key new_column table)
-      |> rep_ok
+      |> rep_ok_tb
     in
-    {
-      db with
-      tables =
-        (let key =
-           get_key
-             (fun (table, index) -> table.table_name = table_name)
-             db.tables
-         in
-         update key (rep_ok new_table) db.tables);
-    }
+    let new_db =
+      {
+        db with
+        tables =
+          (let key =
+             get_key
+               (fun (table, index) -> table.table_name = table_name)
+               db.tables
+           in
+           update key (rep_ok_tb new_table) db.tables);
+      }
+    in
+    rep_ok_db new_db
   with NotFound -> raise ColumnDNE
 
-(** would return default if can't cast*)
-let int_of_string_default str default =
-  try int_of_string str with Failure _ -> default
-
-(** would return default if can't cast*)
-let float_of_string_default str default =
-  try int_of_string str with Failure _ -> default
-
-(*8 return true if data does not belong to this type*)
-let wrong_type data (col_type : data_type) =
-  match col_type with
+(* return true if data does not belong to this type*)
+let wrong_type data (dp : data_type) =
+  let num_int = int_of_string_opt data in
+  let num_float = float_of_string_opt data in
+  match dp with
   | Int ->
-      let converted = int_of_string_default data 999 in
-      if converted = 999 then true else false
+      num_int = None
+      (* if it cannot be converted to int then it has wrong type.*)
   | Float ->
-      let converted = float_of_string_default data 999 in
-      if converted = 999 then true else false
+      num_float = None
+      (* if it cannot be converted to float then it has wrong type.*)
   | String -> false
 
 let rec update_one_row_only
@@ -447,43 +471,42 @@ let insert_row
     (table_name : string)
     (fieldname_type_value_list : (string * string) list) =
   try
+    let key =
+      get_key
+        (fun (table, index) -> table.table_name = table_name)
+        db.tables
+    in
+    let table = get key db.tables in
+    let new_row_index = get_row_num table + 1 in
+    let table_with_default_inserted =
+      insert_default_in_every_column table
+    in
     let new_table =
-      let key =
-        get_key
-          (fun (table, index) -> table.table_name = table_name)
-          db.tables
-      in
-      let table = get key db.tables in
-      let new_row_index = get_row_num table + 1 in
-      let table_with_default_inserted =
-        insert_default_in_every_column table
-      in
       update_one_row_only table_with_default_inserted
         fieldname_type_value_list new_row_index
     in
     let final_table =
       { new_table with num_rows = new_table.num_rows + 1 }
     in
-    {
-      db with
-      tables =
-        (let key =
-           get_key
-             (fun (table, index) -> table.table_name = table_name)
-             db.tables
-         in
-         update key (rep_ok final_table) db.tables);
-    }
+    let new_db =
+      {
+        db with
+        tables =
+          (let key =
+             get_key
+               (fun (table, index) -> table.table_name = table_name)
+               db.tables
+           in
+           update key (rep_ok_tb final_table) db.tables);
+      }
+    in
+    rep_ok_db new_db
   with NotFound -> raise ColumnDNE
 
 open Format
 
-let pretty_print table cell_length =
-  Format.sprintf "@[Table: %s@] \n %d columns * %d entries\n"
-    (get_table_name_internal table)
-    (get_col_num table) (get_row_num table)
-
 let get_all_rows (db : database) (table_name : string) =
+  try
   let table =
     tree_find (fun table -> table.table_name = table_name) db.tables
   in
@@ -493,6 +516,7 @@ let get_all_rows (db : database) (table_name : string) =
     (fun row ->
       "| " ^ String.concat " | " (get_one_row db table_name row) ^ " |")
     row_list
+    with Not_found -> raise TableDNE
 
 let string_of_data_type (dt : data_type) =
   match dt with String -> "String" | Int -> "Int" | Float -> "Float"
