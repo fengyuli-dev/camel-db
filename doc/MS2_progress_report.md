@@ -28,7 +28,9 @@ We also implemented the feature to save current data to a csv file. The function
 - Emerald: Implement file saving feature with csv that convert any table to csv files. Also implemented the naive reading feature from a file to convert it to a table.
 Approximate hours spend:
 - Yolanda: Approximate hours spent:
-- Chuhan: Approximate hours spent:
+- Chuhan: Implemented the internal representation's functions of inserting a new
+row, updating a new row, deleting a new row. Extensively used the tree's functions.
+Worked on pretty printing with Yolanda. Raised exceptions for illegal insertion, deletion, and updates of the database. Approximate hour spent: 9.  
 
 ## Productivity Analysis
 Although the amount of work we assigned to ourselves is comparable to MS1, this sprint is somehow much shorter. Therefore, we got extra productive in order to build a running internal structure of the database. 
@@ -43,11 +45,13 @@ The satisfactory scope has two task: constructing an internal representation of 
    
 ### Excellent ： 15/15
 1. Achieve storing data in a file on the hard drive so data will be kept after accidental or regular shut down like a real data base managing system.
+We successfully 
 
 ## Goals for the Next Sprint
 The database is almost done. This is much faster than our expectation largely because of the insanely short duration of MS2. Little things are left for MS3. In MS3 we plan to accomplish the following:
 ### Satisfactory
-Be able to not only save specified table to csv file but also read csv file to create table. The additional feature of converting valid csv file to create table.
+1. Be able to not only save specified table to csv file but also read csv file to create table. The additional feature of converting valid csv file to create table.
+2. Implement * (the same * in SQl that meaning all/everything) to our table commands.
 ### Good
 Write tests for the full database that uses example csv files. Complete the testing for the untested parts in trees and other relevant compilation units.
 ### Excellent

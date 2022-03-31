@@ -57,8 +57,7 @@ let get_database_name_internal { database_name } = database_name
 
 (** [get_column_data_internal column] is the list of data in provided
     column. *)
-let get_column_data_internal = function
-  | { field_name; data } -> data
+let get_column_data_internal = function { field_name; data } -> data
 
 let get_column_data database table_name field_name =
   let table =
@@ -400,6 +399,25 @@ let rec update_row
     }
   with NotFound -> raise ColumnDNE
 
+(** would return default if can't cast*)
+let int_of_string_default str default =
+  try int_of_string str with Failure _ -> default
+
+(** would return default if can't cast*)
+let float_of_string_default str default =
+  try int_of_string str with Failure _ -> default
+
+(*8 return true if data does not belong to this type*)
+let wrong_type data (col_type : data_type) =
+  match col_type with
+  | Int ->
+      let converted = int_of_string_default data 999 in
+      if converted = 999 then true else false
+  | Float ->
+      let converted = float_of_string_default data 999 in
+      if converted = 999 then true else false
+  | String -> false
+
 let rec update_one_row_only
     table
     (fieldname_type_value_list : (string * string) list)
@@ -415,8 +433,11 @@ let rec update_one_row_only
           col_tree
       in
       let column = get col_key col_tree in
-      let new_column = update_all_rows column data rows_to_keep in
-      update_column_in_table col_key new_column table
+      let col_type = column.data_type in
+      if wrong_type data col_type then raise WrongType
+      else
+        let new_column = update_all_rows column data rows_to_keep in
+        update_column_in_table col_key new_column table
 
 let insert_row
     (db : database)
@@ -454,6 +475,11 @@ let insert_row
 
 open Format
 
+let pretty_print table cell_length =
+  Format.sprintf "@[Table: %s@] \n %d columns * %d entries\n"
+    (get_table_name_internal table)
+    (get_col_num table) (get_row_num table)
+
 let get_all_rows (db : database) (table_name : string) =
   let table =
     tree_find (fun table -> table.table_name = table_name) db.tables
@@ -466,10 +492,7 @@ let get_all_rows (db : database) (table_name : string) =
     row_list
 
 let string_of_data_type (dt : data_type) =
-  match dt with
-  | String -> "String"
-  | Int -> "Int"
-  | Float -> "Float"
+  match dt with String -> "String" | Int -> "Int" | Float -> "Float"
 
 let pretty_print_fields table =
   let pair_list = List.split (get_field_name_list_internal table) in
@@ -484,7 +507,7 @@ let pretty_print db table =
   Format.sprintf "@[Table: %s@] \n %d columns * %d entries\n"
     (get_table_name_internal table)
     (get_col_num table) (get_row_num table)
-  ^ "\n" ^ 
-  pretty_print_fields table 
-  ^ "\n" ^
-  String.concat "\n" (get_all_rows db table.table_name)
+  ^ "\n"
+  ^ pretty_print_fields table
+  ^ "\n"
+  ^ String.concat "\n" (get_all_rows db table.table_name)
