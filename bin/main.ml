@@ -12,7 +12,7 @@ let main () =
         let line = read_line () in
         print_endline "The tokenizer tokenizes this string as: \n";
         print_endline (Helper.pp_tokens (Tokenizer.tokenize line));
-        Parser.parse line;
+        Parser.parse (Rep.create_empty_database "parent") line;
         print_string "\n> ";
         recursive_parse ()
       with
