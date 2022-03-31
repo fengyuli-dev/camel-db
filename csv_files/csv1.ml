@@ -18,7 +18,7 @@ let embedded_csv =
 let csvs =
   List.map
     (fun name -> (name, Csv.load name))
-    [ "csv_example/example1.csv" ]
+    [ "csv_files/example1.csv" ]
 
 let () =
   let ecsv = Csv.input_all (Csv.of_string embedded_csv) in
@@ -28,7 +28,7 @@ let () =
     (fun (name, csv) ->
       (* printf "---%s--------------\n" name; *) Csv.print_readable csv)
     csvs;
-  printf "Compare (Embedded CSV)\n   example1.csv = %i\n"
+  printf "Compare (Embedded\n   CSV)\n example1.csv = %i\n"
     (Csv.compare ecsv (snd (List.hd csvs)))
 
 let () =
@@ -42,3 +42,14 @@ let () =
   printf "Saved CSV to file %S.\n" fname
 
 let convert = Csv.to_array (Csv.input_all (Csv.of_string embedded_csv))
+
+let rec print_2d_array lst =
+  let rec print_array = function
+    | [] -> ""
+    | h :: t -> h ^ " " ^ print_array t
+  in
+  match lst with
+  | [] -> ""
+  | h :: t -> print_array (Array.to_list h) ^ "\n" ^ print_2d_array t
+
+let () = print_string (print_2d_array (Array.to_list convert))

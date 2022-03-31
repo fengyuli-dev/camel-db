@@ -16,11 +16,14 @@ During this short sprint, we have been primarily working on the internal represe
 
 We figured out a way to implement the internal representation using a binary search tree, which we have developed during MS1. We add multiple functionalities to the tree including all high-order functional operations. We then constructed a database that supports multiple tables. We stored every piece of data in the binary search tree, which boosts our database's efficiency compared to a list implementation. We provide numerous ways to manipulate the "data tree" in the `rep` compilation unit, which is called in the controller and serves as the key of the database. 
 
-ADD CONTROLLER AND I/O
+We also implemented the feature to save current data to a csv file. The functions are written in "save.ml", which used a csv library. After parsing the command, controller can call function in save to save the specified table. (We don't have write from file feature yet, that will be in MS3.)
+
+ADD CONTROLLER
 
 ## Activity Breakdown
 - Lee: Added some functionalities to the binary search tree. Designed the internal structure of the database and outlined the `rep` compilation unit. Implemented some functions in `rep` that operate on the data tree. Fixed many bugs. Approximate hours spend: 8
-- Emerald: Approximate hours spend:
+- Emerald: Implement file saving feature with csv that convert any table to csv files. Also implemented the naive reading feature from a file to convert it to a table.
+Approximate hours spend:
 - Yolanda: Approximate hours spent:
 - Chuhan: Approximate hours spent:
 
