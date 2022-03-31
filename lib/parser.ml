@@ -509,7 +509,7 @@ and parse_save db tokens =
     terminal_to_string [ List.nth this_command 0 |> token_to_terminal ]
     |> trim_string
   in
-  Controller.save table;
+  Controller.save db table;
   get_other_commands tokens |> parse_query db
 
 and parse_update_test_version (db : database) tokens :

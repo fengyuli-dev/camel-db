@@ -58,7 +58,7 @@ val parse_drop : database -> token list -> unit
     token type but each must be one of expr type, and pair_data must
     have data with same length, column value must be in String and data
     value must be in the corrisponidng String or Int or Float. *)
-val parse_where : token list -> token list * token list -> bool
+val parse_where : token list -> string list * string list -> bool
 
 (** [parse_save tokens] saves proposed table as csv files in csv_example. *)
 val parse_save : database -> token list -> unit
