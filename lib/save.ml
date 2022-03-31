@@ -1,5 +1,6 @@
 open Rep
 open Controller
+open Printf
 
 let db : database = Controller.get_parent_db
 let conc_comma = String.concat ","
@@ -22,7 +23,7 @@ let rec get_main_table table_name cols =
       (get_column_data db table_name h |> conc_comma)
       :: get_main_table table_name t
 
-let save_file table_name =
+let get_file table_name =
   let field_names_pair =
     get_field_name_list db table_name |> List.split
   in
@@ -35,10 +36,14 @@ let save_file table_name =
   let whole_talbe =
     field_name_string :: field_name_type :: main_table
   in
-  whole_talbe
+  whole_talbe |> conc_line
 
-(* let () = (* Save it to a file *) let ecsv = Csv.input_all
-   (Csv.of_string embedded_csv) in let fname = (* Filename.concat
-   (Filename.get_temp_dir_name ()) "example.csv" *) Filename.concat
-   Filename.current_dir_name "csv_example/example.csv" in Csv.save fname
-   ecsv; printf "Saved CSV to file %S.\n" fname *)
+let save_file table_name =
+  (* Save it to a file *)
+  let ecsv = Csv.input_all (Csv.of_string (get_file table_name)) in
+  let fname =
+    (* Filename.concat (Filename.get_temp_dir_name ()) "example.csv" *)
+    Filename.concat Filename.current_dir_name "csv_example/example.csv"
+  in
+  Csv.save fname ecsv;
+  printf "Saved CSV to file %S.\n" fname

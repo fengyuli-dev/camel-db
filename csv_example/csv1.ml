@@ -4,8 +4,12 @@ open Printf
 
 let lst1 = [ "I_miss_java"; "2112"; "ok" ]
 let lst2 = [ "Me_too"; "I_know"; "yea" ]
-let lst_to_string_commma lst = String.concat "," lst1
-let embedded_csv = lst_to_string_commma lst1
+let conc_comma = String.concat ","
+let conc_line = String.concat "\n"
+
+let embedded_csv =
+  [ lst1 |> conc_comma; lst2 |> conc_comma ] |> conc_line
+
 (* let embedded_csv = "\"I miss java ---- \",\"2112 ----\",\n\ \"Me too
    ------- \",\"5555 -----\"" *)
 (* let csvs = List.map (fun name -> (name, Csv.load name)) [
