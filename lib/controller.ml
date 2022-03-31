@@ -39,12 +39,16 @@ let insert (db : database) table_name cols value_list =
     (List.combine cols (terminal_list_to_string_list value_list))
 
 let select (db : database) table_name cols filter_function =
-  print_string ""
+  let table = select db table_name cols filter_function in
+  print_endline (pretty_print table)
 
-let delete (db : database) table_name filtering_function = db
+let delete (db : database) table_name filtering_function =
+  delete_row db table_name filtering_function
 
 let update (db : database) table_name cols values filtering_function =
-  db
+  update_row db table_name
+    (List.combine cols (terminal_list_to_string_list values))
+    filtering_function
 
-let drop (db : database) table_name = db
-let save (db : database) table_name = Save.save_file table_name
+let drop (db : database) table_name = drop_table db table_name
+let save (db : database) table_name = Save.save_file db table_name
