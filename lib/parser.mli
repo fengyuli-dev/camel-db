@@ -2,6 +2,9 @@
 open Type
 (** Representation of dynamic adventure state. *)
 
+exception Malformed of string
+exception Empty
+
 (** [parse input] partition the line into commands and get rid of ";" *)
 val parse : string -> unit
 

@@ -368,9 +368,9 @@ let parse_where (tokens : token list) =
 
 (* end of parse_where *)
 
-let parse_datatype token =
+let parse_datatype token : data_type =
   match extract_name token with
-  | "INTEGER" -> Int 
+  | "INTEGER" -> Int
   | "INT" -> Int 
   | "FLOAT" -> Float 
   | "DOUBLE" -> Float
