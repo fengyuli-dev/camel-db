@@ -1,6 +1,7 @@
 (** Representation of dynamic adventure state. *)
 open Type
 open Format
+open Rep
 
 (* Useful functions:
 
@@ -13,7 +14,8 @@ open Format
 
    This box prints lines separated into cells of fixed width. *)
 
-let get_parent_db = "sadness"
+let parent_db = create_empty_database "parent"
+let get_parent_db = parent_db
 
 let create (table_name : string) (cols : string list) (data_types : data_type list) =
   (* let updated_db = 
