@@ -3,8 +3,12 @@ open Type
 
 exception Internal of string
 exception WrongTableStructure
+exception WrongDBStructure
 exception WrongType
 exception IllegalName
+exception ColumnDNE
+exception TableDNE
+
 
 val default_int : int
 val default_float : float

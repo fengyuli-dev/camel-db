@@ -32,23 +32,32 @@ let create
     (table_name : string)
     (cols : string list)
     (data_types : data_type list) =
+    try 
   create_table db table_name (List.combine cols data_types)
+with
+ | IllegalName -> print_endline "The table name is duplicated. Please reenter."; db
 
 let insert (db : database) table_name cols value_list =
+  try
   insert_row db table_name
     (List.combine cols (terminal_list_to_string_list value_list))
+  with ColumnDNE -> print_endline "Some columns of the insertion attempt is not in the table."; db
 
 let select (db : database) table_name cols filter_function =
+  try 
   let table = select db table_name cols filter_function in
   print_endline (pretty_print db table)
+with TableDNE -> print_endline "The table in the select attempt is not in the current database."
 
 let delete (db : database) table_name filtering_function =
-  delete_row db table_name filtering_function
+  try delete_row db table_name filtering_function with TableDNE -> print_endline "The table in the delete attempt is not in the current database."; db
 
 let update (db : database) table_name cols values filtering_function =
+  try 
   update_row db table_name
     (List.combine cols (terminal_list_to_string_list values))
     filtering_function
-
-let drop (db : database) table_name = drop_table db table_name
-let save (db : database) table_name = Save.save_file db table_name
+  with ColumnDNE -> print_endline "Some columns of the update attempt is not in the table."; db
+let drop (db : database) table_name = 
+  try drop_table db table_name with TableDNE -> print_endline "The table in the drop attempt is not in the current database."; db
+let save (db : database) table_name = try Save.save_file db table_name with TableDNE -> print_endline "The table in the save attempt is not in the current database."

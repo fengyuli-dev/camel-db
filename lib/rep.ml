@@ -45,10 +45,13 @@ let get_field_name_list_internal table =
   extract_list (inorder table.columns)
 
 let get_field_name_list database table_name =
+  try
   let table =
     tree_find (fun x -> x.table_name = table_name) database.tables
   in
+  
   get_field_name_list_internal table
+with Not_found -> raise TableDNE
 
 (** [get_table_name_internal table] is the name of the table. *)
 let get_table_name_internal { table_name } = table_name
