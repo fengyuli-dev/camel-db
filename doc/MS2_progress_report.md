@@ -27,7 +27,9 @@ We also implemented the feature to save current data to a csv file. The function
 - Lee: Added some functionalities to the binary search tree. Designed the internal structure of the database and outlined the `rep` compilation unit. Implemented some functions in `rep` that operate on the data tree. Fixed many bugs. Approximate hours spend: 8
 - Emerald: Implement file saving feature with csv that convert any table to csv files. Also implemented the naive reading feature from a file to convert it to a table (see "csv_files/csv1.ml"). Fix some parameter dependency to specify one data base. Approximate hours spend: 8
 - Yolanda: Approximate hours spent:
-- Chuhan: Approximate hours spent:
+- Chuhan: Implemented the internal representation's functions of inserting a new
+row, updating a new row, deleting a new row. Extensively used the tree's functions.
+Worked on pretty printing with Yolanda. Raised exceptions for illegal insertion, deletion, and updates of the database. Approximate hour spent: 9.  
 
 ## Productivity Analysis
 Although the amount of work we assigned to ourselves is comparable to MS1, this sprint is somehow much shorter. Therefore, we got extra productive in order to build a running internal structure of the database. 
