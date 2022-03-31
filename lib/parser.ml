@@ -5,15 +5,13 @@ open Controller
 exception Malformed of string
 exception Empty
 
-
 (** General Helpers within Parser *)
 let rec terminal_to_string (tokens : terminal list) =
   match tokens with
   | [] -> ""
   | String s :: t -> s ^ " " ^ terminal_to_string t
   | Int i :: t -> string_of_int i ^ " " ^ terminal_to_string t
-  | Float f :: t ->
-      string_of_float f ^ " " ^ terminal_to_string t
+  | Float f :: t -> string_of_float f ^ " " ^ terminal_to_string t
 
 let tokens_to_terminals tokens =
   List.map
@@ -66,11 +64,9 @@ let trim_string (s : string) =
 let rec terminal_to_string_list (tokens : terminal list) : string list =
   match tokens with
   | [] -> []
-  | String s :: t ->
-      trim_string s :: terminal_to_string_list t
+  | String s :: t -> trim_string s :: terminal_to_string_list t
   | Int i :: t -> string_of_int i :: terminal_to_string_list t
-  | Float f :: t ->
-      string_of_float f :: terminal_to_string_list t
+  | Float f :: t -> string_of_float f :: terminal_to_string_list t
 
 let rec sublist i j l =
   match l with
@@ -148,9 +144,7 @@ let get_vals_list (tokens : token list) : terminal list =
     let val_index = get_val_index tokens in
     sublist (val_index + 1) (List.length tokens - 1) tokens
   in
-  List.map
-    (fun elt -> elt |> token_to_terminal)
-    sublist
+  List.map (fun elt -> elt |> token_to_terminal) sublist
 
 (** [get_update_list tokens] return the sublist that contain columns and
     values to update*)
@@ -193,9 +187,7 @@ let get_update_vals (update_list : token list) : terminal list =
   if not (check_update_list update_list) then raise (Malformed "TODO")
   else
     let token_list = update_list |> remove_eq |> get_odd_elem in
-    List.map
-      (fun elt -> elt |> token_to_terminal)
-      token_list
+    List.map (fun elt -> elt |> token_to_terminal) token_list
 
 let get_this_command (tokens : token list) : token list =
   let eoq_index = find (EndOfQuery EOQ) tokens in
@@ -208,15 +200,14 @@ let get_other_commands (tokens : token list) : token list =
 let rec string_formatter (lst : string list) : string list =
   List.map (fun elt -> elt |> trim_string) lst
 
-let rec vals_formatter (lst : terminal list) :
-    terminal list =
+let rec vals_formatter (lst : terminal list) : terminal list =
   match lst with
   | [] -> []
-  | h :: t -> 
+  | h :: t -> (
       match h with
       | String s -> String (trim_string s) :: vals_formatter t
       | Int i -> Int i :: vals_formatter t
-      | Float f -> Float f :: vals_formatter t
+      | Float f -> Float f :: vals_formatter t)
 
 (* parse_where helpers *)
 
@@ -234,6 +225,14 @@ let token_to_expr_type = function
   | Terminal (Float f) -> Float f
   | _ -> raise (Malformed "token not expr_type")
 
+let string_to_expr_type s =
+  let num_int = int_of_string_opt s in
+  let num_float = float_of_string_opt s in
+  match (num_int, num_float) with
+  | None, None -> String s
+  | Some num_int, None -> Int num_int
+  | None, Some num_float -> Float num_float
+  | Some num_int, Some num_float -> Int num_int
 
 let rec expression_or_helper
     (tokens : expr_type list)
@@ -305,12 +304,12 @@ let rec evaluate_or or_lst pair_data : bool =
     and false if no *)
 let parse_where_helper
     (tokens : expr_type list)
-    (pair_data : token list * token list) : bool =
+    (pair_data : string list * string list) : bool =
   let pair_data_a, pair_data_b = pair_data in
   let pair_data' =
     List.combine
-      (List.map token_to_expr_type pair_data_a)
-      (List.map token_to_expr_type pair_data_b)
+      (List.map string_to_expr_type pair_data_a)
+      (List.map string_to_expr_type pair_data_b)
   in
   let or_lst = expressions_or tokens in
   evaluate_or or_lst pair_data'
@@ -372,8 +371,8 @@ let parse_where (tokens : token list) =
 let parse_datatype token : data_type =
   match extract_name token with
   | "INTEGER" -> Int
-  | "INT" -> Int 
-  | "FLOAT" -> Float 
+  | "INT" -> Int
+  | "FLOAT" -> Float
   | "DOUBLE" -> Float
   | "CHAR" -> String
   | "TEXT" -> String
@@ -388,9 +387,9 @@ let rec parse_create db tokens =
     let tail = List.tl this_command in
     let cols = tail |> get_even_elem |> List.map extract_name in
     let types = tail |> get_odd_elem |> List.map parse_datatype in
-    if List.length cols = List.length types then (
-      let updated_db = create db name cols types in 
-      parse_query updated_db other_commands)
+    if List.length cols = List.length types then
+      let updated_db = create db name cols types in
+      parse_query updated_db other_commands
     else raise (Malformed "Not correct number of columns / types")
   with Failure _ -> raise (Malformed "Syntax in Create is malformed")
 
@@ -415,7 +414,7 @@ and get_from db acc cols lst =
   | [] -> raise (Malformed "No restrictions after FROM")
   | SubCommand Where :: t -> get_where db [] cols acc t
   | EndOfQuery EOQ :: t ->
-       select db (terminal_to_string acc) (parse_select_columns cols)
+      select db (terminal_to_string acc) (parse_select_columns cols)
         (fun _ -> true);
       parse_query db t
   | Terminal h :: t -> get_from db (h :: acc) cols t
@@ -443,8 +442,7 @@ and parse_drop db tokens =
         match lst with
         | [] -> raise (Malformed "Wrong Syntax in DROP")
         | EndOfQuery EOQ :: t ->
-          let updated_db = 
-            drop db (terminal_to_string acc) in 
+            let updated_db = drop db (terminal_to_string acc) in
             parse_query updated_db t
         | Terminal h :: t -> grouping (h :: acc) t
         | _ -> raise (Malformed "Wrong Syntax in DROP")
@@ -459,8 +457,7 @@ and parse_insert db (tokens : token list) =
   in
   let cols = this_command |> get_cols_list |> string_formatter in
   let vals = this_command |> get_vals_list |> vals_formatter in
-  let updated_db = 
-  insert db table cols vals in
+  let updated_db = insert db table cols vals in
   get_other_commands tokens |> parse_query updated_db
 
 (**[parse_insert_test_version tokens] runs parse_insert but it is
@@ -479,9 +476,10 @@ and parse_insert_test_version db (tokens : token list) :
 and parse_delete db tokens =
   let this_command = get_this_command tokens in
   let table = parse_table this_command (SubCommand From) in
-  let updated_db = 
-  Controller.delete db table
-    (parse_where (this_command |> get_list_after_where))in 
+  let updated_db =
+    Controller.delete db table
+      (parse_where (this_command |> get_list_after_where))
+  in
   get_other_commands tokens |> parse_query updated_db
 
 and parse_delete_test_version db (tokens : token list) : string =
@@ -495,13 +493,14 @@ and parse_update db tokens =
     terminal_to_string [ List.nth this_command 0 |> token_to_terminal ]
     |> trim_string
   in
-  let updated_db = 
-  Controller.update db table
-    (this_command |> get_update_list |> get_update_cols
-   |> string_formatter)
-    (this_command |> get_update_list |> get_update_vals
-   |> vals_formatter)
-    (parse_where (this_command |> get_list_after_where)) in 
+  let updated_db =
+    Controller.update db table
+      (this_command |> get_update_list |> get_update_cols
+     |> string_formatter)
+      (this_command |> get_update_list |> get_update_vals
+     |> vals_formatter)
+      (parse_where (this_command |> get_list_after_where))
+  in
   get_other_commands tokens |> parse_query updated_db
 
 and parse_save db tokens =
@@ -510,7 +509,7 @@ and parse_save db tokens =
     terminal_to_string [ List.nth this_command 0 |> token_to_terminal ]
     |> trim_string
   in
-  Controller.save table;
+  Controller.save db table;
   get_other_commands tokens |> parse_query db
 
 and parse_update_test_version (db : database) tokens :

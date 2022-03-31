@@ -12,13 +12,16 @@ The vision for our project is still what we had described in MS0, to create a da
 During our development, we found it beneficial to implement our own data structure (a binary search tree) and our own parser so that our implementation can be more customizable to our needs. We refrained from using a out-of-the-box data structure or a parser generator to demonstrate the novelty of our work.
 
 ## Summary of Progress
-During this short sprint, we have been primarily working on the internal representation of the database as well as connecting it to the controller, a central piece of program that carries out all operations and communicate with the REPL.
+During this short sprint, we have been primarily working on the internal representation of the database as well as connecting it to the controller, a central piece of program that carries out all operations and communicate with the REPL. 
 
 We figured out a way to implement the internal representation using a binary search tree, which we have developed during MS1. We add multiple functionalities to the tree including all high-order functional operations. We then constructed a database that supports multiple tables. We stored every piece of data in the binary search tree, which boosts our database's efficiency compared to a list implementation. We provide numerous ways to manipulate the "data tree" in the `rep` compilation unit, which is called in the controller and serves as the key of the database. 
 
+We made a major change by adding a "Database" type and using it as the parent 
+
+In the controller, we used the parameters from the parsed commands (passed in by Parser) to call functions inside "rep" that actually manipulate the tree based on the commands. This class handles the conversion of parameters and printing for the select function. 
+
 We also implemented the feature to save current data to a csv file. The functions are written in "save.ml", which used a csv library. After parsing the command, controller can call function in save to save the specified table. (We don't have write from file feature yet, that will be in MS3.)
 
-ADD CONTROLLER
 
 ## Activity Breakdown
 - Lee: Added some functionalities to the binary search tree. Designed the internal structure of the database and outlined the `rep` compilation unit. Implemented some functions in `rep` that operate on the data tree. Fixed many bugs. Approximate hours spend: 8
@@ -35,19 +38,19 @@ As a team, we were productive. During team meetings, we mainly focused on discus
 ### Satisfactory : 45/45
 The satisfactory scope has two task: constructing an internal representation of the database and implementing database operations inside it. We achieved that in the `rep` compilation unit. It has a well-designed tree-based structure as well as numerous methods that manipulate these trees to realize CRUD operations.
 
-### Good : 记得写这个
+### Good : 40/40
 1. Connect the command line interface and the parser to the database to demo database operations easier. We will have the command line to print out the actual representation of the data. This is also pretty print of our data to help users to visualize.
    
-### Excellent ： 记得写这个
+### Excellent ： 15/15
 1. Achieve storing data in a file on the hard drive so data will be kept after accidental or regular shut down like a real data base managing system.
 
 ## Goals for the Next Sprint
 The database is almost done. This is much faster than our expectation largely because of the insanely short duration of MS2. Little things are left for MS3. In MS3 we plan to accomplish the following:
 ### Satisfactory
-Be able to output the content of the database to a file on hard drive.
+Be able to not only save specified table to csv file but also read csv file to create table. The additional feature of converting valid csv file to create table.
 ### Good
-Import a file to the database. Correctly destructure its content and store
-them in an appropriate format.
+
+
 ### Excellent
 Connect database file I/O with the REPL interface and test the whole
 project by letting real people use it.
