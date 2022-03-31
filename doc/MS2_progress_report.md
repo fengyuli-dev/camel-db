@@ -24,7 +24,7 @@ We also implemented the feature to save current data to a csv file. The function
 
 
 ## Activity Breakdown
-- Lee: Added some functionalities to the binary search tree. Designed the internal structure of the database and outlined the `rep` compilation unit. Implemented some functions in `rep` that operate on the data tree. Fixed many bugs. Approximate hours spend: 8
+- Lee: Added some functionalities to the binary search tree. Designed the internal structure of the database and outlined the `rep` compilation unit. Implemented some functions in `rep` that operate on the data tree. Fixed many bugs. Approximate hours spend: 9
 - Emerald: Implement file saving feature with csv that convert any table to csv files. Also implemented the naive reading feature from a file to convert it to a table.
 Approximate hours spend:
 - Yolanda: Approximate hours spent:
@@ -49,8 +49,7 @@ The database is almost done. This is much faster than our expectation largely be
 ### Satisfactory
 Be able to not only save specified table to csv file but also read csv file to create table. The additional feature of converting valid csv file to create table.
 ### Good
-
-
+Write tests for the full database that uses example csv files. Complete the testing for the untested parts in trees and other relevant compilation units.
 ### Excellent
 Connect database file I/O with the REPL interface and test the whole
 project by letting real people use it.
