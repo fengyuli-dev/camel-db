@@ -51,7 +51,7 @@ We successfully
 The database is almost done. This is much faster than our expectation largely because of the insanely short duration of MS2. Little things are left for MS3. In MS3 we plan to accomplish the following:
 ### Satisfactory
 1. Be able to not only save specified table to csv file but also read csv file to create table. The additional feature of converting valid csv file to create table.
-2. Implement * (the same * in SQl that meaning all/everything) to our table commands.
+2. Implement wildcard * (the same * in SQl that meaning all/everything) to our table commands.
 ### Good
 Write tests for the full database that uses example csv files. Complete the testing for the untested parts in trees and other relevant compilation units.
 ### Excellent
