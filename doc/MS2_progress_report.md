@@ -22,8 +22,7 @@ ADD CONTROLLER
 
 ## Activity Breakdown
 - Lee: Added some functionalities to the binary search tree. Designed the internal structure of the database and outlined the `rep` compilation unit. Implemented some functions in `rep` that operate on the data tree. Fixed many bugs. Approximate hours spend: 8
-- Emerald: Implement file saving feature with csv that convert any table to csv files. Also implemented the naive reading feature from a file to convert it to a table.
-Approximate hours spend:
+- Emerald: Implement file saving feature with csv that convert any table to csv files. Also implemented the naive reading feature from a file to convert it to a table (see "csv_files/csv1.ml"). Fix some parameter dependency to specify one data base. Approximate hours spend: 8
 - Yolanda: Approximate hours spent:
 - Chuhan: Approximate hours spent:
 
@@ -40,11 +39,13 @@ The satisfactory scope has two task: constructing an internal representation of 
    
 ### Excellent ： 15/15
 1. Achieve storing data in a file on the hard drive so data will be kept after accidental or regular shut down like a real data base managing system.
+We successfully 
 
 ## Goals for the Next Sprint
 The database is almost done. This is much faster than our expectation largely because of the insanely short duration of MS2. Little things are left for MS3. In MS3 we plan to accomplish the following:
 ### Satisfactory
-Be able to not only save specified table to csv file but also read csv file to create table. The additional feature of converting valid csv file to create table.
+1. Be able to not only save specified table to csv file but also read csv file to create table. The additional feature of converting valid csv file to create table.
+2. Implement * (the same * in SQl that meaning all/everything) to our table commands.
 ### Good
 
 
