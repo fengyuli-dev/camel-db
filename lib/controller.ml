@@ -40,7 +40,7 @@ let insert (db : database) table_name cols value_list =
 
 let select (db : database) table_name cols filter_function =
   let table = select db table_name cols filter_function in
-  print_endline (pretty_print table)
+  print_endline (pretty_print db table)
 
 let delete (db : database) table_name filtering_function =
   delete_row db table_name filtering_function
