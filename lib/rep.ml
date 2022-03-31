@@ -21,7 +21,6 @@ let int_of_string s = if s = "NaN" then 0 else Stdlib.int_of_string s
 let float_of_string s =
   if s = "NaN" then 0. else Stdlib.float_of_string s
 
-
 let tree_find (filter : 'a -> bool) (tree : 'a tree) =
   let filtered_tree = filter_based_on_value filter tree in
   if size filtered_tree = 1 then get 0 tree else raise Not_found
@@ -81,9 +80,9 @@ let create_empty_table table_name =
   if table_name = "" then raise IllegalName
   else { table_name; columns = empty; num_rows = 0 }
 
-let create_empty_database database_name = if database_name = "" then
-   raise IllegalName else { database_name; tables = empty; num_tables =
-   0 }
+let create_empty_database database_name =
+  if database_name = "" then raise IllegalName
+  else { database_name; tables = empty; num_tables = 0 }
 
 let get_row_num { table_name; columns; num_rows } = num_rows
 let get_col_num table = size table.columns
@@ -455,23 +454,37 @@ let insert_row
 
 open Format
 
-let pretty_print table =
+let get_all_rows (db : database) (table_name : string) =
+  let table =
+    tree_find (fun table -> table.table_name = table_name) db.tables
+  in
+  let num_rows = table.num_rows in
+  let row_list = range num_rows in
+  List.map
+    (fun row ->
+      "| " ^ String.concat " | " (get_one_row db table_name row) ^ " |")
+    row_list
+
+let string_of_data_type (dt : data_type) =
+  match dt with
+  | String -> "String"
+  | Int -> "Int"
+  | Float -> "Float"
+
+let pretty_print_fields table =
+  let pair_list = List.split (get_field_name_list_internal table) in
+  "| "
+  ^ String.concat " | " (fst pair_list)
+  ^ " |" ^ "\n"
+  ^ String.concat " | "
+      (List.map (fun x -> string_of_data_type x) (snd pair_list))
+  ^ " |"
+
+let pretty_print db table =
   Format.sprintf "@[Table: %s@] \n %d columns * %d entries\n"
     (get_table_name_internal table)
     (get_col_num table) (get_row_num table)
-    (*
-    ^ 
-    column
-    ^
-    string list (entry - 1 row)
-    iterate through columns, concat value to each element of the string list
-
-    Col 1 Col 2 Col 3
-    '1' ^ "dog" ^
-    '2' ^ "dog" ^ 
-    '3' ^ "dog" ^
-    '4' ^ "dog" ^ 
-    '5' ^ "dog" ^
-
-    [string list of rows]
-    List.concat "\n" these lines *)
+  ^ "\n" ^ 
+  pretty_print_fields table 
+  ^ "\n" ^
+  String.concat "\n" (get_all_rows db table.table_name)
