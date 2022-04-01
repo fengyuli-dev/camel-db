@@ -26,7 +26,7 @@ let tree_find (filter : 'a -> bool) (tree : 'a tree) =
   if size filtered_tree = 1 then get 0 (update_key filtered_tree)
   else if size filtered_tree = 0 then raise Not_found
   else (
-    print_endline "more than one element found.";
+    if debug then print_endline "more than one element found." else ();
     raise Duplicate)
 
 (** Dummy placeholder for single database implementation. *)
@@ -366,10 +366,12 @@ let select
       let t =
         tree_find (fun table -> table.table_name = table_name) db.tables
       in
-      print_endline table_name;
-      print_endline t.table_name;
-      print_list (fun x -> fst x) (get_field_name_list_internal t);
-      t
+      if debug then (
+        print_endline table_name;
+        print_endline t.table_name;
+        print_list (fun x -> fst x) (get_field_name_list_internal t);
+        t)
+      else t
     with Not_found -> raise TableDNE
   in
   let new_table =
@@ -391,7 +393,9 @@ let insert_default_into_column (old_column : column) : column =
   let data_type = old_column.data_type in
   let old_data = old_column.data in
   let new_row = generate_new_key old_data in
-  print_endline ("The new_row is: " ^ string_of_int new_row);
+  if debug then
+    print_endline ("The new_row is: " ^ string_of_int new_row)
+  else ();
   let new_data =
     insert (new_row, default_of_data_type data_type) old_data
   in
@@ -412,8 +416,10 @@ let update_data_in_column
     (new_data : string)
     (row_num : int) : column =
   let data = column.data in
-  print_endline "The new data";
-  print_endline new_data;
+  if debug then (
+    print_endline "The new data";
+    print_endline new_data)
+  else ();
   let new_data_tree = update row_num new_data data in
   { column with data = new_data_tree }
 
@@ -437,10 +443,13 @@ let update_column_in_table
     (table : table) =
   let old_column_tree = table.columns in
   let new_column_tree = update col_key new_column old_column_tree in
-  print_endline "Inside update column in table function: ";
-  print_endline new_column.field_name;
-  print_endline (pretty_print { table with columns = new_column_tree });
-  print_endline "";
+  if debug then (
+    print_endline "Inside update column in table function: ";
+    print_endline new_column.field_name;
+    print_endline
+      (pretty_print { table with columns = new_column_tree });
+    print_endline "")
+  else ();
   { table with columns = new_column_tree }
 
 (** get the row numbers to update, for each column, these row numbers
@@ -487,7 +496,9 @@ let rec update_row
       }
     in
     rep_ok_db new_db
-  with | NotFound -> raise ColumnDNE | Not_found -> raise TableDNE
+  with
+  | NotFound -> raise ColumnDNE
+  | Not_found -> raise TableDNE
 
 (* return true if data does not belong to this type*)
 let wrong_type data (dp : data_type) =
@@ -495,11 +506,11 @@ let wrong_type data (dp : data_type) =
   let num_float = float_of_string_opt data in
   match dp with
   | Int ->
-      print_endline "matched to int";
+      if debug then print_endline "matched to int" else ();
       num_int = None
       (* if it cannot be converted to int then it has wrong type.*)
   | Float ->
-      print_endline "matched to float";
+      if debug then print_endline "matched to float" else ();
       num_float = None
       (* if it cannot be converted to float then it has wrong type.*)
   | String -> false
@@ -508,37 +519,51 @@ let rec update_one_row_only
     table
     (fieldname_type_value_list : (string * string) list)
     new_row_index =
-  print_endline "The table passed in as parameter.";
-  print_endline (pretty_print table);
+  if debug then (
+    print_endline "The table passed in as parameter.";
+    print_endline (pretty_print table))
+  else ();
   let col_tree = table.columns in
   let rows_to_keep = [ new_row_index ] in
   let new_table =
     let rec helper lst =
-      print_endline
-        ("size of the lst parameter." ^ string_of_int (List.length lst));
-      print_string (string_of_int (List.length lst));
+      if debug then (
+        print_endline
+          ("size of the lst parameter."
+          ^ string_of_int (List.length lst));
+        print_string (string_of_int (List.length lst)))
+      else ();
       match lst with
       | [] ->
-          print_string "reached base case yay";
-          print_endline (pretty_print table);
+          if debug then (
+            print_string "reached base case yay";
+            print_endline (pretty_print table))
+          else ();
           table
       | (column_name, data) :: t ->
-          print_endline
-            ("size of the t parameter." ^ string_of_int (List.length t));
-          print_endline "THe current recursive cols are: ";
-          print_list (fun (col_name, data) -> col_name ^ " " ^ data) t;
+          if debug then (
+            print_endline
+              ("size of the t parameter."
+              ^ string_of_int (List.length t));
+            print_endline "THe current recursive cols are: ";
+            print_list (fun (col_name, data) -> col_name ^ " " ^ data) t)
+          else ();
           let col_key =
             try
               get_key_col
                 (fun (col, index) -> col.field_name = column_name)
                 col_tree
             with NotFound ->
-              print_endline column_name;
-              print_endline data;
+              if debug then (
+                print_endline column_name;
+                print_endline data)
+              else ();
               raise (Failure "raised at get_key")
           in
-          print_endline
-            ("The current col_key is: " ^ string_of_int col_key);
+          if debug then
+            print_endline
+              ("The current col_key is: " ^ string_of_int col_key)
+          else ();
           let column =
             try get col_key col_tree
             with NotFound ->
@@ -548,15 +573,26 @@ let rec update_one_row_only
           if wrong_type data col_type then raise WrongType
           else
             let new_column = update_all_rows column data rows_to_keep in
-            print_endline ("New Column: " ^ new_column.field_name);
-            print_list (fun (k, v) -> v) (inorder new_column.data);
-            let t = 
-              update_column_in_table col_key new_column (helper t) in 
-              print_endline ("The current table with " ^ string_of_int col_key ^ " updated is: ");
-              print_endline (pretty_print t); t
+            if debug then (
+              print_endline ("New Column: " ^ new_column.field_name);
+              print_list (fun (k, v) -> v) (inorder new_column.data))
+            else ();
+            let t =
+              update_column_in_table col_key new_column (helper t)
+            in
+            if debug then (
+              print_endline
+                ("The current table with " ^ string_of_int col_key
+               ^ " updated is: ");
+              print_endline (pretty_print t);
+              t)
+            else t
     in
-    print_endline "list passed in";
-    print_string (string_of_int (List.length fieldname_type_value_list));
+    if debug then (
+      print_endline "list passed in";
+      print_string
+        (string_of_int (List.length fieldname_type_value_list)))
+    else ();
     helper fieldname_type_value_list
   in
   rep_ok_tb new_table
@@ -565,7 +601,8 @@ let insert_row
     (db : database)
     (table_name : string)
     (fieldname_type_value_list : (string * string) list) =
-  print_endline "The insert_row function is called.";
+  if debug then print_endline "The insert_row function is called."
+  else ();
   try
     let key =
       get_key
@@ -574,7 +611,9 @@ let insert_row
     in
     let table = get key db.tables in
     let new_row_index = get_row_num table in
-    print_endline ("New row index is: " ^ string_of_int new_row_index);
+    if debug then
+      print_endline ("New row index is: " ^ string_of_int new_row_index)
+    else ();
     let table_with_default_inserted =
       insert_default_in_every_column table
     in
@@ -585,7 +624,7 @@ let insert_row
     let final_table =
       { new_table with num_rows = new_table.num_rows }
     in
-    print_endline (pretty_print final_table);
+    if debug then print_endline (pretty_print final_table) else ();
     let new_db =
       {
         db with

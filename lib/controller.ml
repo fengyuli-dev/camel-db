@@ -5,19 +5,7 @@ open Format
 open Rep
 open Tree
 
-(* Useful functions:
-
-   val print_as : int -> string -> unit
-
-   pp_print_as ppf len s prints s in the current pretty-printing box.
-   The pretty-printer formats s as if it were of length len.
-
-   val open_tbox : unit -> unit
-
-   This box prints lines separated into cells of fixed width. *)
-
-(*Button for print test. *)
-let debug = true
+let debug = false
 
 let terminal_to_string (terminal : terminal) =
   match terminal with
@@ -50,11 +38,12 @@ let create
     db
 
 let insert (db : database) table_name cols value_list =
+  if debug then (
   print_endline
     ("\nCalled the insert function. \n\n Table: \"" ^ table_name
    ^ "\"\n Columns: [\""
     ^ String.concat "\", \"" cols
-    ^ "\"]");
+    ^ "\"]");) else ();
   try
     let new_db =
       insert_row db table_name
@@ -70,10 +59,15 @@ let insert (db : database) table_name cols value_list =
       print_endline (pretty_print new_table)
     else ();
     new_db
-  with ColumnDNE ->
-    print_endline
-      "Some columns of the insertion attempt is not in the table.";
-    db
+  with
+  | ColumnDNE ->
+      print_endline
+        "Some columns of the insertion attempt is not in the table.";
+      db
+  | WrongType ->
+      print_endline
+        "The value inserted is not compatible with column type.";
+      db
 
 let select (db : database) table_name cols filter_function =
   print_endline
@@ -103,10 +97,19 @@ let update (db : database) table_name cols values filtering_function =
     update_row db table_name
       (List.combine cols (terminal_list_to_string_list values))
       filtering_function
-  with ColumnDNE ->
-    print_endline
-      "Some columns of the update attempt is not in the table.";
-    db
+  with
+  | TableDNE ->
+      print_endline
+        "The table in the update attempt is not in the current \
+         database.";
+      db
+  | ColumnDNE ->
+      print_endline
+        "Some columns of the update attempt is not in the table.";
+      db
+  | WrongType ->
+      print_endline "Value updated is not compatible with column type.";
+      db
 
 let drop (db : database) table_name =
   try drop_table db table_name
