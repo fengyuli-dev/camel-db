@@ -49,7 +49,10 @@ let rec insert key_value_pair tree =
 
 let rec update key new_value = function
   | EmptyLeaf -> EmptyLeaf
-  | Leaf (k, v) -> if k = key then Leaf (k, new_value) else Leaf (k, v)
+  | Leaf (k, v) ->
+      if k = key then Leaf (k, new_value)
+        (* else raise (Failure "update key new_value has bug") *)
+      else Leaf (k, v)
   | Node (k, v, l, r) ->
       if k = key then Node (k, new_value, l, r)
       else if k < key then Node (k, v, update key new_value l, r)
@@ -114,8 +117,29 @@ let get_key (f : 'a * int -> bool) tree =
   in
   let val_key_pair = List.filter f val_key_assoc_list in
   try snd (List.nth val_key_pair 0) with
-  | Failure _ -> raise NotFound
-  | Invalid_argument _ -> raise NotFound
+  | Failure _ ->
+      print_endline "Not found at snd";
+      raise NotFound
+  | Invalid_argument _ ->
+      print_endline "invalid argument";
+      raise NotFound
+
+let get_key_col (f : column * int -> bool) tree =
+  let key_val_assoc_list = inorder tree in
+  let val_key_assoc_list =
+    reverse_association_list key_val_assoc_list
+  in
+  let val_key_pair = List.filter f val_key_assoc_list in
+  try snd (List.nth val_key_pair 0) with
+  | Failure _ ->
+      print_list (fun (k, v) -> v.field_name) key_val_assoc_list;
+      print_list (fun (k, v) -> k.field_name) val_key_assoc_list;
+      print_list (fun (k, v) -> k.field_name) val_key_pair;
+      print_endline "Not found at snd";
+      raise NotFound
+  | Invalid_argument _ ->
+      print_endline "invalid argument";
+      raise NotFound
 
 let filter_based_on_key f tree =
   let all_key_value_pairs = inorder tree in

@@ -42,11 +42,26 @@ let db = select db "twoColTab" cols filter_all
 
 # Make Start Test Functions
 
-CREATE Persons (PersonID INT, LastName TEXT, FirstName TEXT, Address TEXT, City TEXT) ; CREATE Animals (Species TEXT, Age INT, Home TEXT) ; CREATE God (Sad INT, Fengyu TEXT) ;
+CREATE Persons (PersonID INT, LastName TEXT, FirstName TEXT, Address TEXT, City TEXT) ; CREATE Animals (Species TEXT, Age INT, Home TEXT) ; 
+CREATE God (Sad INT, Fengyu TEXT) ;
 
 SELECT PersonID, LastName, FirstName, Address, City FROM Persons ;
 
- INSERT INTO Customers (Name) VALUES ('Cardinal') ; DELETE FROM Sauce WHERE CustomerID = 1 ;
+ INSERT INTO Customers (Name) VALUES ('Cardinal') ; 
+ INSERT INTO God (Sad, Fengyu) VALUES (5, hey) ;
+
+CREATE Gods (Fengyu TEXT, Yo TEXT) ; 
+INSERT INTO Gods (Yo) VALUES (d) ;
+INSERT INTO God Sad VALUES 5 ;
+INSERT INTO God
+
+open Camel_db;;
+#use "lib/rep.ml";;
+#use "test/csv.ml";;
+let ftvl = [("Language", "Ruby"); ("Inventor", "Yolanda")];;
+update_one_row_only programming_table ftvl 3;;
+
+ DELETE FROM Sauce WHERE CustomerID = 1 ;
 
 SELECT Species FROM Animals ;
 
