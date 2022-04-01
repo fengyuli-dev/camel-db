@@ -1,3 +1,7 @@
 ; (tests
 ;  (names main tree)
 ;  (libraries Camel_db ounit2))
+
+(tests
+ (names csv)
+ (libraries Camel_db))
