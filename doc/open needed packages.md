@@ -1,5 +1,7 @@
 # UTOP Test
 
+## Set up
+
 open Camel_db 
 
 open Type 
@@ -10,7 +12,9 @@ open Controller
 
 open Rep
 
-# set up
+open Parser
+
+
 
 let parent_db = Rep.create_empty_database "parent"
 
@@ -26,15 +30,20 @@ let dts : data_type list = [Type.Int; Type.String]
 
 # create stuff
 
-Controller.create parent_db "oneColTab" single_col single_type 
+let db = create parent_db "oneColTab" single_col single_type 
 
-Controller.create parent_db "twoColTab" cols dts
+let db = create db "twoColTab" cols dts
 
 # select stuff
 
-let filter_all _ _ = true
+let filter_all _ = true
 
-Controller.select parent_db "twoColTab" cols filter_all
+let db = select db "twoColTab" cols filter_all
 
+CREATE Persons (PersonID INT, LastName TEXT, FirstName TEXT, Address TEXT, City TEXT)
 
+CREATE Animals (Species TEXT, Age INT, Home TEXT) ;
 
+CREATE God (Sad INT, Fengyu TEXT) ; INSERT INTO Customers (Name) VALUES ('Cardinal') ; DELETE FROM Sauce WHERE CustomerID = 1 ;
+
+SELECT Species FROM Animals ;

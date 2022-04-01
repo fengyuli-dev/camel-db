@@ -31,5 +31,3 @@ val drop : database -> string -> database
 (** [save table_name] saves the proposed table to a csv file. *)
 val save : database -> string -> unit
 
-(** [get_parent_db] gives the output function the current db. *)
-val get_parent_db : database

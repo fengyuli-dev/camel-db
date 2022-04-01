@@ -17,8 +17,6 @@ open Rep
 
 (*Button for print test. *)
 let debug = false
-let parent_db = create_empty_database "parent"
-let get_parent_db = parent_db
 
 let terminal_to_string (terminal : terminal) =
   match terminal with
@@ -60,17 +58,16 @@ let insert (db : database) table_name cols value_list =
     db
 
 let select (db : database) table_name cols filter_function =
+  
   try
     let table = select db table_name cols filter_function in
     print_endline (pretty_print db table)
   with
-  (* | TableDNE ->
-      print_endline
-        (table_name
-       ^ " is not in the current database.") *)
+  | TableDNE ->
+      print_endline (table_name ^ " is not in the current database.")
   | ColumnDNE ->
       print_endline
-        "Some columns of the insertion attempt is not in the table."
+        "Some columns of the select attempt is not in the table."
 
 let delete (db : database) table_name filtering_function =
   try delete_row db table_name filtering_function

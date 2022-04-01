@@ -1,6 +1,7 @@
 open Type
 open Tokenizer
 open Controller
+open Helper
 
 exception Malformed of string
 exception Empty
@@ -107,9 +108,10 @@ let parse_cols (cols_tokens : terminal list) : string list =
     column names into a list of column names (with stripping). (used for
     select) *)
 let parse_select_columns tokens =
+  let lst =
   tokens |> terminal_to_string
   |> String.split_on_char ','
-  |> List.map String.trim
+  |> List.map String.trim in print_list (fun x -> "\"" ^ x ^ "\"") lst; lst
 
 let extract_name token =
   match token with
@@ -531,7 +533,7 @@ and parse_update_test_version (db : database) tokens :
 
 and parse_query db tokens =
   match tokens with
-  | [] -> ()
+  | [] -> db
   | Command Create :: t -> parse_create db t
   | Command Select :: t -> parse_select db t
   | Command Drop :: t -> parse_drop db t
