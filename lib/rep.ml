@@ -546,7 +546,10 @@ let rec update_one_row_only
             let new_column = update_all_rows column data rows_to_keep in
             print_endline ("New Column: " ^ new_column.field_name);
             print_list (fun (k, v) -> v) (inorder new_column.data);
-            update_column_in_table col_key new_column (helper t)
+            let t = 
+              update_column_in_table col_key new_column (helper t) in 
+              print_endline ("The current table with " ^ string_of_int col_key ^ " updated is: ");
+              print_endline (pretty_print t); t
     in
     print_endline "list passed in";
     print_string (string_of_int (List.length fieldname_type_value_list));
