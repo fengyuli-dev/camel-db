@@ -151,3 +151,10 @@ let table_tree =
 
 let test_db =
   { database_name = "parent"; tables = table_tree; num_tables = 3 }
+
+open Camel_db.Save
+
+let () =
+  save_file test_db "programming";
+  save_file test_db "classes";
+  save_file test_db "students"

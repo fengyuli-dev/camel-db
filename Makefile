@@ -16,8 +16,11 @@ test_tree:
 
 testall: test test_tree
 
-file:
+sample_file:
 	OCAMLRUNPARAM=b dune exec csv_files/csv1.exe
+
+file:
+	OCAMLRUNPARAM=b dune exec test/table_example.exe
 
 start:
 	OCAMLRUNPARAM=b dune exec bin/main.exe

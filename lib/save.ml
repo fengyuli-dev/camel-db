@@ -43,7 +43,8 @@ let save_file db table_name =
   let ecsv = Csv.input_all (Csv.of_string (get_file db table_name)) in
   let fname =
     (* Filename.concat (Filename.get_temp_dir_name ()) "example.csv" *)
-    Filename.concat Filename.current_dir_name ("csv_files/" ^ table_name)
+    Filename.concat Filename.current_dir_name
+      ("csv_files/" ^ table_name ^ ".csv")
   in
   Csv.save fname ecsv;
   printf "Saved CSV to file %S.\n" fname
@@ -54,6 +55,6 @@ let read_file table_name =
   let file_data =
     List.map
       (fun name -> (name, Csv.load name))
-      [ "csv_files/" ^ table_name ]
+      [ "csv_files/" ^ table_name ^ ".csv" ]
   in
   file_data
