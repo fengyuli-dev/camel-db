@@ -58,7 +58,7 @@ let rec update key new_value = function
       if k = key then (
         (* print_endline "update is performed on Node"; *)
         Node (k, new_value, l, r))
-      else if k < key then Node (k, v, update key new_value l, r)
+      else if k > key then Node (k, v, update key new_value l, r)
       else Node (k, v, l, update key new_value r)
 
 let rec get_min = function
