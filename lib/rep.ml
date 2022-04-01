@@ -485,7 +485,7 @@ let rec update_row
       }
     in
     rep_ok_db new_db
-  with NotFound -> raise ColumnDNE
+  with | NotFound -> raise ColumnDNE | Not_found -> raise TableDNE
 
 (* return true if data does not belong to this type*)
 let wrong_type data (dp : data_type) =
