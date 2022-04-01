@@ -84,6 +84,72 @@ let get_column_data database table_name field_name =
   let data = get_column_data_internal column in
   to_value_list data
 
+let get_row_num { table_name; columns; num_rows } = num_rows
+let get_col_num table = size table.columns
+let get_table_num db = db.num_tables
+
+(** [get_one_cell column row_num] gets the cell in this column whose
+    index matches the row_num*)
+let get_one_cell (column : column) (row_num : int) : string =
+  let data = get_column_data_internal column in
+  get row_num data
+
+(** [get_one_row table_name row_num] is the data in this row as a list,
+    organized in the same order as the order of columns*)
+let get_one_row (db : database) (table_name : string) (row_num : int) :
+    string list =
+  let table =
+    tree_find (fun table -> table.table_name = table_name) db.tables
+  in
+  let all_index_and_columns = inorder table.columns in
+  let all_columns = List.map (fun x -> snd x) all_index_and_columns in
+  List.map (fun col -> get_one_cell col row_num) all_columns
+
+(** [get_list_of_row_numbers table] is a list [0,1,2...(num_rows - 1)].
+    This would be helpful for iterating through all the rows*)
+let get_list_of_row_numbers (table : table) : int list =
+  let num_rows = get_row_num table in
+  range num_rows
+
+open Format
+
+let get_all_rows table =
+  try
+    let num_rows = table.num_rows in
+    let row_list = range num_rows in
+    List.map
+      (fun row ->
+        "| "
+        ^ String.concat " | "
+            (let all_columns =
+               List.map (fun x -> snd x) (inorder table.columns)
+             in
+             List.map (fun col -> get_one_cell col row) all_columns)
+        ^ " |")
+      row_list
+  with Not_found -> raise TableDNE
+
+let string_of_data_type (dt : data_type) =
+  match dt with String -> "String" | Int -> "Int" | Float -> "Float"
+
+let pretty_print_fields table =
+  let pair_list = List.split (get_field_name_list_internal table) in
+  "| "
+  ^ String.concat " | " (fst pair_list)
+  ^ " |" ^ "\n| "
+  ^ String.concat " | "
+      (List.map (fun x -> string_of_data_type x) (snd pair_list))
+  ^ " |"
+
+let pretty_print table =
+  Format.sprintf "\n @[Table: %s@] \n %d columns * %d entries\n"
+    (get_table_name_internal table)
+    (get_col_num table) (get_row_num table)
+  ^ "\n"
+  ^ pretty_print_fields table
+  ^ "\n"
+  ^ String.concat "\n" (get_all_rows table)
+
 (** [create_empty_column f dt] is the constructor of a column. *)
 let create_empty_column field_name data_type =
   if field_name = "" then raise IllegalName
@@ -97,10 +163,6 @@ let create_empty_table table_name =
 let create_empty_database database_name =
   if database_name = "" then raise IllegalName
   else { database_name; tables = empty; num_tables = 0 }
-
-let get_row_num { table_name; columns; num_rows } = num_rows
-let get_col_num table = size table.columns
-let get_table_num db = db.num_tables
 
 (* verifies if table is in valid structure, used in every action that
    creates a table. *)
@@ -165,29 +227,6 @@ let create_table db table_name field_name_type_alist =
       }
     in
     rep_ok_db new_db
-
-(** [get_one_cell column row_num] gets the cell in this column whose
-    index matches the row_num*)
-let get_one_cell (column : column) (row_num : int) : string =
-  let data = get_column_data_internal column in
-  get row_num data
-
-(** [get_one_row table_name row_num] is the data in this row as a list,
-    organized in the same order as the order of columns*)
-let get_one_row (db : database) (table_name : string) (row_num : int) :
-    string list =
-  let table =
-    tree_find (fun table -> table.table_name = table_name) db.tables
-  in
-  let all_index_and_columns = inorder table.columns in
-  let all_columns = List.map (fun x -> snd x) all_index_and_columns in
-  List.map (fun col -> get_one_cell col row_num) all_columns
-
-(** [get_list_of_row_numbers table] is a list [0,1,2...(num_rows - 1)].
-    This would be helpful for iterating through all the rows*)
-let get_list_of_row_numbers (table : table) : int list =
-  let num_rows = get_row_num table in
-  range num_rows
 
 (* Core functions and specific helpers. *)
 
@@ -323,7 +362,14 @@ let select
     (field_list : string list)
     (filtering_function : string list * string list -> bool) =
   let target_table =
-    try let t = tree_find (fun table -> table.table_name = table_name) db.tables in print_endline table_name; print_endline t.table_name; print_list (fun x -> fst x) (get_field_name_list_internal t); t
+    try
+      let t =
+        tree_find (fun table -> table.table_name = table_name) db.tables
+      in
+      print_endline table_name;
+      print_endline t.table_name;
+      print_list (fun x -> fst x) (get_field_name_list_internal t);
+      t
     with Not_found -> raise TableDNE
   in
   let new_table =
@@ -355,8 +401,8 @@ let insert_default_into_column (old_column : column) : column =
 let insert_default_in_every_column (old_table : table) =
   get_new_table
     (old_table : table)
-    insert_default_into_column old_table.num_rows
-  |> rep_ok_tb
+    insert_default_into_column
+    (old_table.num_rows + 1)
 
 (** update the data in the specified column and row number with
     [new_data]*)
@@ -365,6 +411,8 @@ let update_data_in_column
     (new_data : string)
     (row_num : int) : column =
   let data = column.data in
+  print_endline "The new data";
+  print_endline new_data;
   let new_data_tree = update row_num new_data data in
   { column with data = new_data_tree }
 
@@ -442,9 +490,11 @@ let wrong_type data (dp : data_type) =
   let num_float = float_of_string_opt data in
   match dp with
   | Int ->
+      print_endline "matched to int";
       num_int = None
       (* if it cannot be converted to int then it has wrong type.*)
   | Float ->
+      print_endline "matched to float";
       num_float = None
       (* if it cannot be converted to float then it has wrong type.*)
   | String -> false
@@ -455,20 +505,57 @@ let rec update_one_row_only
     new_row_index =
   let col_tree = table.columns in
   let rows_to_keep = [ new_row_index ] in
-  match fieldname_type_value_list with
-  | [] -> table
-  | (column_name, data) :: t ->
-      let col_key =
-        get_key
-          (fun (col, index) -> col.field_name = column_name)
-          col_tree
-      in
-      let column = get col_key col_tree in
-      let col_type = column.data_type in
-      if wrong_type data col_type then raise WrongType
-      else
-        let new_column = update_all_rows column data rows_to_keep in
-        update_column_in_table col_key new_column table
+  let rec helper lst =
+    print_endline
+      ("size of the lst parameter: " ^ string_of_int (List.length lst));
+    print_string (string_of_int (List.length lst));
+    match lst with
+    | [] ->
+        print_string "reached base case yay";
+        table
+    | (column_name, data) :: t ->
+        print_endline
+          ("size of the t parameter: " ^ string_of_int (List.length t));
+        print_endline "The current recursive cols (t) are: ";
+        print_list (fun (col_name, data) -> col_name ^ " " ^ data) t;
+        print_endline "";
+        let col_key =
+          try
+            get_key
+              (fun (col, index) -> col.field_name = column_name)
+              col_tree
+          with NotFound ->
+            print_endline column_name;
+            print_endline data;
+            raise (Failure "raised at get_key")
+        in
+        print_endline
+          ("The current col_key is: " ^ string_of_int col_key);
+        let column =
+          try get col_key col_tree
+          with NotFound -> raise (Failure "raised at get col_key ...")
+        in
+        print_endline "The current column's name is";
+        print_endline column.field_name;
+        let col_type = column.data_type in
+        print_endline "The current data passed in is";
+        print_endline data;
+        if wrong_type data col_type then raise WrongType
+        else
+          let new_column = update_all_rows column data rows_to_keep in
+          print_endline ("New Column: " ^ new_column.field_name);
+          print_endline "The data in the new column";
+          print_list (fun (k, v) -> v) (inorder new_column.data);
+          print_endline "";
+          print_endline "The col key to insert: ";
+          print_endline (string_of_int col_key);
+          update_column_in_table col_key new_column (helper t)
+  in
+  let new_table = helper fieldname_type_value_list in
+  rep_ok_tb new_table
+
+let rec m lst =
+  match lst with [] -> 0 | (col, value) :: t -> value + m t
 
 let insert_row
     (db : database)
@@ -481,7 +568,7 @@ let insert_row
         db.tables
     in
     let table = get key db.tables in
-    let new_row_index = get_row_num table + 1 in
+    let new_row_index = get_row_num table in
     let table_with_default_inserted =
       insert_default_in_every_column table
     in
@@ -490,7 +577,7 @@ let insert_row
         fieldname_type_value_list new_row_index
     in
     let final_table =
-      { new_table with num_rows = new_table.num_rows + 1 }
+      { new_table with num_rows = new_table.num_rows }
     in
     let new_db =
       {
@@ -506,42 +593,3 @@ let insert_row
     in
     rep_ok_db new_db
   with NotFound -> raise ColumnDNE
-
-open Format
-
-let get_all_rows table =
-  try
-    let num_rows = table.num_rows in
-    let row_list = range num_rows in
-    List.map
-      (fun row ->
-        "| "
-        ^ String.concat " | "
-            (let all_columns =
-               List.map (fun x -> snd x) (inorder table.columns)
-             in
-             List.map (fun col -> get_one_cell col row) all_columns)
-        ^ " |")
-      row_list
-  with Not_found -> raise TableDNE
-
-let string_of_data_type (dt : data_type) =
-  match dt with String -> "String" | Int -> "Int" | Float -> "Float"
-
-let pretty_print_fields table =
-  let pair_list = List.split (get_field_name_list_internal table) in
-  "| "
-  ^ String.concat " | " (fst pair_list)
-  ^ " |" ^ "\n| "
-  ^ String.concat " | "
-      (List.map (fun x -> string_of_data_type x) (snd pair_list))
-  ^ " |"
-
-let pretty_print table =
-  Format.sprintf "\n @[Table: %s@] \n %d columns * %d entries\n"
-    (get_table_name_internal table)
-    (get_col_num table) (get_row_num table)
-  ^ "\n"
-  ^ pretty_print_fields table
-  ^ "\n"
-  ^ String.concat "\n" (get_all_rows table)

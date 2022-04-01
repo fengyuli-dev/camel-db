@@ -42,13 +42,18 @@ let db = select db "twoColTab" cols filter_all
 
 # Make Start Test Functions
 
-CREATE Persons (PersonID INT, LastName TEXT, FirstName TEXT, Address TEXT, City TEXT) ; CREATE Animals (Species TEXT, Age INT, Home TEXT) ; CREATE God (Sad INT, Fengyu TEXT) ;
+CREATE Persons (PersonID INT, LastName TEXT, FirstName TEXT, Address TEXT, City TEXT) ; CREATE Animals (Species TEXT, Age INT, Home TEXT) ; 
 
 SELECT PersonID, LastName, FirstName, Address, City FROM Persons ;
 
  INSERT INTO Customers (Name) VALUES ('Cardinal') ; DELETE FROM Sauce WHERE CustomerID = 1 ;
 
 SELECT Species FROM Animals ;
+
+CREATE God (Sad INT, Fengyu TEXT) ;
+INSERT INTO God (Sad, Fengyu) VALUES (5, "9") ;
+INSERT INTO God Sad VALUES 5 ;
+INSERT INTO God VALUES ;
 
 
 

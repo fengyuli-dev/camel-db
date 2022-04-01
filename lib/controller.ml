@@ -3,6 +3,7 @@ open Type
 
 open Format
 open Rep
+open Tree
 
 (* Useful functions:
 
@@ -49,18 +50,24 @@ let create
     db
 
 let insert (db : database) table_name cols value_list =
-  print_endline 
+  print_endline
     ("\nCalled the insert function. \n\n Table: \"" ^ table_name
-   ^ "\"\n Columns: [\"" ^ String.concat "\", \"" cols ^ "\"]");
+   ^ "\"\n Columns: [\""
+    ^ String.concat "\", \"" cols
+    ^ "\"]");
   try
-    let new_db = 
-    insert_row db table_name
-      (List.combine cols (terminal_list_to_string_list value_list))
-    in 
+    let new_db =
+      insert_row db table_name
+        (List.combine cols (terminal_list_to_string_list value_list))
+    in
     if debug then
-      print_endline
-        (pretty_print
-           (select new_db table_name cols (fun (_, _) -> true)))
+      let key =
+        get_key
+          (fun (table, index) -> table.table_name = table_name)
+          new_db.tables
+      in
+      let new_table = get key new_db.tables in
+      print_endline (pretty_print new_table)
     else ();
     new_db
   with ColumnDNE ->
@@ -71,7 +78,9 @@ let insert (db : database) table_name cols value_list =
 let select (db : database) table_name cols filter_function =
   print_endline
     ("\nCalled the select function. \n\n Table: \"" ^ table_name
-   ^ "\"\n Columns: [\"" ^ String.concat "\", \"" cols ^"\"]");
+   ^ "\"\n Columns: [\""
+    ^ String.concat "\", \"" cols
+    ^ "\"]");
   try
     let table = Rep.select db table_name cols filter_function in
     print_endline (pretty_print table)
