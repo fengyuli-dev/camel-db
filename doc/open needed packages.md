@@ -43,16 +43,16 @@ let db = select db "twoColTab" cols filter_all
 # Make Start Test Functions
 
 CREATE Persons (PersonID INT, LastName TEXT, FirstName TEXT, Address TEXT, City TEXT) ; CREATE Animals (Species TEXT, Age INT, Home TEXT) ; 
-CREATE God (Sad INT, Fengyu TEXT) ;
+CREATE God (Year INT, Name TEXT) ;
 
 SELECT PersonID, LastName, FirstName, Address, City FROM Persons ;
 
  INSERT INTO Customers (Name) VALUES ('Cardinal') ; 
- INSERT INTO God (Sad, Fengyu) VALUES (5, hey) ;
+ INSERT INTO God (Year, Name) VALUES (5, hey) ;
 
-CREATE Gods (Fengyu TEXT, Yo TEXT) ; 
+CREATE Gods (Name TEXT, Yo TEXT) ; 
 INSERT INTO Gods (Yo) VALUES (d) ;
-INSERT INTO God Sad VALUES 5 ;
+INSERT INTO God Year VALUES 5 ;
 INSERT INTO God
 
 open Camel_db;;
@@ -67,7 +67,7 @@ SELECT Species FROM Animals ;
 
 
 
-let db = parse parent_db "CREATE Animals (Species TEXT, Age INT, Home TEXT) ;";;
+let db = parse parent_db "CREATE Persons (PersonID INT, LastName TEXT, FirstName TEXT, Address TEXT, City TEXT) ; CREATE Animals (Species TEXT, Age INT, Home TEXT) ; CREATE God (Year INT, Name TEXT) ;";;
 
 let db = parse db "SELECT Species FROM Animals ;";;
 
