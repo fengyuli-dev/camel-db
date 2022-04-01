@@ -40,10 +40,26 @@ let filter_all _ = true
 
 let db = select db "twoColTab" cols filter_all
 
-CREATE Persons (PersonID INT, LastName TEXT, FirstName TEXT, Address TEXT, City TEXT)
+CREATE Persons (PersonID INT, LastName TEXT, FirstName TEXT, Address TEXT, City TEXT) ; CREATE Animals (Species TEXT, Age INT, Home TEXT) ; CREATE God (Sad INT, Fengyu TEXT) ;
 
-CREATE Animals (Species TEXT, Age INT, Home TEXT) ;
+SELECT PersonID, LastName, FirstName, Address, City FROM Persons ;
 
-CREATE God (Sad INT, Fengyu TEXT) ; INSERT INTO Customers (Name) VALUES ('Cardinal') ; DELETE FROM Sauce WHERE CustomerID = 1 ;
+ INSERT INTO Customers (Name) VALUES ('Cardinal') ; DELETE FROM Sauce WHERE CustomerID = 1 ;
 
 SELECT Species FROM Animals ;
+
+
+
+let db = parse parent_db "CREATE Animals (Species TEXT, Age INT, Home TEXT) ;";;
+
+let db = parse db "SELECT Species FROM Animals ;";;
+
+select db "Animals" ["Species"] (fun _ -> true);;
+
+
+
+
+
+- [ ] debug create: create 1 table, create 2 tables
+- [ ] debug select: select one column, select multiple columns, select rows
+- [ ] debug insert: insert 1 row

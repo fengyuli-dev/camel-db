@@ -23,10 +23,11 @@ let float_of_string s =
 
 let tree_find (filter : 'a -> bool) (tree : 'a tree) =
   let filtered_tree = filter_based_on_value filter tree in
-  if size filtered_tree = 1 then get 0 tree
+  if size filtered_tree = 1 then get 0 (update_key filtered_tree)
   else if size filtered_tree = 0 then raise Not_found
-  else (print_endline "more than one element found.";
-  raise Duplicate)
+  else (
+    print_endline "more than one element found.";
+    raise Duplicate)
 
 (** Dummy placeholder for single database implementation. *)
 let parent_db =
@@ -322,7 +323,7 @@ let select
     (field_list : string list)
     (filtering_function : string list * string list -> bool) =
   let target_table =
-    try tree_find (fun table -> table.table_name = table_name) db.tables
+    try let t = tree_find (fun table -> table.table_name = table_name) db.tables in print_endline table_name; print_endline t.table_name; print_list (fun x -> fst x) (get_field_name_list_internal t); t
     with Not_found -> raise TableDNE
   in
   let new_table =
@@ -508,17 +509,18 @@ let insert_row
 
 open Format
 
-let get_all_rows (db : database) (table_name : string) =
+let get_all_rows table =
   try
-    let table =
-      tree_find (fun table -> table.table_name = table_name) db.tables
-    in
     let num_rows = table.num_rows in
     let row_list = range num_rows in
     List.map
       (fun row ->
         "| "
-        ^ String.concat " | " (get_one_row db table_name row)
+        ^ String.concat " | "
+            (let all_columns =
+               List.map (fun x -> snd x) (inorder table.columns)
+             in
+             List.map (fun col -> get_one_cell col row) all_columns)
         ^ " |")
       row_list
   with Not_found -> raise TableDNE
@@ -530,16 +532,16 @@ let pretty_print_fields table =
   let pair_list = List.split (get_field_name_list_internal table) in
   "| "
   ^ String.concat " | " (fst pair_list)
-  ^ " |" ^ "\n"
+  ^ " |" ^ "\n| "
   ^ String.concat " | "
       (List.map (fun x -> string_of_data_type x) (snd pair_list))
   ^ " |"
 
-let pretty_print db table =
-  Format.sprintf "@[Table: %s@] \n %d columns * %d entries\n"
+let pretty_print table =
+  Format.sprintf "\n @[Table: %s@] \n %d columns * %d entries\n"
     (get_table_name_internal table)
     (get_col_num table) (get_row_num table)
   ^ "\n"
   ^ pretty_print_fields table
   ^ "\n"
-  ^ String.concat "\n" (get_all_rows db table.table_name)
+  ^ String.concat "\n" (get_all_rows table)

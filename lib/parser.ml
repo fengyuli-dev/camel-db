@@ -108,10 +108,17 @@ let parse_cols (cols_tokens : terminal list) : string list =
     column names into a list of column names (with stripping). (used for
     select) *)
 let parse_select_columns tokens =
+  print_endline
+    ("\n The columns are parsed as: "
+    ^ terminal_to_string (List.rev tokens));
   let lst =
-  tokens |> terminal_to_string
-  |> String.split_on_char ','
-  |> List.map String.trim in print_list (fun x -> "\"" ^ x ^ "\"") lst; lst
+    tokens |> List.rev |> terminal_to_string
+    |> String.split_on_char ','
+    |> List.map String.trim
+  in
+  print_endline "\nThe columns after splitting and trimming are: ";
+  print_list (fun x -> "\"" ^ x ^ "\"") lst;
+  lst
 
 let extract_name token =
   match token with
@@ -424,7 +431,8 @@ and get_from db acc cols lst =
   | Terminal h :: t -> get_from db (h :: acc) cols t
   | _ -> raise (Malformed "Wrong Syntax in FROM")
 
-  (*TODO: print test what columns are passed in, and there is something wrong with db passage. print num_tables. *)
+(*TODO: print test what columns are passed in, and there is something
+  wrong with db passage. print num_tables. *)
 
 and get_cols db acc lst =
   match lst with

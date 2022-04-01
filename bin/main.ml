@@ -10,8 +10,8 @@ let main () =
     let rec recursive_parse db =
       try
         let line = read_line () in
-        print_endline "The tokenizer tokenizes this string as: \n";
-        print_endline (Helper.pp_tokens (Tokenizer.tokenize line));
+        (* print_endline "The tokenizer tokenizes this string as: \n";
+        print_endline (Helper.pp_tokens (Tokenizer.tokenize line)); *)
         let current_db = Parser.parse db line in
         print_string "\n> ";
         recursive_parse current_db

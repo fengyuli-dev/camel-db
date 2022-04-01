@@ -38,7 +38,7 @@ let create
     in
     if debug then
       print_endline
-        (pretty_print new_db
+        (pretty_print
            (select new_db table_name cols (fun (_, _) -> true)))
     else ();
     new_db
@@ -58,10 +58,12 @@ let insert (db : database) table_name cols value_list =
     db
 
 let select (db : database) table_name cols filter_function =
-  
+  print_endline
+    ("\nCalled the select function. \n\n Table: \"" ^ table_name
+   ^ "\"\n Columns: [\"" ^ String.concat "\", \"" cols ^"\"]");
   try
-    let table = select db table_name cols filter_function in
-    print_endline (pretty_print db table)
+    let table = Rep.select db table_name cols filter_function in
+    print_endline (pretty_print table)
   with
   | TableDNE ->
       print_endline (table_name ^ " is not in the current database.")
