@@ -10,7 +10,7 @@ exception IllegalName
 exception ColumnDNE
 exception TableDNE
 
-let debug = true
+let debug = false
 let default_int = 0
 
 (* We're not using Stdlib.nan because Int doesn't have it. *)

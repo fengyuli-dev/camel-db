@@ -7,6 +7,8 @@ After that, install required dependencies by `opam install <package>`.
 ### Dependencies:
 
 1.   `ANSITerminal`
+2.   `csv`
+3.   `csvtool`
 
 ### Run the REPL
 
