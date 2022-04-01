@@ -391,6 +391,7 @@ let insert_default_into_column (old_column : column) : column =
   let data_type = old_column.data_type in
   let old_data = old_column.data in
   let new_row = generate_new_key old_data in
+  print_endline ("The new_row is: " ^ string_of_int new_row);
   let new_data =
     insert (new_row, default_of_data_type data_type) old_data
   in
@@ -436,6 +437,10 @@ let update_column_in_table
     (table : table) =
   let old_column_tree = table.columns in
   let new_column_tree = update col_key new_column old_column_tree in
+  print_endline "Inside update column in table function: ";
+  print_endline new_column.field_name;
+  print_endline (pretty_print { table with columns = new_column_tree });
+  print_endline "";
   { table with columns = new_column_tree }
 
 (** get the row numbers to update, for each column, these row numbers
@@ -482,7 +487,7 @@ let rec update_row
       }
     in
     rep_ok_db new_db
-  with NotFound -> raise ColumnDNE
+  with | NotFound -> raise ColumnDNE | Not_found -> raise TableDNE
 
 (* return true if data does not belong to this type*)
 let wrong_type data (dp : data_type) =
@@ -503,64 +508,64 @@ let rec update_one_row_only
     table
     (fieldname_type_value_list : (string * string) list)
     new_row_index =
+  print_endline "The table passed in as parameter.";
+  print_endline (pretty_print table);
   let col_tree = table.columns in
   let rows_to_keep = [ new_row_index ] in
-  let rec helper lst =
-    print_endline
-      ("size of the lst parameter: " ^ string_of_int (List.length lst));
-    print_string (string_of_int (List.length lst));
-    match lst with
-    | [] ->
-        print_string "reached base case yay";
-        table
-    | (column_name, data) :: t ->
-        print_endline
-          ("size of the t parameter: " ^ string_of_int (List.length t));
-        print_endline "The current recursive cols (t) are: ";
-        print_list (fun (col_name, data) -> col_name ^ " " ^ data) t;
-        print_endline "";
-        let col_key =
-          try
-            get_key
-              (fun (col, index) -> col.field_name = column_name)
-              col_tree
-          with NotFound ->
-            print_endline column_name;
-            print_endline data;
-            raise (Failure "raised at get_key")
-        in
-        print_endline
-          ("The current col_key is: " ^ string_of_int col_key);
-        let column =
-          try get col_key col_tree
-          with NotFound -> raise (Failure "raised at get col_key ...")
-        in
-        print_endline "The current column's name is";
-        print_endline column.field_name;
-        let col_type = column.data_type in
-        print_endline "The current data passed in is";
-        print_endline data;
-        if wrong_type data col_type then raise WrongType
-        else
-          let new_column = update_all_rows column data rows_to_keep in
-          print_endline ("New Column: " ^ new_column.field_name);
-          print_endline "The data in the new column";
-          print_list (fun (k, v) -> v) (inorder new_column.data);
-          print_endline "";
-          print_endline "The col key to insert: ";
-          print_endline (string_of_int col_key);
-          update_column_in_table col_key new_column (helper t)
+  let new_table =
+    let rec helper lst =
+      print_endline
+        ("size of the lst parameter." ^ string_of_int (List.length lst));
+      print_string (string_of_int (List.length lst));
+      match lst with
+      | [] ->
+          print_string "reached base case yay";
+          print_endline (pretty_print table);
+          table
+      | (column_name, data) :: t ->
+          print_endline
+            ("size of the t parameter." ^ string_of_int (List.length t));
+          print_endline "THe current recursive cols are: ";
+          print_list (fun (col_name, data) -> col_name ^ " " ^ data) t;
+          let col_key =
+            try
+              get_key_col
+                (fun (col, index) -> col.field_name = column_name)
+                col_tree
+            with NotFound ->
+              print_endline column_name;
+              print_endline data;
+              raise (Failure "raised at get_key")
+          in
+          print_endline
+            ("The current col_key is: " ^ string_of_int col_key);
+          let column =
+            try get col_key col_tree
+            with NotFound ->
+              raise (Failure "raised at get col_key ...")
+          in
+          let col_type = column.data_type in
+          if wrong_type data col_type then raise WrongType
+          else
+            let new_column = update_all_rows column data rows_to_keep in
+            print_endline ("New Column: " ^ new_column.field_name);
+            print_list (fun (k, v) -> v) (inorder new_column.data);
+            let t = 
+              update_column_in_table col_key new_column (helper t) in 
+              print_endline ("The current table with " ^ string_of_int col_key ^ " updated is: ");
+              print_endline (pretty_print t); t
+    in
+    print_endline "list passed in";
+    print_string (string_of_int (List.length fieldname_type_value_list));
+    helper fieldname_type_value_list
   in
-  let new_table = helper fieldname_type_value_list in
   rep_ok_tb new_table
-
-let rec m lst =
-  match lst with [] -> 0 | (col, value) :: t -> value + m t
 
 let insert_row
     (db : database)
     (table_name : string)
     (fieldname_type_value_list : (string * string) list) =
+  print_endline "The insert_row function is called.";
   try
     let key =
       get_key
@@ -569,6 +574,7 @@ let insert_row
     in
     let table = get key db.tables in
     let new_row_index = get_row_num table in
+    print_endline ("New row index is: " ^ string_of_int new_row_index);
     let table_with_default_inserted =
       insert_default_in_every_column table
     in
@@ -579,6 +585,7 @@ let insert_row
     let final_table =
       { new_table with num_rows = new_table.num_rows }
     in
+    print_endline (pretty_print final_table);
     let new_db =
       {
         db with
