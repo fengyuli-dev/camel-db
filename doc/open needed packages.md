@@ -40,6 +40,8 @@ let filter_all _ = true
 
 let db = select db "twoColTab" cols filter_all
 
+# Make Start Test Functions
+
 CREATE Persons (PersonID INT, LastName TEXT, FirstName TEXT, Address TEXT, City TEXT) ; CREATE Animals (Species TEXT, Age INT, Home TEXT) ; CREATE God (Sad INT, Fengyu TEXT) ;
 
 SELECT PersonID, LastName, FirstName, Address, City FROM Persons ;
@@ -61,5 +63,8 @@ select db "Animals" ["Species"] (fun _ -> true);;
 
 
 - [ ] debug create: create 1 table, create 2 tables
-- [ ] debug select: select one column, select multiple columns, select rows
+- [x] debug select: select one column, select multiple columns, 
+- [ ] debug select rows! parse where function and stuff
 - [ ] debug insert: insert 1 row
+- [ ] 
+

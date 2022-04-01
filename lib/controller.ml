@@ -16,7 +16,7 @@ open Rep
    This box prints lines separated into cells of fixed width. *)
 
 (*Button for print test. *)
-let debug = false
+let debug = true
 
 let terminal_to_string (terminal : terminal) =
   match terminal with
@@ -49,9 +49,20 @@ let create
     db
 
 let insert (db : database) table_name cols value_list =
+  print_endline 
+    ("\nCalled the insert function. \n\n Table: \"" ^ table_name
+   ^ "\"\n Columns: [\"" ^ String.concat "\", \"" cols ^ "\"]");
   try
+    let new_db = 
     insert_row db table_name
       (List.combine cols (terminal_list_to_string_list value_list))
+    in 
+    if debug then
+      print_endline
+        (pretty_print
+           (select new_db table_name cols (fun (_, _) -> true)))
+    else ();
+    new_db
   with ColumnDNE ->
     print_endline
       "Some columns of the insertion attempt is not in the table.";
