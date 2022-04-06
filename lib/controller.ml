@@ -5,7 +5,7 @@ open Format
 open Rep
 open Tree
 
-let debug = false
+let debug = true
 
 let terminal_to_string (terminal : terminal) =
   match terminal with
@@ -38,12 +38,13 @@ let create
     db
 
 let insert (db : database) table_name cols value_list =
-  if debug then (
-  print_endline
-    ("\nCalled the insert function. \n\n Table: \"" ^ table_name
-   ^ "\"\n Columns: [\""
-    ^ String.concat "\", \"" cols
-    ^ "\"]");) else ();
+  if debug then
+    print_endline
+      ("\nCalled the insert function. \n\n Table: \"" ^ table_name
+     ^ "\"\n Columns: [\""
+      ^ String.concat "\", \"" cols
+      ^ "\"]")
+  else ();
   try
     let new_db =
       insert_row db table_name
@@ -60,6 +61,11 @@ let insert (db : database) table_name cols value_list =
     else ();
     new_db
   with
+  | Invalid_argument _ ->
+      print_endline
+        "There is a mismatch between the number of columns specified \
+         and the number of values inserted.";
+      db
   | ColumnDNE ->
       print_endline
         "Some columns of the insertion attempt is not in the table.";
@@ -86,7 +92,18 @@ let select (db : database) table_name cols filter_function =
         "Some columns of the select attempt is not in the table."
 
 let delete (db : database) table_name filtering_function =
-  try delete_row db table_name filtering_function
+  try
+    let new_db = delete_row db table_name filtering_function in
+    if debug then
+      let key =
+        get_key
+          (fun (table, index) -> table.table_name = table_name)
+          new_db.tables
+      in
+      let new_table = get key new_db.tables in
+      print_endline (pretty_print new_table)
+    else ();
+    new_db
   with TableDNE ->
     print_endline
       "The table in the delete attempt is not in the current database.";
@@ -94,9 +111,21 @@ let delete (db : database) table_name filtering_function =
 
 let update (db : database) table_name cols values filtering_function =
   try
-    update_row db table_name
-      (List.combine cols (terminal_list_to_string_list values))
-      filtering_function
+    let new_db =
+      update_row db table_name
+        (List.combine cols (terminal_list_to_string_list values))
+        filtering_function
+    in
+    if debug then
+      let key =
+        get_key
+          (fun (table, index) -> table.table_name = table_name)
+          new_db.tables
+      in
+      let new_table = get key new_db.tables in
+      print_endline (pretty_print new_table)
+    else ();
+    new_db
   with
   | TableDNE ->
       print_endline

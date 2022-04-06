@@ -15,6 +15,7 @@ open Rep
 open Parser
 
 
+# key functions: create, insert, select, delete, update, drop, save
 
 let parent_db = Rep.create_empty_database "parent"
 
@@ -54,6 +55,55 @@ CREATE Gods (Name TEXT, Yo TEXT) ;
 INSERT INTO Gods (Yo) VALUES (d) ;
 INSERT INTO God Year VALUES 5 ;
 INSERT INTO God
+
+
+# Test: Insert empty columns generates all default values
+INSERT INTO Persons VALUES ;
+
+# Test: Insert values into some columns, other columns should have default values
+INSERT INTO Persons PersonID VALUES 3 ;
+
+# Test: Insert into all columns
+INSERT INTO Persons PersonID, LastName, FirstName, Address, City, VALUES 6, "Wang", "Yoyo", 5, "Beijing" ;
+
+# Test: Insert into a column a data with wrong type should generates error message
+INSERT INTO Persons PersonID, LastName, FirstName, Address, City VALUES 5, "Li", "Yoyo", "5", "LosAngeles" ;
+
+# Test: Malformed insert command raises error message
+INSERT INTO Persons PersonID, LastName, FirstName, Address, City VALUES 5, "Li", "Yoyo", "LosAngeles" ;
+
+# Creating a complete table using insert
+CREATE Persons (PersonID INT, LastName TEXT, FirstName TEXT, Address INT, City TEXT) ;  
+INSERT INTO Persons PersonID, LastName, FirstName, Address, City VALUES 1, "Zhang", "Yoyo", 5, "LosAngeles" ;
+INSERT INTO Persons PersonID, LastName, FirstName, Address, City VALUES 2, "Zhang", "Lolo", 5, "LosAngeles" ;
+INSERT INTO Persons PersonID, LastName, FirstName, Address, City VALUES 3, "Xiao", "Ryan", 3, "Ithaca" ;
+INSERT INTO Persons PersonID, LastName, FirstName, Address, City VALUES 4, "Zhao", "Nana", 2, "Beijing" ;
+INSERT INTO Persons PersonID, LastName, FirstName, Address, City VALUES 5, "Cheng", "Leo", 8, "Ithaca" ;
+
+
+# UPDATE Test
+
+# DELETE Test
+CREATE Persons (PersonID INT, LastName TEXT, FirstName TEXT, Address INT, City TEXT) ;  
+
+# Should only delete the Yoyo Zhang entry
+DELETE FROM Persons WHERE PersonID = 1 ;  
+
+# Only delete Leo Cheng
+DELETE FROM Persons WHERE LastName = "Cheng" ;  
+
+# Delete Yoyo Zhang and Lolo Zhang
+DELETE FROM Persons WHERE Address = 5 ;  
+
+# Delete Yoyo Zhang only
+DELETE FROM Persons WHERE PersonID = 1 and LastName = "Zhang" ;  
+
+# Update Tests
+
+# Should change YoYo Zhang to City as Ithaca and ID as 6 and Address as 999
+UPDATE Persons SET PersonID = 6, City = 'Ithaca', Address = 999 WHERE PersonID = 1 ;
+
+UPDATE Persons SET PersonID = 99, City = 'Sadness', Address = 5, FirstName = "Ryan", WHERE City = "Ithaca" ;
 
 open Camel_db;;
 #use "lib/rep.ml";;

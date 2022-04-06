@@ -50,14 +50,14 @@ let rec insert key_value_pair tree =
 let rec update key new_value = function
   | EmptyLeaf -> EmptyLeaf
   | Leaf (k, v) ->
-      if k = key then (
+      if k = key then
         (* print_endline "update is performed on Leaf"; *)
-        Leaf (k, new_value))
+        Leaf (k, new_value)
       else raise (Failure "key does not exist in tree") (*Leaf (k, v)*)
   | Node (k, v, l, r) ->
-      if k = key then (
+      if k = key then
         (* print_endline "update is performed on Node"; *)
-        Node (k, new_value, l, r))
+        Node (k, new_value, l, r)
       else if k > key then Node (k, v, update key new_value l, r)
       else Node (k, v, l, update key new_value r)
 
@@ -162,9 +162,7 @@ let filter_based_on_key f tree =
 
 let rec generate_new_key = function
   | EmptyLeaf -> 0
-  | Leaf (k, v) ->
-      print_endline ("the new key is: " ^ string_of_int (k + 1));
-      k + 1
+  | Leaf (k, v) -> k + 1
   | Node (k, _, _, r) -> (
       match r with EmptyLeaf -> k + 1 | _ -> generate_new_key r)
 

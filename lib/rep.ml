@@ -9,6 +9,7 @@ exception WrongType
 exception IllegalName
 exception ColumnDNE
 exception TableDNE
+exception Duplicate
 
 let debug = false
 let default_int = 0
@@ -452,6 +453,21 @@ let update_column_in_table
   else ();
   { table with columns = new_column_tree }
 
+(* return true if data does not belong to this type*)
+let wrong_type data (dp : data_type) =
+  let num_int = int_of_string_opt data in
+  let num_float = float_of_string_opt data in
+  match dp with
+  | Int ->
+      if debug then print_endline "matched to int" else ();
+      num_int = None
+      (* if it cannot be converted to int then it has wrong type.*)
+  | Float ->
+      if debug then print_endline "matched to float" else ();
+      num_float = None
+      (* if it cannot be converted to float then it has wrong type.*)
+  | String -> false
+
 (** get the row numbers to update, for each column, these row numbers
     need to to be filled with the new value*)
 let rec update_row
@@ -461,27 +477,37 @@ let rec update_row
     filtering_function =
   try
     let new_table =
-      (let table =
-         tree_find
-           (fun table -> table.table_name = table_name)
-           db.tables
-       in
-       let col_tree = table.columns in
-       let rows_to_keep =
-         get_row_numbers_to_keep db filtering_function table.table_name
-       in
-       match fieldname_type_value_list with
-       | [] -> table
-       | (column_name, data) :: t ->
-           let col_key =
-             get_key
-               (fun (col, index) -> col.field_name = column_name)
-               col_tree
-           in
-           let column = get col_key col_tree in
-           let new_column = update_all_rows column data rows_to_keep in
-           update_column_in_table col_key new_column table)
-      |> rep_ok_tb
+      let table =
+        tree_find (fun table -> table.table_name = table_name) db.tables
+      in
+      let col_tree = table.columns in
+      let rows_to_keep =
+        get_row_numbers_to_keep db filtering_function table.table_name
+      in
+      let rec helper lst =
+        match lst with
+        | [] -> table
+        | (column_name, data) :: t ->
+            let col_key =
+              try
+                get_key_col
+                  (fun (col, index) -> col.field_name = column_name)
+                  col_tree
+              with NotFound -> raise (Failure "raised at get_key")
+            in
+            let column = get col_key col_tree in
+            let col_type = column.data_type in
+            if wrong_type data col_type then raise WrongType
+            else
+              let new_column =
+                update_all_rows column data rows_to_keep
+              in
+              let t =
+                update_column_in_table col_key new_column (helper t)
+              in
+              t
+      in
+      helper fieldname_type_value_list
     in
     let new_db =
       {
@@ -500,29 +526,11 @@ let rec update_row
   | NotFound -> raise ColumnDNE
   | Not_found -> raise TableDNE
 
-(* return true if data does not belong to this type*)
-let wrong_type data (dp : data_type) =
-  let num_int = int_of_string_opt data in
-  let num_float = float_of_string_opt data in
-  match dp with
-  | Int ->
-      if debug then print_endline "matched to int" else ();
-      num_int = None
-      (* if it cannot be converted to int then it has wrong type.*)
-  | Float ->
-      if debug then print_endline "matched to float" else ();
-      num_float = None
-      (* if it cannot be converted to float then it has wrong type.*)
-  | String -> false
-
 let rec update_one_row_only
     table
     (fieldname_type_value_list : (string * string) list)
     new_row_index =
-  if debug then (
-    print_endline "The table passed in as parameter.";
-    print_endline (pretty_print table))
-  else ();
+  if debug then print_endline (pretty_print table) else ();
   let col_tree = table.columns in
   let rows_to_keep = [ new_row_index ] in
   let new_table =
