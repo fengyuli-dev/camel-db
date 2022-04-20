@@ -32,3 +32,6 @@ zip:
 clean:
 	dune clean
 	rm -f camel_
+
+docs:
+	dune build @doc
