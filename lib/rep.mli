@@ -1,20 +1,30 @@
-(** Internal Representation of the database. *)
+(** Internal representation of the database. *)
 open Type
 
+(** Internal error in database representation. *)
 exception Internal of string
-exception WrongTableStructure
-exception WrongDBStructure
-exception WrongType
-exception IllegalName
-exception ColumnDNE
-exception TableDNE
 
+(** Structure of a table is corrupted. *)
+exception WrongTableStructure
+
+(** Structure of the database is corrupted. *)
+exception WrongDBStructure
+
+(** Type is wrong. *)
+exception WrongType
+
+(** Name is illegal, please check if it's empty *)
+exception IllegalName
+
+(** Nonexistent column. *)
+exception ColumnDNE
+
+(** Nonexistent table. *)
+exception TableDNE
 
 val default_int : int
 val default_float : float
 val default_string : string
-
-
 val get_row_num : table -> int
 val get_col_num : table -> int
 
