@@ -1,0 +1,29 @@
+# create tests [possible exceptions: IllegalName (if there are duplicate names in the column names)]
+
+CREATE Persons PersonID ; 
+
+CREATE Persons PersonID INTEGER, LastName VARCHAR, FirstName VARCHAR, Address VARCHAR, City VARCHAR ; 
+
+CREATE Persons PersonID INTEGER, LastName VARCHAR, FirstName VARCHAR, LastName VARCHAR, City VARCHAR ; [should raise IllegalName]
+
+
+# insert tests [Invalid_argument, ColumnDNE, WrongType]
+
+
+# delete tests [TableDNE]
+
+# update tests [TableDNE, ColumnDNE, WrongType]
+
+# drop tests [TableDNE]
+
+# SELECT- FROM (-WHERE) [TableDNE, ColumnDNE]
+
+Possible exceptions: exception Internal of string
+exception WrongTableStructure
+exception WrongDBStructure
+exception WrongType
+exception IllegalName
+exception ColumnDNE
+exception TableDNE
+exception Duplicate
+

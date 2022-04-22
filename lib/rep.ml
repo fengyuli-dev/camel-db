@@ -605,12 +605,10 @@ let rec update_one_row_only
   in
   rep_ok_tb new_table
 
-let insert_row
+let insert_aux
     (db : database)
     (table_name : string)
     (fieldname_type_value_list : (string * string) list) =
-  if debug then print_endline "The insert_row function is called."
-  else ();
   try
     let key =
       get_key
@@ -619,9 +617,6 @@ let insert_row
     in
     let table = get key db.tables in
     let new_row_index = get_row_num table in
-    if debug then
-      print_endline ("New row index is: " ^ string_of_int new_row_index)
-    else ();
     let table_with_default_inserted =
       insert_default_in_every_column table
     in
@@ -632,7 +627,17 @@ let insert_row
     let final_table =
       { new_table with num_rows = new_table.num_rows }
     in
-    if debug then print_endline (pretty_print final_table) else ();
+    final_table
+  with NotFound -> raise TableDNE
+
+let insert_row
+    (db : database)
+    (table_name : string)
+    (fieldname_type_value_list : (string * string) list) =
+  try
+    let final_table =
+      insert_aux db table_name fieldname_type_value_list
+    in
     let new_db =
       {
         db with

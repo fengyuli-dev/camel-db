@@ -34,7 +34,7 @@ let create
   with IllegalName ->
     print_endline
       (table_name
-     ^ "is already a table in the current database. Please reenter.");
+     ^ " is already a table in the current database. Please reenter.");
     db
 
 let insert (db : database) table_name cols value_list =
