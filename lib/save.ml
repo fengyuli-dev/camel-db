@@ -74,7 +74,7 @@ let csvs table_name =
   List.map (fun name -> Csv.load name)
            [ "csv_files/"^table_name^"_title.csv"; "csv_files/"^table_name^"_main.csv" ]
 
-let file_to_db db table_name =
+(* let file_to_db db table_name =
   let csv = csvs table_name in
   let csv_title = List.nth csv 0 |> Csv.to_array in
   let csv_main = List.nth csv 1 |> Csv.to_array in
@@ -87,9 +87,30 @@ let file_to_db db table_name =
     let str_lst = str_arr |> Array.to_list in
     let combine_func_2 str1 str2 = (str1,str2) in
     let combine_row = List.map2 combine_func_2 csv_title1 str_lst in
-  ignore (insert_row db table_name combine_row) (* insert *)
+    ignore (insert_row db table_name combine_row) (* insert *)
   in
-  Array.iter array_to_db csv_main
+  Array.iter array_to_db csv_main *)
+
+
+let file_to_db db table_name =
+  let csv = csvs table_name in
+  let csv_title = List.nth csv 0 |> Csv.to_array in
+  let csv_main = List.nth csv 1 |> Csv.to_array in
+  let csv_title1 = csv_title.(0) |> Array.to_list in
+  let csv_title2 = csv_title.(1) |> Array.to_list |> string_to_type in
+  let combine_func_1 str typ = (str,typ) in
+  let combine_title = List.map2 combine_func_1 csv_title1 csv_title2 in
+  let db' = create_table db table_name combine_title in
+  let array_to_db db (str_arr:string array) : database =
+    let str_lst = str_arr |> Array.to_list in
+    let combine_func_2 str1 str2 = (str1,str2) in
+    let combine_row = List.map2 combine_func_2 csv_title1 str_lst in
+    let db' = insert_row db table_name combine_row in
+    db'
+  in
+  let db_final = Array.fold_left array_to_db db' csv_main in
+  db_final
+
 
 let rec print_2d_array lst =
   let rec print_array = function
