@@ -33,22 +33,27 @@ let get_file db table_name =
     field_names_pair |> snd |> type_to_string |> conc_comma
   in
   let main_table = get_main_table db table_name field_name_lst in
-  let whole_talbe =
-    field_name_string :: field_name_type :: main_table
+  let table_title =
+    field_name_string :: field_name_type :: []
   in
-  whole_talbe |> conc_line
+  (table_title |> conc_line) :: (main_table |> conc_line) :: []
 
 let save_file db table_name =
   (* Save it to a file *)
-  let ecsv = Csv.input_all (Csv.of_string (get_file db table_name)) in
-  let transpose_ecsv = Csv.transpose ecsv in
-  let fname =
-    (* Filename.concat (Filename.get_temp_dir_name ()) "example.csv" *)
+  let ecsv_title = Csv.input_all (Csv.of_string (List.nth (get_file db table_name) 0)) in
+  let ecsv_main' = Csv.input_all (Csv.of_string (List.nth (get_file db table_name) 1)) in
+  let ecsv_main = Csv.transpose ecsv_main' in
+  let fname_title =
     Filename.concat Filename.current_dir_name
-      ("csv_files/" ^ table_name ^ ".csv")
+      ("csv_files/" ^ table_name ^ "_title.csv")
   in
-  Csv.save fname transpose_ecsv;
-  printf "Saved CSV to file %S.\n" fname
+  Csv.save fname_title ecsv_title;
+  let fname_main =
+    Filename.concat Filename.current_dir_name
+      ("csv_files/" ^ table_name ^ "_main.csv")
+  in
+  Csv.save fname_main ecsv_main;
+  printf "Saved CSV to file %S and %S.\n" fname_title fname_main;
 
 (** MS3 below this line *)
 
@@ -58,4 +63,4 @@ let read_file table_name =
       (fun name -> (name, Csv.load name))
       [ "csv_files/" ^ table_name ^ ".csv" ]
   in
-  file_data
+  file_data in ()

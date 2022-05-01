@@ -17,13 +17,13 @@ let embedded_csv =
 
 let csvs =
   List.map
-    (fun name -> (name, Csv.load name))
-    [ "csv_files/example1.csv" ]
+    (fun name -> name, Csv.load name)
+    [ "csv_files/example1.csv";"csv_files/example2.csv"]
 
 let () =
   let ecsv = Csv.input_all (Csv.of_string embedded_csv) in
   printf "---Embedded CSV-----------------\n";
-  Csv.print_readable ecsv;
+  (* Csv.print_readable ecsv; *)
   List.iter
     (fun (name, csv) ->
       printf "---%s--------------\n" name; Csv.print_readable csv)
