@@ -133,13 +133,41 @@ let get_all_rows table =
 let string_of_data_type (dt : data_type) =
   match dt with String -> "String" | Int -> "Int" | Float -> "Float"
 
-let pretty_print_fields table =
+let longest_field_length table =
   let pair_list = List.split (get_field_name_list_internal table) in
-  "| "
-  ^ String.concat " | " (fst pair_list)
-  ^ " |" ^ "\n| "
-  ^ String.concat " | "
+  let string_list =
+    fst pair_list
+    @ List.map (fun x -> string_of_data_type x) (snd pair_list)
+  in
+  let string_length_list =
+    List.map (fun x -> String.length x) string_list
+  in
+  let max_length = max string_length_list in
+  max_length
+
+(** concatenate spaces to the end of the str till desired length*)
+let buff_up_string str desired_length =
+  let rec repeat n s = if n = 0 then "" else s ^ repeat (n - 1) s in
+  let original_length = String.length str in
+  let difference = desired_length - original_length in
+  str ^ repeat difference " "
+
+let buff_up_string_list str_lst desired_length =
+  List.map (fun x -> buff_up_string x desired_length) str_lst
+
+let pretty_print_fields table =
+  let longest_length = longest_field_length table in
+  let pair_list = List.split (get_field_name_list_internal table) in
+  let field_list = buff_up_string_list (fst pair_list) longest_length in
+  let type_list =
+    buff_up_string_list
       (List.map (fun x -> string_of_data_type x) (snd pair_list))
+      longest_length
+  in
+  "| "
+  ^ String.concat " | " field_list
+  ^ " |" ^ "\n| "
+  ^ String.concat " | " type_list
   ^ " |"
 
 let pretty_print table =

@@ -33,3 +33,6 @@ val range : int -> int list
 (** [reverse_association lst] reverse the (k, v) pair in association
     list*)
 val reverse_association_list : (int * 'a) list -> ('a * int) list
+
+(** [max lst] return the largest element in lst*)
+val max : int list -> int
