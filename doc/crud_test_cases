@@ -1,0 +1,43 @@
+# create tests [possible exceptions: IllegalName (if there are duplicate names in the column names)]
+
+CREATE Persons PersonID ; 
+CREATE Persons PersonID INTEGER, LastName VARCHAR, FirstName VARCHAR ;
+CREATE Persons PersonID INTEGER, LastName VARCHAR, FirstName VARCHAR, LastName VARCHAR, City VARCHAR ; [should raise IllegalName]
+
+
+# insert tests [Invalid_argument, ColumnDNE, WrongType]
+INSERT INTO Persons PersonID, LastName, FirstName VALUES  3,  "Yo",  "Zhang"  ; 
+INSERT INTO Persons PersonID, LastName, FirstName VALUES  9,  "Yo",  "d"  ; 
+INSERT INTO Persons PersonID, LastName, FirstName VALUES  20,  "Yo",  "Lin"  ; 
+INSERT INTO Persons PersonID, LastName, FirstName VALUES  23,  "Ya",  "Lin"  ; 
+INSERT INTO Persons PersonID, LastName, FirstName VALUES  3,  "Zh",  "Lin"  ; 
+
+
+# delete tests [TableDNE]
+DELETE FROM Persons WHERE PersonID = 3 ;
+DELETE FROM Persons WHERE FirstName = "Lin" ;
+
+# update tests [TableDNE, ColumnDNE, WrongType]
+UPDATE Persons SET PersonID = 999, LastName = 'Unknown' WHERE PersonID = 3 ;
+UPDATE Persons SET PersonID = 999, LastName = 'Unknown' WHERE PersonID = 6 ;
+
+# drop tests [TableDNE]
+DROP Persons
+
+# SELECT- FROM (-WHERE) [TableDNE, ColumnDNE]
+SELECT PersonID, LastName FROM Persons ; 
+SELECT FirstName, LastName FROM Persons WHERE PersonID = 3 ; ???
+
+# Combined Multiline Command
+CREATE Persons PersonID INTEGER, LastName VARCHAR, FirstName VARCHAR ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  3,  "Yo",  "Zhang"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  9,  "Yo",  "d"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  20,  "Yo",  "Lin" ; UPDATE Persons SET PersonID = 999, LastName = 'Unknown' WHERE PersonID = 3 ;
+
+
+Possible exceptions: exception Internal of string
+exception WrongTableStructure
+exception WrongDBStructure
+exception WrongType
+exception IllegalName
+exception ColumnDNE
+exception TableDNE
+exception Duplicate
+

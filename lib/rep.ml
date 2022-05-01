@@ -133,23 +133,94 @@ let get_all_rows table =
 let string_of_data_type (dt : data_type) =
   match dt with String -> "String" | Int -> "Int" | Float -> "Float"
 
-let pretty_print_fields table =
+let longest_field_length table =
   let pair_list = List.split (get_field_name_list_internal table) in
-  "| "
-  ^ String.concat " | " (fst pair_list)
-  ^ " |" ^ "\n| "
-  ^ String.concat " | "
+  let string_list =
+    fst pair_list
+    @ List.map (fun x -> string_of_data_type x) (snd pair_list)
+  in
+  let string_length_list =
+    List.map (fun x -> String.length x) string_list
+  in
+  let max_length = max string_length_list in
+  max_length
+
+let rec repeat n s = if n = 0 then "" else s ^ repeat (n - 1) s
+
+(** concatenate spaces to the end of the str till desired length*)
+let buff_up_string str desired_length =
+  let original_length = String.length str in
+  let difference = desired_length - original_length in
+  str ^ repeat difference " "
+
+let buff_up_string_list str_lst desired_length =
+  List.map (fun x -> buff_up_string x desired_length) str_lst
+
+(** [get_one_cell_even_length column row_num] gets the cell in this
+    column whose index matches the row_num and buff it up to desired
+    length*)
+let get_one_cell_even_length
+    (column : column)
+    (row_num : int)
+    (desired_length : int) : string =
+  let original =
+    let data = get_column_data_internal column in
+    get row_num data
+  in
+  buff_up_string original desired_length
+
+(** get all rows but each cell is filled to the longest length*)
+let get_all_rows_even_length table longest_length =
+  try
+    let num_rows = table.num_rows in
+    let row_list = range num_rows in
+    List.map
+      (fun row ->
+        "| "
+        ^ String.concat " | "
+            (let all_columns =
+               List.map (fun x -> snd x) (inorder table.columns)
+             in
+             List.map
+               (fun col ->
+                 get_one_cell_even_length col row longest_length)
+               all_columns)
+        ^ " |")
+      row_list
+  with Not_found -> raise TableDNE
+
+let pretty_print_fields table =
+  let longest_length = longest_field_length table in
+  let col_num = get_col_num table in
+  let row_length = (longest_length * col_num) + (col_num + 7) in
+  let row_separator = repeat row_length "-" in
+  let pair_list = List.split (get_field_name_list_internal table) in
+  let field_list = buff_up_string_list (fst pair_list) longest_length in
+  let type_list =
+    buff_up_string_list
       (List.map (fun x -> string_of_data_type x) (snd pair_list))
-  ^ " |"
+      longest_length
+  in
+  "| "
+  ^ String.concat " | " field_list
+  ^ " |" ^ "\n" ^ row_separator ^ "\n| "
+  ^ String.concat " | " type_list
+  ^ " |" ^ "\n" ^ row_separator
 
 let pretty_print table =
+  let longest_length = longest_field_length table in
+  let col_num = get_col_num table in
+  let row_length = (longest_length * col_num) + (col_num + 7) in
+  let row_separator = repeat row_length "-" in
   Format.sprintf "\n @[Table: %s@] \n %d columns * %d entries\n"
     (get_table_name_internal table)
     (get_col_num table) (get_row_num table)
-  ^ "\n"
+  ^ "\n" ^ row_separator ^ "\n"
   ^ pretty_print_fields table
   ^ "\n"
-  ^ String.concat "\n" (get_all_rows table)
+  ^ String.concat
+      ("\n" ^ row_separator ^ "\n")
+      (get_all_rows_even_length table longest_length)
 
 (** [create_empty_column f dt] is the constructor of a column. *)
 let create_empty_column field_name data_type =

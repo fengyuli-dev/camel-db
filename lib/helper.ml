@@ -52,7 +52,6 @@ let token_to_string = function
   | Datatype Float -> "Datatype Float"
   | Datatype String -> "Datatype String"
   | Terminal t -> terminal_to_string t
-  
 
 let pp_tokens tokens =
   " { \n"
@@ -97,3 +96,15 @@ let range n =
   function_to_list in_range 0
 
 let reverse_association_list lst = List.map (fun (a, b) -> (b, a)) lst
+let extract o = match o with Some i -> i | None -> 0
+
+let max list =
+  let max_helper list =
+    let f max x =
+      match max with
+      | None -> Some x
+      | Some m -> if m > x then Some m else Some x
+    in
+    List.fold_left f None list
+  in
+  extract (max_helper list)
