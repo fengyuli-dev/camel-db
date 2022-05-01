@@ -42,3 +42,5 @@ OCaml, Leroy, 1996
 2. create_table db "Programming" [("Language", String), ("Inventor", String), ("Year Invented", Int)]
 3. insert_row db "Programming"(fieldname_type_value_list : [("Language","Java"), ("Inventor", "James Gosling"), ("Year Invented", "1991")])
 4. ...
+
+* Rewrite rep insert to get rid of column names.
