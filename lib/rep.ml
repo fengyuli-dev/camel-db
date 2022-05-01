@@ -145,9 +145,10 @@ let longest_field_length table =
   let max_length = max string_length_list in
   max_length
 
+let rec repeat n s = if n = 0 then "" else s ^ repeat (n - 1) s
+
 (** concatenate spaces to the end of the str till desired length*)
 let buff_up_string str desired_length =
-  let rec repeat n s = if n = 0 then "" else s ^ repeat (n - 1) s in
   let original_length = String.length str in
   let difference = desired_length - original_length in
   str ^ repeat difference " "
@@ -190,6 +191,9 @@ let get_all_rows_even_length table longest_length =
 
 let pretty_print_fields table =
   let longest_length = longest_field_length table in
+  let col_num = get_col_num table in
+  let row_length = (longest_length * col_num) + (col_num + 7) in
+  let row_separator = repeat row_length "-" in
   let pair_list = List.split (get_field_name_list_internal table) in
   let field_list = buff_up_string_list (fst pair_list) longest_length in
   let type_list =
@@ -199,19 +203,24 @@ let pretty_print_fields table =
   in
   "| "
   ^ String.concat " | " field_list
-  ^ " |" ^ "\n| "
+  ^ " |" ^ "\n" ^ row_separator ^ "\n| "
   ^ String.concat " | " type_list
-  ^ " |"
+  ^ " |" ^ "\n" ^ row_separator
 
 let pretty_print table =
   let longest_length = longest_field_length table in
+  let col_num = get_col_num table in
+  let row_length = (longest_length * col_num) + (col_num + 7) in
+  let row_separator = repeat row_length "-" in
   Format.sprintf "\n @[Table: %s@] \n %d columns * %d entries\n"
     (get_table_name_internal table)
     (get_col_num table) (get_row_num table)
-  ^ "\n"
+  ^ "\n" ^ row_separator ^ "\n"
   ^ pretty_print_fields table
   ^ "\n"
-  ^ String.concat "\n" (get_all_rows_even_length table longest_length)
+  ^ String.concat
+      ("\n" ^ row_separator ^ "\n")
+      (get_all_rows_even_length table longest_length)
 
 (** [create_empty_column f dt] is the constructor of a column. *)
 let create_empty_column field_name data_type =
