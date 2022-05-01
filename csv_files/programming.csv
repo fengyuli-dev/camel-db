@@ -1,5 +1,3 @@
-Language,Inventor,Year Invented
-String,String,Int
-Java,Python,OCaml
-James Gosling,Rossum,Leroy
-1991,1992,1996
+Language,String,Java,James Gosling,1991
+Inventor,String,Python,Rossum,1992
+Year Invented,Int,OCaml,Leroy,1996

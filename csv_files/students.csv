@@ -1,5 +1,3 @@
-Name,Major,Age
-String,String,Int
-Yolanda,Lee,Emerald
-CS/Info,Math,CS
-18,19,19
+Name,String,Yolanda,CS/Info,18
+Major,String,Lee,Math,19
+Age,Int,Emerald,CS,19

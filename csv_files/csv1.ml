@@ -2,7 +2,7 @@
 
 open Printf
 
-let lst1 = [ "I_miss_java"; "2112"; "ok" ]
+let lst1 = [ "I_miss_java"; "2112"; "okk" ]
 let lst2 = [ "Me_too"; "I_know"; "yea" ]
 let conc_comma = String.concat ","
 let conc_line = String.concat "\n"
@@ -22,23 +22,24 @@ let csvs =
 
 let () =
   let ecsv = Csv.input_all (Csv.of_string embedded_csv) in
-  (* printf "---Embedded CSV-----------------\n"; *)
+  printf "---Embedded CSV-----------------\n";
   Csv.print_readable ecsv;
   List.iter
     (fun (name, csv) ->
-      (* printf "---%s--------------\n" name; *) Csv.print_readable csv)
+      printf "---%s--------------\n" name; Csv.print_readable csv)
     csvs;
-  printf "Compare (Embedded\n   CSV)\n example1.csv = %i\n"
+  printf "Compare (Embedded CSV)\n example1.csv = %i\n"
     (Csv.compare ecsv (snd (List.hd csvs)))
 
 let () =
   (* Save it to a file *)
   let ecsv = Csv.input_all (Csv.of_string embedded_csv) in
+  let transpose_ecsv = Csv.transpose ecsv in
   let fname =
     (* Filename.concat (Filename.get_temp_dir_name ()) "example.csv" *)
-    Filename.concat Filename.current_dir_name "csv_files/example.csv"
+    Filename.concat Filename.current_dir_name "csv_files/example_transpose.csv"
   in
-  Csv.save fname ecsv;
+  Csv.save fname transpose_ecsv;
   printf "Saved CSV to file %S.\n" fname
 
 let convert = Csv.to_array (Csv.input_all (Csv.of_string embedded_csv))

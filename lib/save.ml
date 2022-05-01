@@ -41,12 +41,13 @@ let get_file db table_name =
 let save_file db table_name =
   (* Save it to a file *)
   let ecsv = Csv.input_all (Csv.of_string (get_file db table_name)) in
+  let transpose_ecsv = Csv.transpose ecsv in
   let fname =
     (* Filename.concat (Filename.get_temp_dir_name ()) "example.csv" *)
     Filename.concat Filename.current_dir_name
       ("csv_files/" ^ table_name ^ ".csv")
   in
-  Csv.save fname ecsv;
+  Csv.save fname transpose_ecsv;
   printf "Saved CSV to file %S.\n" fname
 
 (** MS3 below this line *)
