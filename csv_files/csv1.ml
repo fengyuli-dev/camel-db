@@ -27,9 +27,9 @@ let () =
   List.iter
     (fun (name, csv) ->
       printf "---%s--------------\n" name; Csv.print_readable csv)
-    csvs
-  (* printf "Compare (Embedded CSV) example1.csv = %i\n"
-    (Csv.compare ecsv (snd (List.hd csvs))) *)
+    csvs;
+  printf "Compare (Embedded CSV) example1.csv = %i\n"
+    (Csv.compare ecsv (snd (List.hd csvs)))
 
 let () =
   (* Save it to a file *)
