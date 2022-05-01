@@ -4,4 +4,4 @@ open Type
 val save_file : database -> string -> unit
 
 (* [file_to_db db table_name] convert table [table_name] in csv format back into a table in database [db] *)
-val file_to_db : database -> string -> unit
+val file_to_db : database -> string -> database
