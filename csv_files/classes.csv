@@ -1,6 +1,4 @@
-Number,Name,Professor,Class Level
-Int,String,String,Int
-1110,2110,2800
-Intro to Python,Data Structures,Discrete Structures
-Walker White,David Gries,Anke
-1,2,2
+Number,Int,1110,Intro to Python,Walker White,1
+Name,String,2110,Data Structures,David Gries,2
+Professor,String,2800,Discrete Structures,Anke,2
+Class Level,Int
