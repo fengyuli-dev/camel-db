@@ -1,22 +1,30 @@
+(** A controller that executes SQL operations by calling the mathods in
+    [rep.mli]. *)
+
 open Tokenizer
 open Type
 
-(** [create table_name cols terminals] *)
+(** Create a table. *)
 val create :
   database -> string -> string list -> data_type list -> database
 
-(** [select table columns filter_function] *)
+(** Select some entries in a table based on a filter function. *)
 val select :
-  database -> string -> string list -> (string list * string list -> bool) -> unit
+  database ->
+  string ->
+  string list ->
+  (string list * string list -> bool) ->
+  unit
 
-(** [insert table columns values] *)
+(** Insert one entry into the table. *)
 val insert :
   database -> string -> string list -> terminal list -> database
 
-(** [delete table_name filtering_function] *)
-val delete : database -> string -> (string list * string list -> bool) -> database
+(** Delete some entries in a table based on a filter function. *)
+val delete :
+  database -> string -> (string list * string list -> bool) -> database
 
-(** [update table columns values filtering_function] *)
+(** Update some entires in a table based on a fileter function. *)
 val update :
   database ->
   string ->
@@ -25,9 +33,8 @@ val update :
   (string list * string list -> bool) ->
   database
 
-(** [drop table_name] *)
+(** [drop table_name] drops the table [table_name] from the database. *)
 val drop : database -> string -> database
 
 (** [save table_name] saves the proposed table to a csv file. *)
 val save : database -> string -> unit
-
