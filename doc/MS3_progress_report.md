@@ -1,8 +1,8 @@
-# MS2 Progress Report
+# MS3 Progress Report
 
-### Authors:
+## Authors
 
-1. Li Fengyu (fl334)
+1. Fengyu Li (fl334)
 2. Yolanda Wang (yw583)
 3. Chuhan Ouyang (co232)
 4. Emerald Liu (sl2322)
@@ -16,7 +16,7 @@ We implement our own data structure (a binary search tree) and our own parser so
 
 ## Activity Breakdown
 
-- Lee: Approximate hours spend: 9
+- Lee: Approximate hours spend: 7
 - Emerald: Approximate hours spend: 8
 - Yolanda: Approximate hours spent: 9
 - Chuhan: Approximate hour spent: 9

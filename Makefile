@@ -2,6 +2,7 @@
 	
 build:
 	dune build
+
 utop:
 	OCAMLRUNPARAM=b dune utop lib
 
@@ -10,9 +11,6 @@ test:
 
 test_tree:
 	OCAMLRUNPARAM=b dune exec test/tree.exe
-
-# test_expr:
-#	OCAMLRUNPARAM=b dune exec test/expr.exe
 
 testall: test test_tree
 
@@ -28,10 +26,6 @@ start:
 zip:
 	rm -f camel_db.zip
 	zip -r camel_db.zip . -x@exclude.lst
-
-clean:
-	dune clean
-	rm -f camel_
 
 docs:
 	dune build @doc

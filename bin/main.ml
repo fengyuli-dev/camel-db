@@ -1,6 +1,6 @@
 open Camel_db
 
-(** [main] prompts for the game to play, then starts it. *)
+(** [main] prompts for the SQL repl to run. *)
 let main () =
   let _ =
     ANSITerminal.print_string [ ANSITerminal.green ]
@@ -10,8 +10,6 @@ let main () =
     let rec recursive_parse db =
       try
         let line = read_line () in
-        (* print_endline "The tokenizer tokenizes this string as: \n";
-        print_endline (Helper.pp_tokens (Tokenizer.tokenize line)); *)
         let current_db = Parser.parse db line in
         print_string "\n> ";
         recursive_parse current_db
@@ -29,5 +27,4 @@ let main () =
   in
   ()
 
-(* Execute the game engine. *)
 let () = main ()
