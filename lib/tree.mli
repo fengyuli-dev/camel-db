@@ -1,3 +1,5 @@
+(** A binary search tree data sturcture. *)
+
 open Type
 
 (** Exception raised when trying to insert a node of the same key into
