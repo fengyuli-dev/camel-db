@@ -270,6 +270,23 @@ let insert_column_internal table column =
   }
   |> rep_ok_tb
 
+let get_emty_columns field_name_type_alist =
+  List.map
+    (fun x -> create_empty_column (fst x) (snd x))
+    field_name_type_alist
+
+let get_new_table table_name field_name_type_alist =
+  let empty_table = create_empty_table table_name in
+  let get_empty_columns field_name_type_alist =
+    List.map
+      (fun x -> create_empty_column (fst x) (snd x))
+      field_name_type_alist
+  in
+  let empty_columns = get_empty_columns field_name_type_alist in
+  List.fold_left
+    (fun x y -> insert_column_internal x y)
+    empty_table empty_columns
+
 let create_table db table_name field_name_type_alist =
   if
     duplicate_in_list
@@ -277,17 +294,7 @@ let create_table db table_name field_name_type_alist =
       field_name_type_alist
   then raise IllegalName
   else
-    let empty_table = create_empty_table table_name in
-    let empty_columns =
-      List.map
-        (fun x -> create_empty_column (fst x) (snd x))
-        field_name_type_alist
-    in
-    let new_table =
-      List.fold_left
-        (fun x y -> insert_column_internal x y)
-        empty_table empty_columns
-    in
+    let new_table = get_new_table table_name field_name_type_alist in
     let new_db =
       {
         db with
