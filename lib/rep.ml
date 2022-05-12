@@ -348,9 +348,8 @@ let get_new_table (old_table : table) (f : column -> column) (nr : int)
   let new_column_tree = map f old_column_tree in
   rep_ok_tb { old_table with columns = new_column_tree; num_rows = nr }
 
-(** [filter_table_rows] is the old function [delete_row_internal],
-    renamed for helper function clarity. It takes table type as input
-    instead of taking string as input for table_name*)
+(** [filter_table_rows] takes table type as input instead of taking
+    string as input for table_name*)
 let filter_table_rows
     (db : database)
     (table_name : string)
@@ -445,20 +444,15 @@ let select
     (table_name : string)
     (field_list : string list)
     (filtering_function : string list * string list -> bool) =
-  let target_table =
-    try
-      let t =
-        tree_find (fun table -> table.table_name = table_name) db.tables
-      in
-      t
-    with Not_found -> raise TableDNE
-  in
-  let new_table =
-    select_column
-      (filter_table_rows db target_table.table_name filtering_function)
-      field_list
-  in
-  rep_ok_tb new_table
+  try
+    let old_table =
+      tree_find (fun table -> table.table_name = table_name) db.tables
+    in
+    let new_table =
+      filter_table_rows db old_table.table_name filtering_function
+    in
+    new_table
+  with Not_found -> raise TableDNE
 
 (** return the default value of the data type*)
 let default_of_data_type (data_type : data_type) =

@@ -93,6 +93,15 @@ let parse_table (tokens : token list) (sub_command : token) =
         |> trim_string
       else raise (Malformed "wrong command format")
 
+let rec parse_table_select (tokens : token list) =
+  match tokens with
+  | [] -> raise (Malformed "wrong command format")
+  | h :: t ->
+      if h = SubCommand From then
+        terminal_to_string [ List.nth t 0 |> token_to_terminal ]
+        |> trim_string
+      else parse_table_select t
+
 (** [get_list_after_where tokens] return the sublist of tokens after the
     where keyword*)
 let get_list_after_where (tokens : token list) : token list =
@@ -447,6 +456,19 @@ and parse_select db tokens =
   | Terminal s :: t -> get_cols db [] (Terminal s :: t)
   | _ -> raise (Malformed "Wrong Syntax in SELECT")
 
+and parse_select_new db tokens =
+  let this_command = get_this_command tokens in
+  let table = parse_table_select this_command in
+  try
+    let filtering_function =
+      parse_where (this_command |> get_list_after_where)
+    in
+    Controller.select db table [] filtering_function;
+    db
+  with Malformed _ ->
+    Controller.select db table [] (fun _ -> true);
+    get_other_commands tokens |> parse_query db
+
 (** Parse Drop: *)
 and parse_drop db tokens =
   match tokens with
@@ -543,7 +565,7 @@ and parse_query db tokens =
   match tokens with
   | [] -> db
   | Command Create :: t -> parse_create db t
-  | Command Select :: t -> parse_select db t
+  | Command Select :: t -> parse_select_new db t
   | Command Drop :: t -> parse_drop db t
   | Command Insert :: t -> parse_insert db t
   | Command Delete :: t -> parse_delete db t
