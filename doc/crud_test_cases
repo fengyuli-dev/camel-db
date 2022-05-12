@@ -19,15 +19,15 @@ INSERT INTO Persons PersonID, LastName, FirstName VALUES  93,  "Yennis",  "Zhang
 
 # delete tests [TableDNE]
 DELETE FROM Persons WHERE PersonID = 3 ;
-DELETE FROM Persons WHERE FirstName = "Lin" or LastName = "Lightkk" ;
+DELETE FROM Persons WHERE FirstName = "Lin" OR LastName = "Unknown" ;
 DELETE FROM Persons WHERE FirstName = "Zhajjjng" ;
-DELETE FROM Persons WHERE FirstName = "Yenniz" and LastName = "Zhang" and PersonID = 23 ;
+DELETE FROM Persons WHERE LastName = "Yennis" AND FirstName = "Zhang" AND PersonID = 23 ;
 
 
 
 # update tests [TableDNE, ColumnDNE, WrongType]
-UPDATE Persons SET PersonID = 999, LastName = 'Unknown' WHERE PersonID = 3 ;
-UPDATE Persons SET PersonID = 999, LastName = 'Unknown' WHERE PersonID = 6 ;
+UPDATE Persons SET PersonID = 999, LastName = 'Unknown' WHERE PersonID = 3 AND LastName = "Yennis" ;
+UPDATE Persons SET PersonID = 999, LastName = 'yeehaw' WHERE PersonID = 9 AND LastName = "Yo" AND FirstName = "d" ;
 
 # drop tests [TableDNE]
 DROP Persons
