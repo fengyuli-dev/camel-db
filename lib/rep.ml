@@ -371,6 +371,22 @@ let negate_filtering_function
     (pair_list : string list * string list) =
   not (filtering_function pair_list)
 
+let get_new_db (db : database) (table_name : string) (new_table : table)
+    =
+  let new_db =
+    {
+      db with
+      tables =
+        (let key =
+           get_key
+             (fun (table, index) -> table.table_name = table_name)
+             db.tables
+         in
+         update key (rep_ok_tb new_table) db.tables);
+    }
+  in
+  rep_ok_db new_db
+
 let delete_row
     (db : database)
     (table_name : string)
@@ -381,19 +397,8 @@ let delete_row
     in
     let negated = negate_filtering_function filtering_function in
     let new_table = filter_table_rows db old_table.table_name negated in
-    let new_db =
-      {
-        db with
-        tables =
-          (let key =
-             get_key
-               (fun (table, index) -> table.table_name = table_name)
-               db.tables
-           in
-           update key (rep_ok_tb new_table) db.tables);
-      }
-    in
-    rep_ok_db new_db
+    let new_db = get_new_db db table_name new_table in
+    new_db
   with Not_found -> raise TableDNE
 
 let drop_table db table_name =
@@ -445,12 +450,7 @@ let select
       let t =
         tree_find (fun table -> table.table_name = table_name) db.tables
       in
-      if debug then (
-        print_endline table_name;
-        print_endline t.table_name;
-        print_list (fun x -> fst x) (get_field_name_list_internal t);
-        t)
-      else t
+      t
     with Not_found -> raise TableDNE
   in
   let new_table =

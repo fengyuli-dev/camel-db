@@ -11,11 +11,19 @@ INSERT INTO Persons PersonID, LastName, FirstName VALUES  9,  "Yo",  "d"  ;
 INSERT INTO Persons PersonID, LastName, FirstName VALUES  20,  "Yo",  "Lin"  ; 
 INSERT INTO Persons PersonID, LastName, FirstName VALUES  23,  "Ya",  "Lin"  ; 
 INSERT INTO Persons PersonID, LastName, FirstName VALUES  3,  "Zh",  "Lin"  ; 
-
+INSERT INTO Persons PersonID, LastName, FirstName VALUES  15,  "Light",  "Ball"  ; 
+INSERT INTO Persons PersonID, LastName, FirstName VALUES  23,  "Unkown",  "Zhang"  ; 
+INSERT INTO Persons PersonID, LastName, FirstName VALUES  23,  "Unkown",  "Person"  ; 
+INSERT INTO Persons PersonID, LastName, FirstName VALUES  23,  "Yennis",  "Zhang"  ; 
+INSERT INTO Persons PersonID, LastName, FirstName VALUES  93,  "Yennis",  "Zhang"  ; 
 
 # delete tests [TableDNE]
 DELETE FROM Persons WHERE PersonID = 3 ;
-DELETE FROM Persons WHERE FirstName = "Lin" ;
+DELETE FROM Persons WHERE FirstName = "Lin" or LastName = "Lightkk" ;
+DELETE FROM Persons WHERE FirstName = "Zhajjjng" ;
+DELETE FROM Persons WHERE FirstName = "Yenniz" and LastName = "Zhang" and PersonID = 23 ;
+
+
 
 # update tests [TableDNE, ColumnDNE, WrongType]
 UPDATE Persons SET PersonID = 999, LastName = 'Unknown' WHERE PersonID = 3 ;
