@@ -17,6 +17,9 @@ INSERT INTO Persons PersonID, LastName, FirstName VALUES  23,  "Unkown",  "Perso
 INSERT INTO Persons PersonID, LastName, FirstName VALUES  23,  "Yennis",  "Zhang"  ; 
 INSERT INTO Persons PersonID, LastName, FirstName VALUES  93,  "Yennis",  "Zhang"  ; 
 
+# insert mega command
+CREATE Persons PersonID INTEGER, LastName VARCHAR, FirstName VARCHAR ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  3,  "Yo",  "Zhang"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  9,  "Yo",  "d"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  20,  "Yo",  "Lin"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  23,  "Ya",  "Lin"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  93,  "Yennis",  "Zhang"  ; 
+
 # delete tests [TableDNE]
 DELETE FROM Persons WHERE PersonID = 3 ;
 DELETE FROM Persons WHERE FirstName = "Lin" OR LastName = "Unknown" ;
@@ -34,7 +37,9 @@ DROP Persons
 
 # SELECT- FROM (-WHERE) [TableDNE, ColumnDNE]
 SELECT PersonID, LastName FROM Persons ; 
-SELECT PersonID, FirstName, LastName FROM Persons WHERE LastName = "Ya" OR PersonID = 93 ;
+SELECT PersonID FROM Persons ; 
+SELECT PersonID, FirstName, LastName FROM Persons ; 
+SELECT PersonID, FirstName, LastName FROM Persons WHERE PersonID = 3 OR LastName = "Yo" ;
 
 # Combined Multiline Command
 CREATE Persons PersonID INTEGER, LastName VARCHAR, FirstName VARCHAR ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  3,  "Yo",  "Zhang"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  9,  "Yo",  "d"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  20,  "Yo",  "Lin" ; UPDATE Persons SET PersonID = 999, LastName = 'Unknown' WHERE PersonID = 3 ;

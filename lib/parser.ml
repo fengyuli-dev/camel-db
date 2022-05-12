@@ -216,6 +216,18 @@ let get_other_commands (tokens : token list) : token list =
   let eoq_index = find (EndOfQuery EOQ) tokens in
   sublist (eoq_index + 1) (List.length tokens - 1) tokens
 
+let get_from_index (tokens : token list) : int =
+  find (SubCommand From) tokens
+
+(** [get_select_cols update_list] return the list of columns to update.
+    Precondition: the update_list is correctly formatted*)
+let get_select_cols (tokens : token list) : string list =
+  let sub_list =
+    let from_index = get_from_index tokens in
+    sublist 0 (from_index - 1) tokens
+  in
+  terminal_to_string_list (token_list_to_terminal_list sub_list)
+
 let rec string_formatter (lst : string list) : string list =
   List.map (fun elt -> elt |> trim_string) lst
 
@@ -458,15 +470,16 @@ and parse_select db tokens =
 
 and parse_select_new db tokens =
   let this_command = get_this_command tokens in
+  let select_cols = get_select_cols tokens in
   let table = parse_table_select this_command in
   try
     let filtering_function =
       parse_where (this_command |> get_list_after_where)
     in
-    Controller.select db table [] filtering_function;
+    Controller.select db table select_cols filtering_function;
     db
   with Malformed _ ->
-    Controller.select db table [] (fun _ -> true);
+    Controller.select db table select_cols (fun _ -> true);
     get_other_commands tokens |> parse_query db
 
 (** Parse Drop: *)

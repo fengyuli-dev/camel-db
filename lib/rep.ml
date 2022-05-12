@@ -444,6 +444,8 @@ let select
     (table_name : string)
     (field_list : string list)
     (filtering_function : string list * string list -> bool) =
+  print_endline "this is the columns passed in";
+  print_list (fun x -> x) field_list;
   try
     let old_table =
       tree_find (fun table -> table.table_name = table_name) db.tables
@@ -451,7 +453,8 @@ let select
     let new_table =
       filter_table_rows db old_table.table_name filtering_function
     in
-    new_table
+    let cols_filtered_table = select_column new_table field_list in
+    cols_filtered_table
   with Not_found -> raise TableDNE
 
 (** return the default value of the data type*)
