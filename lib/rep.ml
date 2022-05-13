@@ -415,18 +415,27 @@ let drop_table db table_name =
     rep_ok_db new_database
   else raise TableDNE
 
+let extract_all_columns (table : table) =
+  filter_based_on_value (fun col -> true) table.columns
+
 (** filters selected columns of the table according to a field name
     list. *)
 let select_column (table : table) (field_list : string list) : table =
+  print_endline "reached select column, below is the fieldlist";
+  print_list (fun x -> x) field_list;
+  print_endline "";
   let new_table =
     let new_cols =
-      filter_based_on_value
-        (fun col ->
-          List.exists (fun name -> name = col.field_name) field_list)
-        table.columns
+      if field_list = [ "*" ] then extract_all_columns table
+      else
+        filter_based_on_value
+          (fun col ->
+            List.exists (fun name -> name = col.field_name) field_list)
+          table.columns
       (*go through columns and check if they are included*)
     in
-    if List.length field_list = size new_cols then
+    if field_list = [ "*" ] || List.length field_list = size new_cols
+    then
       {
         table_name = "temp";
         columns = new_cols;

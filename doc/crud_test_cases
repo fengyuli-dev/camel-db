@@ -38,8 +38,10 @@ DROP Persons
 # SELECT- FROM (-WHERE) [TableDNE, ColumnDNE]
 SELECT PersonID, LastName FROM Persons ; 
 SELECT PersonID FROM Persons ; 
+SELECT * FROM Persons ;
 SELECT PersonID, FirstName, LastName FROM Persons ; 
 SELECT PersonID, FirstName, LastName FROM Persons WHERE PersonID = 3 OR LastName = "Yo" ;
+SELECT * FROM Persons  WHERE PersonID = 3 OR LastName = "Yo" ;
 
 # Combined Multiline Command
 CREATE Persons PersonID INTEGER, LastName VARCHAR, FirstName VARCHAR ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  3,  "Yo",  "Zhang"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  9,  "Yo",  "d"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  20,  "Yo",  "Lin" ; UPDATE Persons SET PersonID = 999, LastName = 'Unknown' WHERE PersonID = 3 ;
