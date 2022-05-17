@@ -421,9 +421,6 @@ let extract_all_columns (table : table) =
 (** filters selected columns of the table according to a field name
     list. *)
 let select_column (table : table) (field_list : string list) : table =
-  print_endline "reached select column, below is the fieldlist";
-  print_list (fun x -> x) field_list;
-  print_endline "";
   let new_table =
     let new_cols =
       if field_list = [ "*" ] then extract_all_columns table
@@ -432,7 +429,6 @@ let select_column (table : table) (field_list : string list) : table =
           (fun col ->
             List.exists (fun name -> name = col.field_name) field_list)
           table.columns
-      (*go through columns and check if they are included*)
     in
     if field_list = [ "*" ] || List.length field_list = size new_cols
     then
@@ -552,6 +548,59 @@ let wrong_type data (dp : data_type) =
       (* if it cannot be converted to float then it has wrong type.*)
   | String -> false
 
+let get_col_key column_name col_tree =
+  try
+    get_key_col
+      (fun (col, index) -> col.field_name = column_name)
+      col_tree
+  with NotFound -> raise (Failure "raised at get_key")
+
+let rec update_table_helper lst table col_tree rows_to_keep =
+  match lst with
+  | [] -> table
+  | (column_name, data) :: t ->
+      let col_key = get_col_key column_name col_tree in
+      let column =
+        try get col_key col_tree
+        with NotFound -> raise (Failure "raised at get col_key ...")
+      in
+      let col_type = column.data_type in
+      if wrong_type data col_type then raise WrongType
+      else
+        let new_column = update_all_rows column data rows_to_keep in
+        let t =
+          update_column_in_table col_key new_column
+            (update_table_helper t table col_tree rows_to_keep)
+        in
+        t
+
+let generate_new_db db table_name new_table =
+  {
+    db with
+    tables =
+      (let key =
+         get_key
+           (fun (table, index) -> table.table_name = table_name)
+           db.tables
+       in
+       update key (rep_ok_tb new_table) db.tables);
+  }
+
+let get_new_table
+    table_name
+    db
+    fieldname_type_value_list
+    filtering_function =
+  let table =
+    tree_find (fun table -> table.table_name = table_name) db.tables
+  in
+  let col_tree = table.columns in
+  let rows_to_keep =
+    get_row_numbers_to_keep db filtering_function table.table_name
+  in
+  update_table_helper fieldname_type_value_list table col_tree
+    rows_to_keep
+
 (** get the row numbers to update, for each column, these row numbers
     need to to be filled with the new value*)
 let rec update_row
@@ -561,50 +610,10 @@ let rec update_row
     filtering_function =
   try
     let new_table =
-      let table =
-        tree_find (fun table -> table.table_name = table_name) db.tables
-      in
-      let col_tree = table.columns in
-      let rows_to_keep =
-        get_row_numbers_to_keep db filtering_function table.table_name
-      in
-      let rec helper lst =
-        match lst with
-        | [] -> table
-        | (column_name, data) :: t ->
-            let col_key =
-              try
-                get_key_col
-                  (fun (col, index) -> col.field_name = column_name)
-                  col_tree
-              with NotFound -> raise (Failure "raised at get_key")
-            in
-            let column = get col_key col_tree in
-            let col_type = column.data_type in
-            if wrong_type data col_type then raise WrongType
-            else
-              let new_column =
-                update_all_rows column data rows_to_keep
-              in
-              let t =
-                update_column_in_table col_key new_column (helper t)
-              in
-              t
-      in
-      helper fieldname_type_value_list
+      get_new_table table_name db fieldname_type_value_list
+        filtering_function
     in
-    let new_db =
-      {
-        db with
-        tables =
-          (let key =
-             get_key
-               (fun (table, index) -> table.table_name = table_name)
-               db.tables
-           in
-           update key (rep_ok_tb new_table) db.tables);
-      }
-    in
+    let new_db = generate_new_db db table_name new_table in
     rep_ok_db new_db
   with
   | NotFound -> raise ColumnDNE
@@ -614,80 +623,24 @@ let rec update_one_row_only
     table
     (fieldname_type_value_list : (string * string) list)
     new_row_index =
-  if debug then print_endline (pretty_print table) else ();
   let col_tree = table.columns in
   let rows_to_keep = [ new_row_index ] in
   let new_table =
-    let rec helper lst =
-      if debug then (
-        print_endline
-          ("size of the lst parameter."
-          ^ string_of_int (List.length lst));
-        print_string (string_of_int (List.length lst)))
-      else ();
-      match lst with
-      | [] ->
-          if debug then (
-            print_string "reached base case yay";
-            print_endline (pretty_print table))
-          else ();
-          table
-      | (column_name, data) :: t ->
-          if debug then (
-            print_endline
-              ("size of the t parameter."
-              ^ string_of_int (List.length t));
-            print_endline "THe current recursive cols are: ";
-            print_list (fun (col_name, data) -> col_name ^ " " ^ data) t)
-          else ();
-          let col_key =
-            try
-              get_key_col
-                (fun (col, index) -> col.field_name = column_name)
-                col_tree
-            with NotFound ->
-              if debug then (
-                print_endline column_name;
-                print_endline data)
-              else ();
-              raise (Failure "raised at get_key")
-          in
-          if debug then
-            print_endline
-              ("The current col_key is: " ^ string_of_int col_key)
-          else ();
-          let column =
-            try get col_key col_tree
-            with NotFound ->
-              raise (Failure "raised at get col_key ...")
-          in
-          let col_type = column.data_type in
-          if wrong_type data col_type then raise WrongType
-          else
-            let new_column = update_all_rows column data rows_to_keep in
-            if debug then (
-              print_endline ("New Column: " ^ new_column.field_name);
-              print_list (fun (k, v) -> v) (inorder new_column.data))
-            else ();
-            let t =
-              update_column_in_table col_key new_column (helper t)
-            in
-            if debug then (
-              print_endline
-                ("The current table with " ^ string_of_int col_key
-               ^ " updated is: ");
-              print_endline (pretty_print t);
-              t)
-            else t
-    in
-    if debug then (
-      print_endline "list passed in";
-      print_string
-        (string_of_int (List.length fieldname_type_value_list)))
-    else ();
-    helper fieldname_type_value_list
+    update_table_helper fieldname_type_value_list table col_tree
+      rows_to_keep
   in
   rep_ok_tb new_table
+
+let get_final_table
+    table_with_default_inserted
+    fieldname_type_value_list
+    new_row_index =
+  let new_table =
+    update_one_row_only table_with_default_inserted
+      fieldname_type_value_list new_row_index
+  in
+  let final_table = { new_table with num_rows = new_table.num_rows } in
+  final_table
 
 let insert_aux
     (db : database)
@@ -704,15 +657,21 @@ let insert_aux
     let table_with_default_inserted =
       insert_default_in_every_column table
     in
-    let new_table =
-      update_one_row_only table_with_default_inserted
-        fieldname_type_value_list new_row_index
-    in
-    let final_table =
-      { new_table with num_rows = new_table.num_rows }
-    in
-    final_table
+    get_final_table table_with_default_inserted
+      fieldname_type_value_list new_row_index
   with NotFound -> raise TableDNE
+
+let get_new_db_insert db table_name final_table =
+  {
+    db with
+    tables =
+      (let key =
+         get_key
+           (fun (table, index) -> table.table_name = table_name)
+           db.tables
+       in
+       update key (rep_ok_tb final_table) db.tables);
+  }
 
 let insert_row
     (db : database)
@@ -722,17 +681,6 @@ let insert_row
     let final_table =
       insert_aux db table_name fieldname_type_value_list
     in
-    let new_db =
-      {
-        db with
-        tables =
-          (let key =
-             get_key
-               (fun (table, index) -> table.table_name = table_name)
-               db.tables
-           in
-           update key (rep_ok_tb final_table) db.tables);
-      }
-    in
+    let new_db = get_new_db_insert db table_name final_table in
     rep_ok_db new_db
   with NotFound -> raise ColumnDNE
