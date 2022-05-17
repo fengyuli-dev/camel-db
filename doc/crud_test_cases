@@ -33,7 +33,7 @@ UPDATE Persons SET PersonID = 999, LastName = 'Unknown' WHERE PersonID = 3 AND L
 UPDATE Persons SET PersonID = 999, LastName = 'yeehaw' WHERE PersonID = 9 AND LastName = "Yo" AND FirstName = "d" ;
 
 # drop tests [TableDNE]
-DROP Persons
+DROP Persons ;
 
 # SELECT- FROM (-WHERE) [TableDNE, ColumnDNE]
 SELECT PersonID, LastName FROM Persons ; 
