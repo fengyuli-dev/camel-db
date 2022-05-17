@@ -345,7 +345,7 @@ let parse_where_helper
   let or_lst = expressions_or tokens in
   evaluate_or or_lst pair_data'
 
-let print_condition = true
+let print_condition = false
 
 let rec print_function_helper exprs =
   match exprs with

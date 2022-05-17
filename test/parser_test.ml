@@ -80,46 +80,20 @@ let condition6 =
   ]
 
 let pair_list_title =
-  [
-    Terminal (String "Language");
-    Terminal (String "Country");
-    Terminal (String "LandSize");
-    Terminal (String "Continent");
-    Terminal (String "Population");
-  ]
+  [ "Language"; "Country"; "LandSize"; "Continent"; "Population" ]
 
 (* condition1 true; condition2 false; *)
 let pair_list_China =
-  ( pair_list_title,
-    [
-      Terminal (String "Chinese");
-      Terminal (String "China");
-      Terminal (Int 10000);
-      Terminal (String "Asia");
-      Terminal (Int 1000);
-    ] )
+  (pair_list_title, [ "Chinese"; "China"; "10000"; "Asia"; "1000" ])
 
 (* condition1 false; condition2 false; *)
 let pair_list_USA =
-  ( pair_list_title,
-    [
-      Terminal (String "English");
-      Terminal (String "USA");
-      Terminal (Int 5000);
-      Terminal (String "NorthAmerica");
-      Terminal (Int 500);
-    ] )
+  (pair_list_title, [ "English"; "USA"; "5000"; "NorthAmerica"; "500" ])
 
 (* condition1 true; condition2 true; *)
 let pair_list_Mexico =
   ( pair_list_title,
-    [
-      Terminal (String "Mexcian");
-      Terminal (String "Mexico");
-      Terminal (Int 100);
-      Terminal (String "NorthAmerica");
-      Terminal (Int 100);
-    ] )
+    [ "Mexcian"; "Mexico"; "100"; "NorthAmerica"; "100" ] )
 
 let parse_where_test name expected actual =
   name >:: fun _ -> assert_equal expected actual ~printer:string_of_bool
@@ -166,130 +140,8 @@ let parse_where_tests =
 
 type t = string * string list * terminal list
 
-(** let string_of_t (my_type : string * string list * terminal list) =
-    match my_type with | string, string_list, terminal_list -> string ^
-    " " ^ string_list ^ " " ^ terminal_list *)
-
-let parse_insert_test
-    (name : string)
-    (tokens : token list)
-    (expected_output : string * string list * terminal list) : test =
-  name >:: fun _ ->
-  assert_equal expected_output (parse_insert_test_version tokens)
-
 (** helper: return the list with the head removed *)
-let remove_hd lst =
-  match lst with
-  | [] -> []
-  | h :: t -> t
-
-let insert_token_1 =
-  tokenize "INSERT INTO Customers (CustomerName) VALUES ('Cardinal') ;"
-  |> remove_hd
-
-let insert_token_2 =
-  [
-    SubCommand Into;
-    Terminal (String "Customers");
-    Terminal (String "(CustomerName,");
-    Terminal (String "ContactName,");
-    Terminal (String "Address,");
-    Terminal (String "City,");
-    Terminal (String "PostalCode,");
-    Terminal (String "Country)");
-    SubCommand Values;
-    Terminal (String "('Cardinal',");
-    Terminal (String "'TomErichsen',");
-    Terminal (String "'Skagen21',");
-    Terminal (String "'Stavanger',");
-    Terminal (Int 4006);
-    Terminal (String "'Norway')");
-    EndOfQuery EOQ;
-  ]
-
-let insert_token_3 =
-  [
-    SubCommand Into;
-    Terminal (String "Customers");
-    Terminal (String "(CustomerName,");
-    Terminal (String "ContactName,");
-    Terminal (String "Address,");
-    Terminal (String "City,");
-    Terminal (String "PostalCode,");
-    Terminal (String "Country)");
-    SubCommand Values;
-    Terminal (String "('Cardinal',");
-    Terminal (String "'TomErichsen',");
-    Terminal (String "'Skagen21',");
-    Terminal (String "'Stavanger',");
-    Terminal (Float 400.6);
-    Terminal (String "'Norway')");
-    EndOfQuery EOQ;
-  ]
-
-let parse_insert_tests =
-  [
-    parse_insert_test "all strings" insert_token_1
-      ( "Cusomters",
-        [ "CustomerName" ],
-        [ Camel_db.Type.String "Cardinal" ] );
-    parse_insert_test "has ints" insert_token_2
-      ( "Cusomters",
-        [
-          "CustomerName";
-          "ContactName";
-          "Address";
-          "City";
-          "PostalCode";
-          "Country";
-        ],
-        [
-          Camel_db.Type.String "Caridnal";
-          Camel_db.Type.String "TomErichsen";
-          Camel_db.Type.String "Skagen21";
-          Camel_db.Type.String "Stavanger";
-          Camel_db.Type.Int 4006;
-          Camel_db.Type.String "Norway";
-        ] );
-    parse_insert_test "has floats" insert_token_3
-      ( "Cusomters",
-        [
-          "CustomerName";
-          "ContactName";
-          "Address";
-          "City";
-          "PostalCode";
-          "Country";
-        ],
-        [
-          Camel_db.Type.String "Caridnal";
-          Camel_db.Type.String "TomErichsen";
-          Camel_db.Type.String "Skagen21";
-          Camel_db.Type.String "Stavanger";
-          Camel_db.Type.Float 400.6;
-          Camel_db.Type.String "Norway";
-        ] );
-  ]
-
-let parse_delete_test
-    (name : string)
-    (tokens : token list)
-    (expected_output : string) : test =
-  name >:: fun _ ->
-  assert_equal expected_output (parse_delete_test_version tokens)
-
-let delete_token =
-  tokenize "DELETE FROM Customers WHERE CustomerID = 1 ;" |> remove_hd
-
-let parse_delete_tests =
-  [ parse_delete_test "delete command" delete_token "Customers" ]
-
-let parse_update_test
-    (name : string)
-    (tokens : token list)
-    (expected_output : string * string list * terminal list) : test =
-  name >:: fun _ ->
-  assert_equal expected_output (parse_update_test_version tokens)
+let remove_hd lst = match lst with [] -> [] | h :: t -> t
 
 let update_token_1 =
   tokenize
@@ -317,25 +169,6 @@ let update_token_2 =
     EndOfQuery EOQ;
   ]
 
-let parse_update_tests =
-  [
-    parse_update_test "update command with strings only" update_token_1
-      ( "Customers",
-        [ "ContactName"; "City" ],
-        [
-          Camel_db.Type.String "AlfredSchmidt";
-          Camel_db.Type.String "Frankfurt";
-        ] );
-    parse_update_test "update command with mixed types" update_token_2
-      ( "Customers",
-        [ "ContactName"; "City"; "Address" ],
-        [
-          Camel_db.Type.Float 6.2;
-          Camel_db.Type.String "Frankfurt";
-          Camel_db.Type.Int 9;
-        ] );
-  ]
-
 let get_list_after_where_test
     (name : string)
     (tokens : token list)
@@ -349,11 +182,7 @@ let get_list_after_where_tests =
     get_list_after_where_test "command1" update_token_1
       [ Terminal (String "CustomerID"); BinaryOp EQ; Terminal (Int 1) ];
     get_list_after_where_test "command2" update_token_2
-      [
-        Terminal (String "CustomerID");
-        BinaryOp EQ;
-        Terminal (Int 1);
-      ];
+      [ Terminal (String "CustomerID"); BinaryOp EQ; Terminal (Int 1) ];
   ]
 
 let long_command =
@@ -440,7 +269,6 @@ let suite =
            get_list_after_where_tests;
            get_this_command_tests;
            get_other_commands_tests;
-           parse_update_tests;
          ]
 
 let _ = run_test_tt_main suite
