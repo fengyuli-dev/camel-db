@@ -3,5 +3,5 @@
 ;  (libraries Camel_db ounit2))
 
 (tests
- (names table_example)
- (libraries Camel_db))
+ (names main expr_test save_test tree_test)
+ (libraries Camel_db ounit2))

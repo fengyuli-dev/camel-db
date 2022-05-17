@@ -9,11 +9,6 @@ utop:
 test:
 	OCAMLRUNPARAM=b dune exec test/main.exe
 
-test_tree:
-	OCAMLRUNPARAM=b dune exec test/tree.exe
-
-testall: test test_tree
-
 sample_file:
 	OCAMLRUNPARAM=b dune exec csv_files/csv1.exe
 

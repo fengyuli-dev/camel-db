@@ -154,7 +154,7 @@ let test_db =
 
 open Camel_db.Save
 
-let () =
+let suite =
   save_file test_db "programming";
   save_file test_db "classes";
   save_file test_db "students"

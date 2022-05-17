@@ -8,6 +8,7 @@
 
 open OUnit2
 open Camel_db.Parser
+open Camel_db.Type
 
 (** (A = 1) or (D = 4) *)
 let (tokens1 : expr_type list) =
