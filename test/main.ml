@@ -13,7 +13,13 @@
    the tokenizer is an integral part of the parsing system (the tokens
    generated are passed to parser.ml), so the tokenizer tests are
    integrated into the parser tests in the second half of the
-   `parser_test.ml`.
+   `parser_test.ml`. It is tested with both OUnit and manual testing.
+   The OUnit testing is with black box testing that we tested with
+   trivial and edge case. The manual testing is done with REPL. When
+   comparing the output to the expected, we know our tokenizer is
+   correct. This is also tested with parser and other functionality
+   becuase for a database to understand commands it is necessary to
+   parse tokens.
 
    2. Parser The main purpose of the parser is to parse the string
    entered by users, associate it with a specific CRUD operation,
@@ -101,7 +107,7 @@
    With manual testing, we created sample databases and called the
    save_file functions on them, and observe a csv file being generated
    in the working directory with the contents that match the ones coded
-   in the database.
+   in the database. This shows the correctness of our implementation.
 
    Overall, by using OUnit testing on seperable functionalities and
    manual testing with the REPL on integrated features, we guarantee
