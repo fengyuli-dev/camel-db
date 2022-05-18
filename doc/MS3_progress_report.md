@@ -39,6 +39,25 @@ Our work allotted is actually not as much because the majority of the implementa
 As a team, we were productive. During team meetings, we mainly focused on discussing the unresolved bugs and potential new features for the project. We worked individually to implement the functions that we are assigned to complete and the bugs that we introduced in the two earlier sprints. To improve code quality, we reviewed each other’s work and made revisions.
 
 ## Scope Grade
+We think that we have achieved excellent scope in MS3.
+
+We completed satisfactory scope because we created a function called file_to_db
+that generates a database out of a csv file stored locally in the directory. 
+As long as the csv file is valid, we can create a table succesfully. We have also
+supported the wildcard * beause select * now prints all the columns of the table.
+
+We completed good scope because we write tests for the full database that uses
+example csv files. We have created sample databases and tested the save functions
+on them. We also tested each of the CRUD operations extensively to see the sequence
+of instructions update the database accordingly
+
+We completed excellent scope as well because we connected the data file I/O to
+the REPL interface by adding in additional tokens called "SAVE" and "READ" and
+added new functions "parse_save" and "parse_read" that allow the user to 
+input "SAVE table_name" and "READ table_name" to write and read to fsv files.
+
+As mentioned before, we also support the * commands in SELECT as extra 
+fucntionality.
 
 ### Satisfactory
 
