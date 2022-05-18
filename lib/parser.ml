@@ -509,19 +509,6 @@ and parse_insert db (tokens : token list) =
   let updated_db = insert db table cols vals in
   get_other_commands tokens |> parse_query updated_db
 
-(**[parse_insert_test_version tokens] runs parse_insert but it is
-   friendly for testing because it has a concrete output type instead of
-   unit*)
-and parse_insert_test_version db (tokens : token list) :
-    string * string list * terminal list =
-  let this_command = get_this_command tokens in
-  let table =
-    parse_table this_command (SubCommand Into) |> trim_string
-  in
-  let cols = this_command |> get_cols_list |> string_formatter in
-  let vals = this_command |> get_vals_list |> vals_formatter in
-  (table, cols, vals)
-
 and parse_delete db tokens =
   let this_command = get_this_command tokens in
   let table = parse_table this_command (SubCommand From) in
@@ -530,11 +517,6 @@ and parse_delete db tokens =
       (parse_where (this_command |> get_list_after_where))
   in
   get_other_commands tokens |> parse_query updated_db
-
-and parse_delete_test_version db (tokens : token list) : string =
-  let this_command = get_this_command tokens in
-  let table = parse_table this_command (SubCommand From) in
-  table
 
 and parse_update db tokens =
   let this_command = get_this_command tokens in
@@ -560,19 +542,6 @@ and parse_save db tokens =
   in
   Controller.save db table;
   get_other_commands tokens |> parse_query db
-
-and parse_update_test_version (db : database) tokens :
-    string * string list * terminal list =
-  let this_command = get_this_command tokens in
-  let table =
-    terminal_to_string [ List.nth this_command 0 |> token_to_terminal ]
-    |> trim_string
-  in
-  ( table,
-    this_command |> get_update_list |> get_update_cols
-    |> string_formatter,
-    this_command |> get_update_list |> get_update_vals |> vals_formatter
-  )
 
 and parse_query db tokens =
   match tokens with

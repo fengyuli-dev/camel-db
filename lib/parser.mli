@@ -24,31 +24,14 @@ val parse_create : database -> token list -> database
     controller_insert to insert a new row into an existing table. *)
 val parse_insert : database -> token list -> database
 
-(** [parse_insert_test_version tokens] runs parse_insert but it is
-    friendly for testing because it has a concrete output type instead
-    of unit. *)
-val parse_insert_test_version :
-  database -> token list -> string * string list * terminal list
-
 (** [parse_delete_test_version input] parse an delete databse command to
     send to controller_insert to insert a new row into an existing
     table. *)
 val parse_delete : database -> token list -> database
 
-(** [parse_delete_test_version input] parse an delete databse command to
-    send to controller_insert to insert a new row into an existing
-    table. *)
-val parse_delete_test_version : database -> token list -> string
-
 (** [parse_update tokens] parses an update database command to send to
     controller_update to update rows in an existing dataabase. *)
 val parse_update : database -> token list -> database
-
-(** [parse_update_test_version tokens] runs parse_update but it is
-    friendly for testing because it has a concrete output type instead
-    of unit. *)
-val parse_update_test_version :
-  database -> token list -> string * string list * terminal list
 
 (** [parse_select input] parses a select command which calls parse_from
     and parse_where. *)
