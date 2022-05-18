@@ -34,14 +34,11 @@ let create
     (cols : string list)
     (data_types : data_type list) =
   try get_new_db_create db table_name cols data_types
-  with 
-  | IllegalName 
-  | Duplicate ->
+  with IllegalName | Duplicate ->
     print_endline
       (table_name
      ^ " is already a table in the current database. Please reenter.");
     db
-   
 
 let get_insert_new_db db table_name cols value_list =
   let new_db =
@@ -150,3 +147,10 @@ let save (db : database) table_name =
   with TableDNE ->
     print_endline
       "The table in the save attempt is not in the current database."
+
+let read (db : database) table_name =
+  try Save.file_to_db db table_name
+  with TableDNE ->
+    print_endline
+      "The table in the read attempt is not in the current database.";
+    db

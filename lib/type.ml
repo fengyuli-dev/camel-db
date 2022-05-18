@@ -20,6 +20,7 @@ type command_type =
   | Delete
   | Update
   | Save
+  | Read
 
 type sub_command_type =
   | From
