@@ -16,7 +16,9 @@ We implement our own data structure (a binary search tree) and our own parser so
 
 During this last sprint, we focused on bug fixing while also introducing a few features to our database. We also wrote some test suites to test our implementation. We support a new feature of reading a csv file and processing it, turning it into a database that can then be manipulated using our SQL commands. This complements our existing feature of outputting as a csv file. We also enhanced our SELECT command by allowing wildcard symbols in the select queries. In this way, our SELECT would support most functionalities in the original SQL standard protocol by allowing filters, wildcards, and field queries. Additionally, we rewrote the pretty print method of the database. The REPL output that displays the content of the database is now much more organized and legible. 
 
-Besides these features, we implemented
+Besides these features, we implemented test suites for each major parts of our program. Details about our test scheme is available in `test/main.ml`.
+
+Lastly, we fixed numerous bugs in our program. The internal representation was coded in a hurry because of MS2’s relatively short time span. Our program is now more robust and usable. We also improved our code quality by closely examining each file.
 
 ## Activity Breakdown
 
@@ -26,6 +28,9 @@ Besides these features, we implemented
 - Chuhan: Approximate hour spent: 9
 
 ## Productivity Analysis
+
+Although this sprint is longer than MS2, the work allotted is actually not as much because the majority of the implementation is done in MS2 and only some small features and debugging are left. We mainly focused on these tasks and peer-reviewed our code in order to debug and refactor.
+As a team, we were productive. During team meetings, we mainly focused on discussing the unresolved bugs and potential new features for the project. We worked individually to implement the functions that we are assigned to complete and the bugs that we introduced in the two earlier sprints. To improve code quality, we reviewed each other’s work and made revisions.
 
 ## Scope Grade
 
