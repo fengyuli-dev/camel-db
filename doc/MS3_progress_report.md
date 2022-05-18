@@ -9,8 +9,7 @@
 
 ## Vision
 
-The vision for our project is still what we had described in MS0, to create a database management system (DBS) that stores data and supports basic SQL queries. Our system supports users to create and drop tables, insert, and update an entry in the table, read input and create an output. To be specific, it supports CRUD (Create, Read, Update, Delete) operations such as SELECT…FROM…WHERE, CREATE, DROP, INSERT, UPDATE, DELETE. Detailed description of these operations can be found in "doc/grammar.md". We use REPL (Read-eval-print loop) to allow clients to interact with the DBS. We changed our work plan slighted (some additional feature and removed some other feature)
-We implement our own data structure (a binary search tree) and our own parser so that our implementation can be more customizable to our needs. We refrained from using an out-of-the-box data structure or a parser generator to demonstrate the novelty of our work.
+Your friends run the kernelized perceptron and get ~α = [1, 2, 1]T . However, when they applied the model to the training set, they could not get 100% accuracy. Again, knowing that you are the pro in ML, they ask for your help again. After talking to them, you realize that they might not have run the algorithm till convergence. So, you ran the kernelized perceptron algorithm with ~α initialized to [1, 2, 1]T . What is the α you get after you run the algorithm till convergence? α = [1, 3, 1]T . Students only need to go through the dataset twice - one for the update, another one for checking zero training error.
 
 ## Summary of Progress
 
@@ -19,6 +18,8 @@ During this last sprint, we focused on bug fixing while also introducing a few f
 Besides these features, we implemented test suites for each major parts of our program. Details about our test scheme is available in `test/main.ml`.
 
 Lastly, we fixed numerous bugs in our program. The internal representation was coded in a hurry because of MS2’s relatively short time span. Our program is now more robust and usable. We also improved our code quality by closely examining each file.
+
+Our eventual deliverable should contain about 2400 loc.
 
 ## Activity Breakdown
 
@@ -36,13 +37,13 @@ As a team, we were productive. During team meetings, we mainly focused on discus
 
 ### Satisfactory : 45/45
 
-1. Be able to not only save specified table to csv file but also read csv file to create table. The additional feature of converting valid csv file to create table.
-2. Implement wildcard _(the same_ in SQl that meaning all/everything) to our table commands.
+1. 歪比巴卜
+2. 歪比巴卜
 
 ### Good : 40/40
 
-1. Write tests for the full database that uses example csv files. Complete the testing for the untested parts in trees and other relevant compilation units.
+1. 歪比巴卜
 
 ### Excellent ： 15/15
 
-1. Connect database file I/O with the REPL interface and test the whole project by letting real people use it.
+1. 歪比巴卜
