@@ -28,10 +28,10 @@ Our final eventual deliverable should contain about 2400 loc.
 
 ## Activity Breakdown
 
-- Fengyu: Approximate hours spend: 7
-- Emerald: Implement the additional feature of converting valid database files to data base. Also added more documentation for different features and files. Approximate hours spend: 9
-- Yolanda: Approximate hours spent: 9
-- Chuhan: Approximate hour spent: 9
+- Fengyu: Collaborate in debugging, organize documentation of the whole project and make sure make docs works fine, Approximate hours spend: 8
+- Emerald: Implement the additional feature of converting valid database files to data base. Also added more documentation for different features and files. Approximate hours spend: 8
+- Yolanda: Refactor testing to fit the make test criteria, organize test plan. Approximate hours spent: 9
+- Chuhan: Refactor long code and clean up coding style, organize test plan, make pretty print prettier, debug edge cases of rep.ml, implement "select all" function. Approximate hour spent: 9
 
 ## Productivity Analysis
 
