@@ -18,7 +18,10 @@ INSERT INTO Persons PersonID, LastName, FirstName VALUES  23,  "Yennis",  "Zhang
 INSERT INTO Persons PersonID, LastName, FirstName VALUES  93,  "Yennis",  "Zhang"  ; 
 
 # insert mega command
-CREATE Persons PersonID INTEGER, LastName VARCHAR, FirstName VARCHAR ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  3,  "Yo",  "Zhang"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  9,  "Yo",  "d"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  20,  "Yo",  "Lin"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  23,  "Ya",  "Lin"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  93,  "Yennis",  "Zhang"  ; 
+CREATE NN FirstName VARCHAR, LastName VARCHAR, Age INT ; INSERT INTO NN FirstName, LastName, Age VALUES "Yo",  "Zhang", 3 ; INSERT INTO NN FirstName, LastName, Age VALUES  "Ya",  "d", 10 ; 
+
+CREATE NN FirstName VARCHAR, LastName VARCHAR, Age INT ; INSERT INTO NN VALUES "Chu", "Ouyyang", 6 ; INSERT INTO NN VALUES "T", "DD", 7 ;
+
 
 # delete tests [TableDNE]
 DELETE FROM Persons WHERE PersonID = 3 ;

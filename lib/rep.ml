@@ -174,6 +174,7 @@ let get_all_rows_even_length table longest_length =
   try
     let num_rows = table.num_rows in
     let row_list = range num_rows in
+    print_int num_rows;
     List.map
       (fun row ->
         "| "

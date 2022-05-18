@@ -543,6 +543,15 @@ and parse_save db tokens =
   Controller.save db table;
   get_other_commands tokens |> parse_query db
 
+and parse_read db tokens =
+  let this_command = get_this_command tokens in
+  let table =
+    terminal_to_string [ List.nth this_command 0 |> token_to_terminal ]
+    |> trim_string
+  in
+  let read_db = Controller.read db table in
+  get_other_commands tokens |> parse_query read_db
+
 and parse_query db tokens =
   match tokens with
   | [] -> db
@@ -553,6 +562,7 @@ and parse_query db tokens =
   | Command Delete :: t -> parse_delete db t
   | Command Update :: t -> parse_update db t
   | Command Save :: t -> parse_save db t
+  | Command Read :: t -> parse_read db t
   | _ -> raise (Malformed "Not a valid Command")
 
 let parse (db : database) (input : string) =

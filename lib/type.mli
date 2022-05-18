@@ -21,6 +21,7 @@ type command_type =
   | Delete
   | Update
   | Save
+  | Read
 
 (** Keywords affiliated with a SQL command. *)
 type sub_command_type =
