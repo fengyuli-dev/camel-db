@@ -351,30 +351,14 @@ let print_condition = false
 
 let rec print_function_helper exprs =
   match exprs with
-  | AND :: t ->
-      print_string "AND ";
-      print_function_helper t
-  | OR :: t ->
-      print_string "OR ";
-      print_function_helper t
-  | EQ :: t ->
-      print_string "= ";
-      print_function_helper t
-  | GT :: t ->
-      print_string "> ";
-      print_function_helper t
-  | LT :: t ->
-      print_string "< ";
-      print_function_helper t
-  | GE :: t ->
-      print_string ">= ";
-      print_function_helper t
-  | LE :: t ->
-      print_string "<= ";
-      print_function_helper t
-  | NE :: t ->
-      print_string "!= ";
-      print_function_helper t
+  | AND :: t -> print_helper "AND " t
+  | OR :: t -> print_helper "OR " t
+  | EQ :: t -> print_helper "= " t
+  | GT :: t -> print_helper "> " t
+  | LT :: t -> print_helper "< " t
+  | GE :: t -> print_helper ">= " t
+  | LE :: t -> print_helper "<= " t
+  | NE :: t -> print_helper "!= " t
   | String s :: t ->
       print_string s;
       print_string " ";
@@ -388,6 +372,10 @@ let rec print_function_helper exprs =
       print_string " ";
       print_function_helper t
   | [] -> print_string ""
+
+and print_helper s t =
+  print_string s;
+  print_function_helper t
 
 let print_function exprs =
   print_string "Condition: ";
