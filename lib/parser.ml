@@ -194,7 +194,8 @@ let get_even_elem (lst : token list) : token list =
 (** [get_update_cols update_list] return the list of columns to update.
     Precondition: the update_list is correctly formatted*)
 let get_update_cols (update_list : token list) : string list =
-  if not (check_update_list update_list) then raise (Malformed "TODO")
+  if not (check_update_list update_list) then
+    raise (Malformed "cannot update column like this")
   else
     update_list |> remove_eq |> get_even_elem
     |> token_list_to_terminal_list |> terminal_to_string_list
@@ -203,7 +204,8 @@ let get_update_cols (update_list : token list) : string list =
     for the correponding columns. Precondition: the update_list is
     correctly formatted*)
 let get_update_vals (update_list : token list) : terminal list =
-  if not (check_update_list update_list) then raise (Malformed "TODO")
+  if not (check_update_list update_list) then
+    raise (Malformed "cannot update value like this")
   else
     let token_list = update_list |> remove_eq |> get_odd_elem in
     List.map (fun elt -> elt |> token_to_terminal) token_list
@@ -451,9 +453,6 @@ and get_from db acc cols lst =
       parse_query db t
   | Terminal h :: t -> get_from db (h :: acc) cols t
   | _ -> raise (Malformed "Wrong Syntax in FROM")
-
-(*TODO: print test what columns are passed in, and there is something
-  wrong with db passage. print num_tables. *)
 
 and get_cols db acc lst =
   match lst with

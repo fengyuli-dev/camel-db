@@ -7,8 +7,6 @@ let to_string_list input =
   |> List.map String.trim
   |> List.filter (fun e -> e <> "")
 
-(* TODO: Tokenizer does not support string with spaces. It also does not
-   support spaces around binary operators. *)
 let match_terminal s =
   try Terminal (Int (int_of_string s))
   with _ -> (

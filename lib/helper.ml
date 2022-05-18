@@ -32,6 +32,7 @@ let token_to_string = function
   | Command Delete -> "Command Delete"
   | Command Update -> "Command Update"
   | Command Save -> "Command Save"
+  | Command Read -> "Command Read"
   | Target Database -> "Target Database"
   | Target Table -> "Target Table"
   | SubCommand Set -> "SubCommand Set"

@@ -1,2 +1,2 @@
-PersonID,LastName,FirstName
-Int,String,String
+PersonID,LastName,FirstName,Address,City
+Int,String,String,String,String

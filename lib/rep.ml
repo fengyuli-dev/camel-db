@@ -434,7 +434,7 @@ let select_column (table : table) (field_list : string list) : table =
     if field_list = [ "*" ] || List.length field_list = size new_cols
     then
       {
-        table_name = "temp";
+        table_name = table.table_name;
         columns = new_cols;
         num_rows = table.num_rows;
       }
