@@ -17,12 +17,12 @@ testing the parser using OUnit and manually.
 For OUnit testing (test/parser_test.ml), we focus on testing the parse_where
 method. The parse_where method is responsible for parsing a condition,
 such as "COUNTRY = MEXICO and ID = 5". Parse_where will return a boolean value
-indicating whether the data passed in matches the cnodition. Therefore, we
+indicating whether the data passed in matches the condition. Therefore, we
 created token list of sample conditions, with nested and and or conditions,
 and passed in sample data. Our test cases examine whether the expected boolean
 value matches the one actually produced by the parse_where method. We passed
 all the OUnit test cases, showing that our system is able to process conditional
-statements. We deeveloped test cases using glass box, testing each combination 
+statements. We developed test cases using glass box, testing each combination 
 of nested conditional statements.
 
 The rest of the parser system is tested manually. Since the parser calls the 
@@ -32,7 +32,7 @@ controller command is called once we enter a command to parse in REPL.
 3. Tree
 Tree.ml is the data structure that supports the internal implementation of our
 database. The tree method is mostly tested using OUnit testing. We generated sample trees. Then, we created test cases that examine whether the applying get, size, fold, delete, duplicate methods on our sample tree matches the expected outcomes. We passed all the test cases, so our implementation of the tree
-is successful. We used glass box testing to test the most implrtant methods
+is successful. We used glass box testing to test the most important methods
 of tree.ml.
 
 4. Rep and Controller.
@@ -51,10 +51,10 @@ sure to generate various sample table and tested all CRUD operations and combine
 
 
 6. Save
-Save.ml is a module that controls the I/O of the databas. It supports converting from a database to a file and converting vice versa. We tested this module with OUnit and manual testing. 
+Save.ml is a module that controls the I/O and save to hard-drive of the database. It supports saving the table in a database to a file as well as reading the file back into the database. The files are saved in csv format. We tested this module with OUnit and manual testing.
 
 With OUnit testing, we hardcoded a database called test_db (by inserting entries into the tree). Then, we called save_file on the test_db and made sure it correctly saves to a cvs file. For these test
-cases, we used glass box testing since we were able to see what each line of the save_file function does.
+cases, we used glass box testing since we see what each line of the save_file function does and we also used black box testing and compared saved database file to our expected file output.
 
 With manual testing, we created sample databases and called the save_file functions on them, and observe a csv file being generated in the working directory with the contents that match the ones coded in the
 database. 
