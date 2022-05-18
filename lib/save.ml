@@ -79,18 +79,6 @@ let csvs table_name =
       "csv_files/" ^ table_name ^ "_main.csv";
     ]
 
-(* let file_to_db db table_name = let csv = csvs table_name in let
-   csv_title = List.nth csv 0 |> Csv.to_array in let csv_main = List.nth
-   csv 1 |> Csv.to_array in let csv_title1 = csv_title.(0) |>
-   Array.to_list in let csv_title2 = csv_title.(1) |> Array.to_list |>
-   string_to_type in let combine_func_1 str typ = (str,typ) in let
-   combine_title = List.map2 combine_func_1 csv_title1 csv_title2 in
-   ignore (create_table db table_name combine_title); (* create *) let
-   array_to_db (str_arr:string array) : unit = let str_lst = str_arr |>
-   Array.to_list in let combine_func_2 str1 str2 = (str1,str2) in let
-   combine_row = List.map2 combine_func_2 csv_title1 str_lst in ignore
-   (insert_row db table_name combine_row) (* insert *) in Array.iter
-   array_to_db csv_main *)
 
 let file_to_db db table_name =
   let csv = csvs table_name in
