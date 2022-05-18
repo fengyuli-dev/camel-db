@@ -4,7 +4,7 @@ CREATE Persons PersonID INTEGER, LastName VARCHAR, FirstName VARCHAR, Address VA
 
 ## INSERT (two times)
 
-INSERT INTO Persons PersonID, LastName, FirstName, Address, City VALUES  9, "Du", "Chuhan", "Risley", "Moon" ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  20, "Li", "Fengyu"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  23, "Liu",  "Emerald"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  93,  "Wang", "Yolanda"; 
+INSERT INTO Persons PersonID, LastName, FirstName, Address, City VALUES  9, "Du", "Chuhan", "Risley", "Moon" ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  20, "Li", "Fengyu"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  23, "Liu",  "Emerald" ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  93,  "Wang", "Yolanda" ; 
 
 SELECT * FROM Persons ; 
 
@@ -22,7 +22,7 @@ DROP Persons ;
 
 ## Helper Command
 
-CREATE Persons PersonID INTEGER, LastName VARCHAR, FirstName VARCHAR, Address VARCHAR, City VARCHAR ; INSERT INTO Persons PersonID, LastName, FirstName, Address, City VALUES  9, "Du", "Chuhan", "Risley", "Moon" ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  20, "Li", "Fengyu"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  23, "Liu",  "Emerald"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  93,  "Wang", "Yolanda"; SELECT * FROM Persons ;
+CREATE Persons PersonID INTEGER, LastName VARCHAR, FirstName VARCHAR, Address VARCHAR, City VARCHAR ; INSERT INTO Persons PersonID, LastName, FirstName, Address, City VALUES  9, "Du", "Chuhan", "Risley", "Moon" ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  20, "Li", "Fengyu"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  23, "Liu",  "Emerald"  ; INSERT INTO Persons PersonID, LastName, FirstName VALUES  93,  "Wang", "Yolanda" ; SELECT * FROM Persons ;
 
 
 
