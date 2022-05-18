@@ -39,38 +39,36 @@ Our work allotted is actually not as much because the majority of the implementa
 As a team, we were productive. During team meetings, we mainly focused on discussing the unresolved bugs and potential new features for the project. We worked individually to implement the functions that we are assigned to complete and the bugs that we introduced in the two earlier sprints. To improve code quality, we reviewed each other’s work and made revisions.
 
 ## Scope Grade
-We think that we have achieved excellent scope in MS3.
+
+### Satisfactory
+
+1. Be able to not only save specified table to csv file but also read csv file to create table. 
+2. Implement wildcard * (the same * in SQl that meaning all/everything) to our table commands.
 
 We completed satisfactory scope because we created a function called file_to_db
 that generates a database out of a csv file stored locally in the directory. 
-As long as the csv file is valid, we can create a table succesfully. We have also
-supported the wildcard * beause select * now prints all the columns of the table.
+As long as the csv file is valid, we can create a table successfully. The additional
+feature of converting valid csv file to create table. This is implemented successfully 
+with the same csv library. We can now read any valid database csv file and convert it 
+to a database. We have also supported the wildcard * because select * now prints all 
+the columns of the table.
+
+### Good
+1. Write tests for the full database that uses example csv files. Complete the testing 
+for the untested parts in trees and other relevant compilation units.
+
 
 We completed good scope because we write tests for the full database that uses
 example csv files. We have created sample databases and tested the save functions
 on them. We also tested each of the CRUD operations extensively to see the sequence
-of instructions update the database accordingly
+of instructions update the database accordingly。
+
+
+### Excellent
+1. Connect database file I/O with the REPL interface and test the whole project by 
+letting real people use it.
 
 We completed excellent scope as well because we connected the data file I/O to
 the REPL interface by adding in additional tokens called "SAVE" and "READ" and
 added new functions "parse_save" and "parse_read" that allow the user to 
 input "SAVE table_name" and "READ table_name" to write and read to fsv files.
-
-As mentioned before, we also support the * commands in SELECT as extra 
-fucntionality.
-
-### Satisfactory
-
-1. Be able to not only save specified table to csv file but also read csv file to create table. The additional feature of converting valid csv file to create table. This is implemented successfully with the same csv library. We can now read any valid database csv file and convert it to a database. 
-
-2. Implement wildcard * (the same * in SQl that meaning all/everything) to our table commands.
-
-
-### Good
-1. Write tests for the full database that uses example csv files. Complete the testing for the untested parts in trees and other relevant compilation units.
-
-
-### Excellent
-1. Connect database file I/O with the REPL interface and test the whole project by letting real people use it.
-
-2. Implement extra commands as needed. 
