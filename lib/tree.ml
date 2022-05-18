@@ -28,17 +28,15 @@ let rec insert key_value_pair tree =
   match tree with
   | EmptyLeaf -> Leaf (key, value)
   | Leaf (k, v) ->
-      if k = key then (
-        print_string "thrown from leaf \n";
-        raise Duplicate)
+      if k = key then 
+        raise Duplicate
       else
         let new_leaf = Leaf (key, value) in
         if k < key then Node (k, v, EmptyLeaf, new_leaf)
         else Node (k, v, new_leaf, EmptyLeaf)
   | Node (k, v, l, r) ->
-      if k = key then (
-        print_string "thrown from node \n";
-        raise Duplicate)
+      if k = key then 
+        raise Duplicate
       else
         let new_leaf = Leaf (key, value) in
         if k < key then
@@ -51,12 +49,10 @@ let rec update key new_value = function
   | EmptyLeaf -> EmptyLeaf
   | Leaf (k, v) ->
       if k = key then
-        (* print_endline "update is performed on Leaf"; *)
         Leaf (k, new_value)
       else raise (Failure "key does not exist in tree") (*Leaf (k, v)*)
   | Node (k, v, l, r) ->
       if k = key then
-        (* print_endline "update is performed on Node"; *)
         Node (k, new_value, l, r)
       else if k > key then Node (k, v, update key new_value l, r)
       else Node (k, v, l, update key new_value r)
@@ -121,10 +117,8 @@ let get_key (f : 'a * int -> bool) tree =
   let val_key_pair = List.filter f val_key_assoc_list in
   try snd (List.nth val_key_pair 0) with
   | Failure _ ->
-      print_endline "Not found at snd";
       raise NotFound
   | Invalid_argument _ ->
-      print_endline "invalid argument";
       raise NotFound
 
 let get_key_col (f : column * int -> bool) tree =
@@ -135,13 +129,8 @@ let get_key_col (f : column * int -> bool) tree =
   let val_key_pair = List.filter f val_key_assoc_list in
   try snd (List.nth val_key_pair 0) with
   | Failure _ ->
-      print_list (fun (k, v) -> v.field_name) key_val_assoc_list;
-      print_list (fun (k, v) -> k.field_name) val_key_assoc_list;
-      print_list (fun (k, v) -> k.field_name) val_key_pair;
-      print_endline "Not found at snd";
       raise NotFound
   | Invalid_argument _ ->
-      print_endline "invalid argument";
       raise NotFound
 
 let filter_based_on_key f tree =

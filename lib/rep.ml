@@ -449,8 +449,6 @@ let select
     (table_name : string)
     (field_list : string list)
     (filtering_function : string list * string list -> bool) =
-  print_endline "this is the columns passed in";
-  print_list (fun x -> x) field_list;
   try
     let old_table =
       tree_find (fun table -> table.table_name = table_name) db.tables

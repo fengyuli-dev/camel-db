@@ -6,7 +6,7 @@ open Rep
 open Tree
 
 let debug = false
-let print = true
+let print = false
 
 let terminal_to_string (terminal : terminal) =
   match terminal with
@@ -34,11 +34,14 @@ let create
     (cols : string list)
     (data_types : data_type list) =
   try get_new_db_create db table_name cols data_types
-  with IllegalName ->
+  with 
+  | IllegalName 
+  | Duplicate ->
     print_endline
       (table_name
      ^ " is already a table in the current database. Please reenter.");
     db
+   
 
 let get_insert_new_db db table_name cols value_list =
   let new_db =
