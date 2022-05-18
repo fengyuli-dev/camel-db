@@ -40,6 +40,7 @@ let match_token = function
   | "OR" -> LogicOp OR
   | ";" -> EndOfQuery EOQ
   | "SAVE" -> Command Save
+  | "READ" -> Command Read
   | s -> match_terminal s
 
 let tokenize s = List.map (fun e -> match_token e) (to_string_list s)

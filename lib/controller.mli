@@ -38,3 +38,6 @@ val drop : database -> string -> database
 
 (** [save table_name] saves the proposed table to a csv file. *)
 val save : database -> string -> unit
+
+(** [read table_name] read the csv file to a database. *)
+val read : database -> string -> database
