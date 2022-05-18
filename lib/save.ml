@@ -69,8 +69,6 @@ let save_file db table_name =
   Csv.save fname_main ecsv_main;
   printf "Saved CSV to file %S and %S.\n" fname_title fname_main
 
-(** MS3 below this line *)
-
 let csvs table_name =
   List.map
     (fun name -> Csv.load name)
@@ -78,7 +76,6 @@ let csvs table_name =
       "csv_files/" ^ table_name ^ "_title.csv";
       "csv_files/" ^ table_name ^ "_main.csv";
     ]
-
 
 let file_to_db db table_name =
   let csv = csvs table_name in
@@ -107,6 +104,3 @@ let rec print_2d_array lst =
   match lst with
   | [] -> ""
   | h :: t -> print_array (Array.to_list h) ^ "\n" ^ print_2d_array t
-
-(* let () = print_string (print_2d_array (Array.to_list csv_title)) let
-   () = print_string (print_2d_array (Array.to_list csv_main)) *)

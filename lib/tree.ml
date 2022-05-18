@@ -5,8 +5,8 @@ exception NotFound
 
 open Helper
 
-(* type 'a tree = | EmptyLeaf | Leaf of (int * 'a) | Node of (int * 'a *
-   'a tree * 'a tree) *)
+(* the following is the type of a tree: 'a tree = | EmptyLeaf | Leaf of
+   (int * 'a) | Node of (int * 'a * 'a tree * 'a tree) *)
 
 let empty = EmptyLeaf
 let is_empty = function EmptyLeaf -> true | _ -> false
@@ -28,15 +28,13 @@ let rec insert key_value_pair tree =
   match tree with
   | EmptyLeaf -> Leaf (key, value)
   | Leaf (k, v) ->
-      if k = key then 
-        raise Duplicate
+      if k = key then raise Duplicate
       else
         let new_leaf = Leaf (key, value) in
         if k < key then Node (k, v, EmptyLeaf, new_leaf)
         else Node (k, v, new_leaf, EmptyLeaf)
   | Node (k, v, l, r) ->
-      if k = key then 
-        raise Duplicate
+      if k = key then raise Duplicate
       else
         let new_leaf = Leaf (key, value) in
         if k < key then
@@ -48,12 +46,10 @@ let rec insert key_value_pair tree =
 let rec update key new_value = function
   | EmptyLeaf -> EmptyLeaf
   | Leaf (k, v) ->
-      if k = key then
-        Leaf (k, new_value)
-      else raise (Failure "key does not exist in tree") (*Leaf (k, v)*)
+      if k = key then Leaf (k, new_value)
+      else raise (Failure "key does not exist in tree")
   | Node (k, v, l, r) ->
-      if k = key then
-        Node (k, new_value, l, r)
+      if k = key then Node (k, new_value, l, r)
       else if k > key then Node (k, v, update key new_value l, r)
       else Node (k, v, l, update key new_value r)
 
@@ -116,10 +112,8 @@ let get_key (f : 'a * int -> bool) tree =
   in
   let val_key_pair = List.filter f val_key_assoc_list in
   try snd (List.nth val_key_pair 0) with
-  | Failure _ ->
-      raise NotFound
-  | Invalid_argument _ ->
-      raise NotFound
+  | Failure _ -> raise NotFound
+  | Invalid_argument _ -> raise NotFound
 
 let get_key_col (f : column * int -> bool) tree =
   let key_val_assoc_list = inorder tree in
@@ -128,10 +122,8 @@ let get_key_col (f : column * int -> bool) tree =
   in
   let val_key_pair = List.filter f val_key_assoc_list in
   try snd (List.nth val_key_pair 0) with
-  | Failure _ ->
-      raise NotFound
-  | Invalid_argument _ ->
-      raise NotFound
+  | Failure _ -> raise NotFound
+  | Invalid_argument _ -> raise NotFound
 
 let filter_based_on_key f tree =
   let all_key_value_pairs = inorder tree in
