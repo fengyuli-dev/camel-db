@@ -34,7 +34,9 @@
    actually produced by the parse_where method. We passed all the OUnit
    test cases, showing that our system is able to process conditional
    statements. We deeveloped test cases using glass box, testing each
-   combination of nested conditional statements.
+   combination of nested conditional statements based on the
+   implementation. We also used black box testing, which we tested
+   normal and edge case based on the functionality.
 
    The rest of the parser system is tested with print test in the first
    milestone when we left the controller methods as printing only. These
